@@ -87,7 +87,7 @@ body::before {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background-image: url('/images/niletronix-bg.webp');
+  background-image: url('../public/images/niletronix-bg.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
