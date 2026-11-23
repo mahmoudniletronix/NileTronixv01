@@ -2,6 +2,8 @@
   position: sticky;
   inset-block-start: 0;
   z-index: 100;
+  width: 100%;
+  max-width: 100vw;
   background-color: var(--nt-white);
   border-block-end: 1px solid var(--nt-border-subtle);
   animation: ntHeaderEnter 320ms var(--nt-ease) both;
@@ -14,7 +16,7 @@
   gap: clamp(0.75rem, 1.5vw, 1.5rem);
   min-height: var(--nt-header-height);
   width: 100%;
-  padding-inline: clamp(1rem, 3.5vw, 4rem);
+  padding-inline: var(--nt-gutter);
 }
 
 .brand-link {
@@ -26,10 +28,10 @@
   flex-shrink: 0;
 }
 
-.brand-logo { height: 30px; width: auto; }
+.brand-logo { height: 32px; width: auto; }
 
 .brand-tagline {
-  font-size: 0.6875rem;
+  font-size: 0.72rem;
   font-weight: 500;
   color: var(--nt-ink-muted);
   line-height: 1.2;
@@ -40,7 +42,7 @@
 .nav-list {
   display: flex;
   align-items: center;
-  gap: clamp(0.75rem, 1.6vw, 1.9rem);
+  gap: clamp(0.85rem, 1.8vw, 2.1rem);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -50,10 +52,10 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.35rem;
   padding-block: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 500;
+  font-size: var(--nt-ui-size);
+  font-weight: 600;
   color: var(--nt-ink);
   text-decoration: none;
   background: transparent;
@@ -114,12 +116,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
+  gap: 0.5rem;
   min-height: 44px;
-  padding: 0.6rem 1.15rem;
-  background-color: var(--nt-deep-navy);
+  padding: 0.6rem 1.25rem;
+  background-color: var(--nt-dark-navy);
   color: var(--nt-white);
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   font-weight: 600;
   text-decoration: none;
   border-radius: var(--nt-radius-sm);
@@ -262,11 +264,14 @@
 .drawer-cta { width: 100%; min-height: 48px; }
 
 @media (max-width: 1279px) {
+  .header-bar { gap: 0.65rem; }
   .brand-tagline { display: none; }
-  .brand-logo { height: 26px; }
-  .nav-link { font-size: 0.875rem; }
-  .header-actions { gap: 0.5rem; }
-  .header-cta { padding: 0.55rem 0.9rem; font-size: 0.8125rem; }
+  .brand-logo { height: 24px; }
+  .nav-list { gap: 0.85rem; }
+  .nav-link { font-size: 0.84375rem; }
+  .header-actions { gap: 0.45rem; }
+  .lang-switcher { padding: 0.3rem 0.45rem; font-size: 0.8125rem; }
+  .header-cta { padding: 0.5rem 0.85rem; font-size: 0.8125rem; min-height: 40px; }
 }
 
 @media (max-width: 1023px) {

@@ -1,35 +1,50 @@
 /* ==========================================================================
-   NileTronix Enterprise Design System — Global Tokens & Base Styles
+   NileTronix Enterprise Design System — Consolidated Global Tokens & Base
    ========================================================================== */
 
 :root {
-  /* Brand Palette */
+  /* Official Brand Palette (aligned with NileTronix logo) */
+  --nt-dark-navy: #082f43;
   --nt-deep-navy: #103c55;
-  --nt-dark-navy: #06283d;
   --nt-nile-blue: #0b7897;
   --nt-cyan-accent: #00b6d6;
+  --nt-brand-red: #ed1b2f;
   --nt-white: #ffffff;
-  --nt-light-bg: #f8f9f7;
+  --nt-light-bg: #f5f8fa;
 
-  /* Derived Neutrals & Surfaces */
-  --nt-ink: #0f2433;
-  --nt-ink-muted: #4b6170;
-  --nt-border-subtle: rgba(16, 60, 85, 0.11);
+  /* Semantic Surfaces & Text */
+  --nt-surface-primary: #ffffff;
+  --nt-surface-secondary: #f5f8fa;
+  --nt-ink: #102a3a;
+  --nt-ink-muted: #526674;
+  --nt-placeholder: #768996;
+  --nt-border-subtle: #dce5ea;
   --nt-border-light: rgba(255, 255, 255, 0.16);
-  --nt-surface-hover: #f2f6f8;
-  --nt-focus-ring: #00b6d6;
+  --nt-surface-hover: #eef5f8;
+  --nt-focus-ring: #0b7897;
 
-  /* Typography */
+  /* Typography Families */
   --nt-font-en: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --nt-font-ar: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
   --nt-font-sans: var(--nt-font-en);
 
-  /* Layout & Spacing */
+  /* Unified Typography Scale */
+  --nt-h1-size: clamp(2.5rem, 4.4vw, 4.25rem);
+  --nt-h2-size: clamp(2.05rem, 3.1vw, 2.85rem);
+  --nt-h3-size: clamp(1.45rem, 2.05vw, 1.95rem);
+  --nt-body-size: clamp(0.96875rem, 1.05vw, 1.03125rem);
+  --nt-ui-size: 0.9375rem;
+  --nt-eyebrow-size: 0.8125rem;
+
+  /* Unified Spacing & Layout Rhythm (8px base) */
   --nt-container-max: 1380px;
-  --nt-container-pad: clamp(1rem, 3vw, 2.5rem);
+  --nt-gutter: clamp(1rem, 3.5vw, 4rem);
+  --nt-container-pad: var(--nt-gutter);
+  --nt-section-py: clamp(3.5rem, 5.5vw, 5rem);
   --nt-header-height: 80px;
   --nt-radius-sm: 6px;
-  --nt-radius-md: 8px;
+  --nt-radius-md: 10px;
+  --nt-radius-lg: 14px;
 
   /* Motion */
   --nt-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -51,14 +66,17 @@ html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 body {
   margin: 0;
   font-family: var(--nt-font-sans);
+  font-size: 1rem;
   color: var(--nt-ink);
-  background-color: #f4f7fa;
-  line-height: 1.5;
+  background-color: var(--nt-surface-secondary);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
@@ -125,7 +143,7 @@ a {
   width: 100%;
   max-width: var(--nt-container-max);
   margin-inline: auto;
-  padding-inline: var(--nt-container-pad);
+  padding-inline: var(--nt-gutter);
 }
 
 /* Screen-reader only utility */

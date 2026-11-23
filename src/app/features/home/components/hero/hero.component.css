@@ -31,11 +31,17 @@
   background: linear-gradient(270deg, #06283d 0%, #0b324a 36%, rgba(16, 60, 85, 0.9) 46%, rgba(16, 60, 85, 0.35) 56%, rgba(6, 40, 61, 0.04) 68%, transparent 100%);
 }
 
-.hero-grid { position: relative; z-index: 2; padding-block: clamp(3rem, 5vh, 4.25rem); }
+.hero-grid {
+  position: relative;
+  z-index: 2;
+  max-width: none;
+  padding-inline: var(--nt-gutter);
+  padding-block: clamp(3rem, 5vh, 4.5rem);
+}
 
 .hero-content {
   width: 45%;
-  max-width: 580px;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -43,35 +49,35 @@
 
 .hero-eyebrow {
   margin: 0 0 1.25rem;
-  font-size: 0.75rem;
+  font-size: var(--nt-eyebrow-size);
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.82);
 }
 
-:host-context([dir='rtl']) .hero-eyebrow { letter-spacing: 0.02em; font-size: 0.8125rem; }
+:host-context([dir='rtl']) .hero-eyebrow { letter-spacing: 0.02em; font-size: 0.875rem; }
 
 .hero-headline {
   margin: 0 0 1.35rem;
-  font-size: clamp(2.25rem, 4vw, 3.85rem);
-  font-weight: 700;
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+  font-size: var(--nt-h1-size);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.028em;
   color: var(--nt-white);
 }
 
-:host-context([dir='rtl']) .hero-headline { letter-spacing: 0; line-height: 1.22; }
+:host-context([dir='rtl']) .hero-headline { letter-spacing: 0; line-height: 1.2; }
 
 .hero-headline-row { display: block; }
 .hero-headline-accent { color: var(--nt-cyan-accent); }
 
 .hero-description {
   margin: 0 0 2rem;
-  max-width: 44ch;
-  font-size: clamp(0.95rem, 1.15vw, 1.125rem);
+  max-width: 46ch;
+  font-size: clamp(1rem, 1.15vw, 1.125rem);
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.84);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .hero-actions {
@@ -138,6 +144,7 @@
 .indicator-item:last-child { padding-inline-end: 0; }
 .indicator-icon {
   color: var(--nt-cyan-accent);
+  font-size: 1.2rem;
   flex-shrink: 0;
   transition: transform var(--nt-dur-fast) var(--nt-ease);
 }

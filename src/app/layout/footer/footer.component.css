@@ -9,13 +9,12 @@
 }
 
 .footer-accent-line {
-  height: 3px;
-  background: linear-gradient(90deg, var(--nt-nile-blue) 0%, var(--nt-cyan-accent) 50%, var(--nt-nile-blue) 100%);
+  display: none;
 }
 
 .footer-inner {
-  padding-inline: clamp(1rem, 3.5vw, 4rem);
-  padding-block: clamp(3rem, 5vw, 4.25rem) 1.75rem;
+  padding-inline: var(--nt-gutter);
+  padding-block: clamp(3.25rem, 5vw, 4.5rem) 2rem;
 }
 
 .footer-grid {
@@ -23,7 +22,7 @@
   grid-template-columns: minmax(240px, 1.45fr) repeat(3, minmax(170px, 1fr));
   gap: clamp(2rem, 3.5vw, 3.5rem);
   padding-block-end: clamp(2.25rem, 4vw, 3.25rem);
-  border-block-end: 1px solid rgba(255, 255, 255, 0.12);
+  border-block-end: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 /* Brand Column */
@@ -36,21 +35,21 @@
 
 .footer-logo-wrap {
   display: inline-flex;
-  padding: 0.45rem 0.75rem;
+  padding: 0.5rem 0.85rem;
   background-color: #ffffff;
   border-radius: 8px;
 }
 
 .footer-logo {
-  height: 28px;
+  height: 30px;
   width: auto;
 }
 
 .footer-tagline {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.78);
   max-width: 36ch;
 }
 
@@ -76,9 +75,9 @@
 }
 
 .social-btn:hover {
-  background-color: var(--nt-cyan-accent);
-  border-color: var(--nt-cyan-accent);
-  color: var(--nt-dark-navy);
+  background-color: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
 }
 
 /* Columns */
@@ -107,8 +106,8 @@
 }
 
 .footer-links a {
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.76);
+  font-size: var(--nt-ui-size);
+  color: rgba(255, 255, 255, 0.82);
   text-decoration: none;
   transition: color 180ms var(--nt-ease);
 }
@@ -121,9 +120,9 @@
   display: flex;
   align-items: flex-start;
   gap: 0.65rem;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.76);
+  font-size: var(--nt-ui-size);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .footer-contact-list i {
@@ -152,8 +151,9 @@
   justify-content: space-between;
   gap: 0.75rem 1.5rem;
   padding-block-start: 1.5rem;
-  font-size: 0.8125rem;
-  color: rgba(255, 255, 255, 0.56);
+  padding-inline-end: 4.25rem;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .copyright {

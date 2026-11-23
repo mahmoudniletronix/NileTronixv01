@@ -17,30 +17,29 @@ describe('IndustriesServeComponent', () => {
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
-    const tabs = el.querySelectorAll('.industry-option');
+    const tabs = el.querySelectorAll('.sector-tab');
     expect(tabs.length).toBe(5);
     expect(tabs[0].classList.contains('is-active')).toBe(true);
-    expect(el.querySelector('.detail-title')?.textContent?.trim()).toBe('Healthcare');
-    expect(el.querySelector('.architectural-img')?.getAttribute('src')).toBe(
+    expect(el.querySelector('.stage-title')?.textContent?.trim()).toBe('Healthcare');
+    expect(el.querySelector('.stage-img')?.getAttribute('src')).toBe(
       'industries/healthcare.webp'
     );
   });
 
-  it('should update active industry, image, capabilities, and CTA when selecting another industry', () => {
+  it('should update active industry, image, and CTA when selecting another industry', () => {
     const fixture = TestBed.createComponent(IndustriesServeComponent);
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
-    const tabs = el.querySelectorAll('.industry-option') as NodeListOf<HTMLButtonElement>;
+    const tabs = el.querySelectorAll('.sector-tab') as NodeListOf<HTMLButtonElement>;
     tabs[3].click(); // Parking & Mobility
     fixture.detectChanges();
 
-    expect(el.querySelector('.detail-title')?.textContent?.trim()).toBe('Parking & Mobility');
-    expect(el.querySelector('.architectural-img')?.getAttribute('src')).toBe(
+    expect(el.querySelector('.stage-title')?.textContent?.trim()).toBe('Parking & Mobility');
+    expect(el.querySelector('.stage-img')?.getAttribute('src')).toBe(
       'industries/parking.webp'
     );
-    expect(el.querySelector('.counter-current')?.textContent?.trim()).toBe('04');
-    expect(el.querySelector('.explore-solutions-cta')?.getAttribute('href')).toBe(
+    expect(el.querySelector('.stage-cta')?.getAttribute('href')).toBe(
       '/solutions/parking-management'
     );
   });
@@ -50,19 +49,18 @@ describe('IndustriesServeComponent', () => {
     fixture.detectChanges();
 
     const el = fixture.nativeElement as HTMLElement;
-    const prevBtn = el.querySelector('.col-nav .arrow-prev') as HTMLButtonElement;
-    const nextBtn = el.querySelector('.col-nav .arrow-next') as HTMLButtonElement;
+    const prevBtn = el.querySelector('.stage-arrow:first-child') as HTMLButtonElement;
+    const nextBtn = el.querySelector('.stage-arrow:last-child') as HTMLButtonElement;
 
     prevBtn.click(); // 01 -> 05 Government
     fixture.detectChanges();
-    expect(el.querySelector('.counter-current')?.textContent?.trim()).toBe('05');
-    expect(el.querySelector('.detail-title')?.textContent?.trim()).toBe(
+    expect(el.querySelector('.stage-title')?.textContent?.trim()).toBe(
       'Government & Public Services'
     );
 
     nextBtn.click(); // 05 -> 01 Healthcare
     fixture.detectChanges();
-    expect(el.querySelector('.counter-current')?.textContent?.trim()).toBe('01');
+    expect(el.querySelector('.stage-title')?.textContent?.trim()).toBe('Healthcare');
   });
 
   it('should switch industry copy to Arabic when language changes', () => {
@@ -73,7 +71,7 @@ describe('IndustriesServeComponent', () => {
 
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('.section-headline')?.textContent).toContain('تكنولوجيا تتكيّف');
-    expect(el.querySelector('.detail-title')?.textContent?.trim()).toBe('الرعاية الصحية');
+    expect(el.querySelector('.stage-title')?.textContent?.trim()).toBe('الرعاية الصحية');
 
     lang.setLanguage('en');
     fixture.detectChanges();

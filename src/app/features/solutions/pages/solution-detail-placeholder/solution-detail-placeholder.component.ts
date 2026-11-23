@@ -13,15 +13,7 @@ import { LocalizedText } from '../../models/solution.model';
     <section class="placeholder-wrap">
       <div class="nt-container placeholder-inner">
         <a class="back-link" routerLink="/" fragment="solutions">
-          <svg class="nt-dir-icon" viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
-            <path
-              d="M12.5 8h-9m0 0L7 4.5M3.5 8L7 11.5"
-              stroke="currentColor"
-              stroke-width="1.6"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <i class="fa-solid fa-arrow-left nt-dir-icon" aria-hidden="true"></i>
           <span>{{ t(copy.backToSolutions) }}</span>
         </a>
 
@@ -85,7 +77,7 @@ import { LocalizedText } from '../../models/solution.model';
       margin: 0 0 2rem;
       padding: 0.95rem 1.15rem;
       background-color: var(--nt-surface-hover);
-      border-inline-start: 3px solid var(--nt-nile-blue);
+      border: 1px solid var(--nt-border-subtle);
       border-radius: var(--nt-radius-sm);
       font-size: 0.9rem;
       color: var(--nt-deep-navy);
