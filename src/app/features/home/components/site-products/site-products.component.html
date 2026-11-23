@@ -1,0 +1,238 @@
+<section
+  class="blueprint-section"
+  aria-labelledby="site-products-heading"
+>
+  <!-- Editorial Section Header -->
+  <header class="blueprint-header">
+    <div class="header-main">
+      <p class="section-eyebrow">
+        <span class="eyebrow-num" aria-hidden="true">{{ copy.eyebrowNum }}</span>
+        <span>{{ t(copy.eyebrowText) }}</span>
+      </p>
+      <h2 id="site-products-heading" class="section-headline">
+        <span>{{ t(copy.headline) }}</span><span class="headline-dot" aria-hidden="true">.</span>
+      </h2>
+    </div>
+
+    <p class="header-desc">
+      {{ t(copy.supportingText) }}
+    </p>
+  </header>
+
+  <!-- Minimal Architectural Category Line -->
+  <nav
+    class="category-bar"
+    role="tablist"
+    [attr.aria-label]="t(copy.filterAriaLabel)"
+  >
+    @for (cat of categories; track cat.id) {
+      <button
+        type="button"
+        role="tab"
+        class="cat-tab"
+        [class.is-active]="cat.id === activeCategory()"
+        [attr.aria-selected]="cat.id === activeCategory()"
+        (click)="selectCategory(cat.id)"
+      >
+        <i [class]="cat.icon" aria-hidden="true"></i>
+        <span>{{ t(cat.label) }}</span>
+      </button>
+    }
+  </nav>
+
+  <!-- Asymmetric Blueprint Pedestal + Swiss Technical Dossier (ZERO Cards) -->
+  <div class="showroom-grid">
+    <!-- Left 56%: Interactive Blueprint Pedestal with Magnetic 3D Tilt -->
+    <div
+      class="pedestal-stage"
+      (mousemove)="onStagePointerMove($event)"
+      (mouseleave)="onStagePointerLeave()"
+    >
+      <!-- Technical Corner Crosshairs -->
+      <span class="reticle reticle-tl" aria-hidden="true"></span>
+      <span class="reticle reticle-tr" aria-hidden="true"></span>
+      <span class="reticle reticle-bl" aria-hidden="true"></span>
+      <span class="reticle reticle-br" aria-hidden="true"></span>
+
+      <!-- Oversized Subtle Model Code Watermark -->
+      <span #watermarkEl class="stage-watermark" aria-hidden="true">
+        {{ activeProduct().modelCode }}
+      </span>
+
+      <!-- Top Technical Telemetry Bar -->
+      <div class="stage-top-bar">
+        <span class="stage-code-pill">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          <span>{{ activeProduct().modelCode }}</span>
+        </span>
+
+        <button
+          type="button"
+          class="stage-zoom-btn"
+          [attr.aria-label]="t(copy.zoomLabel)"
+          (click)="openLightbox()"
+        >
+          <i class="fa-solid fa-expand" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- Floating Hardware Specimen -->
+      <figure #pedestalFigure class="pedestal-figure">
+        <img
+          #pedestalImg
+          class="pedestal-img"
+          [src]="activeProduct().image.src"
+          [alt]="t(activeProduct().image.alt)"
+          [width]="activeProduct().image.width"
+          [height]="activeProduct().image.height"
+          loading="lazy"
+          decoding="async"
+        />
+        <span class="pedestal-shadow" aria-hidden="true"></span>
+      </figure>
+
+      <!-- Bottom Thumbnail Dock (Only when multiple models exist in category) -->
+      @if (categoryProducts().length > 1) {
+        <div class="model-dock">
+          @for (prod of categoryProducts(); track prod.id; let idx = $index) {
+            <button
+              type="button"
+              class="dock-thumb"
+              [class.is-active]="idx === activeModelIndex()"
+              [attr.aria-label]="t(prod.name)"
+              [attr.aria-pressed]="idx === activeModelIndex()"
+              (click)="selectModel(idx)"
+            >
+              <img
+                [src]="prod.image.src"
+                [alt]="t(prod.name)"
+                [width]="prod.image.width"
+                [height]="prod.image.height"
+                loading="lazy"
+              />
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Right 44%: Swiss Technical Spec Dossier -->
+    <div class="spec-dossier">
+      <div #dossierCopy class="dossier-head">
+        <div class="dossier-meta">
+          <span class="dossier-counter">{{ formattedIndex() }} / {{ formattedTotal() }}</span>
+          <span class="dossier-sep" aria-hidden="true">—</span>
+          <span class="dossier-badge">{{ t(activeProduct().categoryBadge) }}</span>
+        </div>
+
+        <h3 class="dossier-title">{{ t(activeProduct().name) }}</h3>
+        <p class="dossier-summary">{{ t(activeProduct().summary) }}</p>
+      </div>
+
+      <!-- Technical Specifications Table (Clean Hairlines) -->
+      <dl #specRows class="spec-table">
+        @for (spec of activeProduct().specs; track spec.label.en) {
+          <div class="spec-row">
+            <dt class="spec-key">
+              <i [class]="spec.icon" aria-hidden="true"></i>
+              <span>{{ t(spec.label) }}</span>
+            </dt>
+            <dd class="spec-val">{{ t(spec.value) }}</dd>
+          </div>
+        }
+      </dl>
+
+      <!-- Interactive Model Index List -->
+      @if (categoryProducts().length > 1) {
+        <div class="model-index-block">
+          <p class="index-heading">{{ t(copy.modelsInCategory) }}</p>
+          <ul class="model-index-list">
+            @for (prod of categoryProducts(); track prod.id; let idx = $index) {
+              <li>
+                <button
+                  type="button"
+                  class="index-row-btn"
+                  [class.is-active]="idx === activeModelIndex()"
+                  (click)="selectModel(idx)"
+                >
+                  <span class="index-num">{{ formatNum(idx) }}</span>
+                  <span class="index-name">{{ t(prod.name) }}</span>
+                  <span class="index-code">{{ prod.modelCode }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Bottom Action & Device Stepper -->
+      <div class="dossier-footer">
+        <a class="dossier-cta" routerLink="/consultation">
+          <span>{{ t(copy.requestQuoteCta) }}</span>
+          <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+        </a>
+
+        @if (categoryProducts().length > 1) {
+          <div class="dossier-arrows">
+            <button
+              type="button"
+              class="dossier-arrow"
+              [attr.aria-label]="t(copy.prevDevice)"
+              (click)="prevModel()"
+            >
+              <i class="fa-solid fa-arrow-left nt-dir-icon" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="dossier-arrow"
+              [attr.aria-label]="t(copy.nextDevice)"
+              (click)="nextModel()"
+            >
+              <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Fullscreen Hardware Inspection Lightbox -->
+@if (lightboxOpen()) {
+  <div
+    class="lightbox-backdrop"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="t(activeProduct().name)"
+    (click)="closeLightbox()"
+  >
+    <div class="lightbox-card" (click)="$event.stopPropagation()">
+      <div class="lightbox-top">
+        <div>
+          <span class="lightbox-code">{{ activeProduct().modelCode }}</span>
+          <h3 class="lightbox-title">{{ t(activeProduct().name) }}</h3>
+        </div>
+        <button
+          type="button"
+          class="lightbox-close"
+          [attr.aria-label]="t(copy.closeLightbox)"
+          (click)="closeLightbox()"
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="lightbox-stage">
+        <img
+          class="lightbox-img"
+          [src]="activeProduct().image.src"
+          [alt]="t(activeProduct().image.alt)"
+          [width]="activeProduct().image.width"
+          [height]="activeProduct().image.height"
+        />
+      </div>
+
+      <p class="lightbox-desc">{{ t(activeProduct().summary) }}</p>
+    </div>
+  </div>
+}

@@ -1,0 +1,126 @@
+<section
+  class="industries-section"
+  aria-labelledby="industries-section-heading"
+>
+  <!-- Clean Editorial Header -->
+  <header class="industries-header">
+    <div class="header-left">
+      <p class="section-eyebrow">
+        <span class="eyebrow-num" aria-hidden="true">{{ copy.eyebrowNum }}</span>
+        <span>{{ t(copy.eyebrowText) }}</span>
+      </p>
+      <h2 id="industries-section-heading" class="section-headline">
+        <span>{{ t(copy.headline) }}</span><span class="headline-dot" aria-hidden="true">.</span>
+      </h2>
+    </div>
+
+    <p class="header-desc">
+      {{ t(copy.supportingText) }}
+    </p>
+  </header>
+
+  <!-- Clear Horizontal Sector Switcher -->
+  <div
+    class="sector-tabs"
+    role="tablist"
+    [attr.aria-label]="t(copy.navAriaLabel)"
+  >
+    @for (item of industries; track item.id; let idx = $index) {
+      <button
+        type="button"
+        role="tab"
+        class="sector-tab"
+        [id]="'industry-tab-' + item.id"
+        [class.is-active]="item.id === selectedId()"
+        [attr.aria-selected]="item.id === selectedId()"
+        aria-controls="industry-stage-panel"
+        (click)="selectIndustry(item.id)"
+        (keydown)="onTabKeydown($event, idx)"
+      >
+        <i class="tab-icon" [class]="item.faIcon" aria-hidden="true"></i>
+        <span class="tab-label">{{ t(item.name) }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Unified Full-Width Architectural Stage (No Duplicate Cards) -->
+  <div
+    id="industry-stage-panel"
+    class="industry-stage"
+    role="tabpanel"
+    [attr.aria-labelledby]="'industry-tab-' + activeIndustry().id"
+  >
+    <!-- Architectural Backdrop Photograph -->
+    <div class="stage-media">
+      <img
+        #stageImg
+        class="stage-img"
+        [src]="activeIndustry().image.src"
+        [alt]="t(activeIndustry().image.alt)"
+        [width]="activeIndustry().image.width"
+        [height]="activeIndustry().image.height"
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="stage-scrim" aria-hidden="true"></div>
+    </div>
+
+    <!-- Foreground Sector Content -->
+    <div class="stage-content">
+      <div #stageCopy class="stage-copy">
+        <div class="stage-meta">
+          <span class="stage-index">{{ activeIndustry().indexLabel }} / {{ formattedTotal }}</span>
+          <span class="stage-dot" aria-hidden="true">·</span>
+          <span class="stage-subtitle">{{ t(activeIndustry().subtitle) }}</span>
+        </div>
+
+        <h3 class="stage-title">{{ t(activeIndustry().name) }}</h3>
+
+        <p class="stage-description">
+          {{ t(activeIndustry().description) }}
+        </p>
+      </div>
+
+      <ul
+        #stageList
+        class="stage-capabilities"
+        [attr.aria-label]="t(copy.capabilitiesLabel)"
+      >
+        @for (cap of activeIndustry().capabilities; track cap.label.en) {
+          <li class="stage-cap-item">
+            <span class="cap-icon" aria-hidden="true">
+              <i [class]="cap.icon"></i>
+            </span>
+            <span>{{ t(cap.label) }}</span>
+          </li>
+        }
+      </ul>
+
+      <div class="stage-actions">
+        <a class="stage-cta" [routerLink]="activeIndustry().ctaRoute">
+          <span>{{ t(copy.exploreCta) }}</span>
+          <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+        </a>
+
+        <div class="stage-nav">
+          <button
+            type="button"
+            class="stage-arrow"
+            [attr.aria-label]="t(copy.prevIndustry)"
+            (click)="prev()"
+          >
+            <i class="fa-solid fa-arrow-left nt-dir-icon" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            class="stage-arrow"
+            [attr.aria-label]="t(copy.nextIndustry)"
+            (click)="next()"
+          >
+            <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

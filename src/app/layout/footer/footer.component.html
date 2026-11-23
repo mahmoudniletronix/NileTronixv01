@@ -1,0 +1,164 @@
+<footer class="site-footer">
+  <div class="footer-accent-line" aria-hidden="true"></div>
+
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <!-- Brand Column -->
+      <div class="footer-brand">
+        <a class="footer-logo-wrap" routerLink="/" [attr.aria-label]="content().brand.homeAriaLabel">
+          <img
+            class="footer-logo"
+            src="images/niletronix-logo.png"
+            [alt]="content().brand.name"
+            width="776"
+            height="193"
+            loading="lazy"
+          />
+        </a>
+
+        <p class="footer-tagline">
+          @if (lang() === 'ar') {
+            نايل ترونكس للحلول المتقدمة — شريككم الهندسي في تطوير البرمجيات المؤسسية، والأنظمة الذكية، والأجهزة الميدانية، وتكامل أنظمة التيار الخفيف.
+          } @else {
+            Niletronix For Advanced Solutions — engineering integrated enterprise software, intelligent field hardware, and reliable smart infrastructure.
+          }
+        </p>
+
+        <div class="footer-social">
+          <a
+            class="social-btn"
+            [href]="mapsLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            [attr.aria-label]="lang() === 'ar' ? 'موقعنا على خرائط جوجل' : 'NileTronix on Google Maps'"
+          >
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+          </a>
+          <a
+            class="social-btn"
+            href="mailto:info@niletronix.com"
+            [attr.aria-label]="lang() === 'ar' ? 'راسلنا عبر البريد الإلكتروني' : 'Email NileTronix'"
+          >
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+          </a>
+          <a
+            class="social-btn"
+            routerLink="/"
+            fragment="contact"
+            [attr.aria-label]="lang() === 'ar' ? 'اطلب استشارة' : 'Request a Consultation'"
+          >
+            <i class="fa-solid fa-headset" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Solutions Column -->
+      <div class="footer-col">
+        <h3 class="footer-heading">
+          {{ lang() === 'ar' ? 'الحلول والأنظمة' : 'Solutions' }}
+        </h3>
+        <ul class="footer-links">
+          <li>
+            <a routerLink="/solutions/queue-management">
+              {{ lang() === 'ar' ? 'إدارة الانتظار (Q-Control)' : 'Queue Management (Q-Control)' }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/solutions/parking-management">
+              {{ lang() === 'ar' ? 'إدارة المواقف (NPark)' : 'Parking Management (NPark)' }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/solutions/customer-feedback">
+              {{ lang() === 'ar' ? 'منصة استبيان ورضا العملاء' : 'Customer Feedback & Surveys' }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/solutions/traffic-management">
+              {{ lang() === 'ar' ? 'إدارة المرور والإشارات' : 'Traffic Signal Control' }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/solutions/security-low-current">
+              {{ lang() === 'ar' ? 'الأمن والرؤية الذكية والتيار الخفيف' : 'AI Vision, Security & Low Current' }}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Quick Navigation Column -->
+      <div class="footer-col">
+        <h3 class="footer-heading">
+          {{ lang() === 'ar' ? 'روابط سريعة' : 'Explore' }}
+        </h3>
+        <ul class="footer-links">
+          <li>
+            <a routerLink="/" fragment="solutions">
+              {{ lang() === 'ar' ? 'حلولنا البرمجية' : 'Our Solutions' }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/" fragment="industries">
+              {{ lang() === 'ar' ? 'القطاعات التي نخدمها' : 'Industries We Serve' }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/" fragment="hardware">
+              {{ lang() === 'ar' ? 'الأجهزة والأنظمة الميدانية' : 'Hardware & Field Systems' }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/" fragment="references">
+              {{ lang() === 'ar' ? 'عملاؤنا وشركاء النجاح' : 'Clients & References' }}
+            </a>
+          </li>
+          <li>
+            <a routerLink="/" fragment="contact">
+              {{ lang() === 'ar' ? 'تواصل معنا' : 'Contact Us' }}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contact Column -->
+      <div class="footer-col">
+        <h3 class="footer-heading">
+          {{ lang() === 'ar' ? 'تواصل معنا' : 'Headquarters' }}
+        </h3>
+        <ul class="footer-contact-list">
+          <li>
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <a [href]="mapsLink" target="_blank" rel="noopener noreferrer">
+              {{ lang() === 'ar' ? 'مصر الجديدة، القاهرة، مصر' : 'Heliopolis, Cairo, Egypt' }}
+            </a>
+          </li>
+          <li>
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            <a href="mailto:info@niletronix.com">info&#64;niletronix.com</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-clock" aria-hidden="true"></i>
+            <span>
+              {{ lang() === 'ar' ? 'الأحد – الخميس · 9:00 ص – 5:00 م' : 'Sun – Thu · 9:00 AM – 5:00 PM' }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom Legal Bar -->
+    <div class="footer-bottom">
+      <p class="copyright">
+        @if (lang() === 'ar') {
+          © {{ currentYear }} نايل ترونكس للحلول المتقدمة. جميع الحقوق محفوظة.
+        } @else {
+          © {{ currentYear }} Niletronix For Advanced Solutions. All rights reserved.
+        }
+      </p>
+
+      <div class="footer-bottom-meta">
+        <span>{{ lang() === 'ar' ? 'برمجيات · أجهزة · تكامل أنظمة' : 'Software · Hardware · Systems Integration' }}</span>
+      </div>
+    </div>
+  </div>
+</footer>

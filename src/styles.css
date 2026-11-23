@@ -1,1 +1,197 @@
-/* You can add global styles to this file, and also import other style files */
+/* ==========================================================================
+   NileTronix Enterprise Design System — Global Tokens & Base Styles
+   ========================================================================== */
+
+:root {
+  /* Brand Palette */
+  --nt-deep-navy: #103c55;
+  --nt-dark-navy: #06283d;
+  --nt-nile-blue: #0b7897;
+  --nt-cyan-accent: #00b6d6;
+  --nt-white: #ffffff;
+  --nt-light-bg: #f8f9f7;
+
+  /* Derived Neutrals & Surfaces */
+  --nt-ink: #0f2433;
+  --nt-ink-muted: #4b6170;
+  --nt-border-subtle: rgba(16, 60, 85, 0.11);
+  --nt-border-light: rgba(255, 255, 255, 0.16);
+  --nt-surface-hover: #f2f6f8;
+  --nt-focus-ring: #00b6d6;
+
+  /* Typography */
+  --nt-font-en: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --nt-font-ar: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  --nt-font-sans: var(--nt-font-en);
+
+  /* Layout & Spacing */
+  --nt-container-max: 1380px;
+  --nt-container-pad: clamp(1rem, 3vw, 2.5rem);
+  --nt-header-height: 80px;
+  --nt-radius-sm: 6px;
+  --nt-radius-md: 8px;
+
+  /* Motion */
+  --nt-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --nt-dur-fast: 180ms;
+  --nt-dur-base: 260ms;
+}
+
+html[lang='ar'] {
+  --nt-font-sans: var(--nt-font-ar);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--nt-font-sans);
+  color: var(--nt-ink);
+  background-color: #f4f7fa;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url('/images/niletronix-bg.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+/* Accessible focus indicator */
+:focus-visible {
+  outline: 2px solid var(--nt-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Skip to main content link */
+.nt-skip-link {
+  position: fixed;
+  inset-block-start: -100px;
+  inset-inline-start: 1rem;
+  z-index: 1000;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--nt-dark-navy);
+  color: var(--nt-white);
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: var(--nt-radius-sm);
+  text-decoration: none;
+  transition: inset-block-start var(--nt-dur-fast) var(--nt-ease);
+}
+
+.nt-skip-link:focus {
+  inset-block-start: 1rem;
+}
+
+/* Shared Layout Container */
+.nt-container {
+  width: 100%;
+  max-width: var(--nt-container-max);
+  margin-inline: auto;
+  padding-inline: var(--nt-container-pad);
+}
+
+/* Screen-reader only utility */
+.nt-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* RTL arrow mirroring helper */
+html[dir='rtl'] .nt-dir-icon {
+  transform: scaleX(-1);
+}
+
+/* Lock body scroll when mobile drawer is open */
+body.nt-scroll-locked {
+  overflow: hidden;
+}
+
+/* Shared Entrance Keyframes */
+@keyframes ntHeaderEnter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ntMenuReveal {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ntFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ntRevealUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ntIndicatorReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ntHeroImageEnter {
+  from { opacity: 0.72; transform: scale(1.02); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

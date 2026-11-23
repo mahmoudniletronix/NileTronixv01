@@ -1,0 +1,11 @@
+# Changes relative to original legacy agent and Wasla v1.0
+- Kept the requested senior-frontend and high-quality UI/UX/mobile experience standards.
+- Retained Jira feature delivery and strong business logic/contract verification.
+- Removed project-specific branding, patient workflows, roles and fixed Angular versions.
+- Added explicit project discovery and framework-agnostic implementation skill (Angular remains a specialist).
+- Refactored duplicate legacy visual-design skills into complementary product UX, mobile UX and design system responsibilities; no third-party skill code copied.
+- Added accessibility/i18n, code review, performance and safe agent operations.
+- Added optional read-only independent reviewers; these are not automatically invoked for minor tasks.
+- Added opt-in Playwright and Context7 MCP profiles; no GitHub executable installed automatically.
+- Added cross-platform installer with backup and dry run, and a static validator.
+- Preserves runtime integrity: global and workspace configurations can coexist; warns on inherited legacy settings.

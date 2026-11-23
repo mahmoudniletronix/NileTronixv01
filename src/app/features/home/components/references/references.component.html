@@ -1,0 +1,150 @@
+<section
+  class="references-section"
+  aria-labelledby="references-section-heading"
+>
+  <!-- Editorial Header -->
+  <header class="references-header">
+    <div class="header-copy">
+      <p class="section-eyebrow">
+        <span class="eyebrow-num" aria-hidden="true">05 /</span>
+        <span>
+          @if (lang() === 'ar') {
+            عملاؤنا وشركاء النجاح
+          } @else {
+            CLIENTS &amp; REFERENCES
+          }
+        </span>
+      </p>
+
+      <h2 id="references-section-heading" class="section-headline">
+        @if (lang() === 'ar') {
+          ثقة نخبة من المؤسسات والهيئات الرائدة<span class="headline-dot" aria-hidden="true">.</span>
+        } @else {
+          Trusted by leading organizations<span class="headline-dot" aria-hidden="true">.</span>
+        }
+      </h2>
+
+      <p class="header-desc">
+        @if (lang() === 'ar') {
+          نفخر بتشغيل أنظمتنا وحلولنا في كبرى المستشفيات، والبنوك، والمنشآت التجارية، والهيئات الحكومية.
+        } @else {
+          Powering mission-critical operations across healthcare, banking, commercial, and public sector facilities.
+        }
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <span class="partner-count">
+        <strong>{{ allLogos.length }}+</strong>
+        <span>
+          @if (lang() === 'ar') {
+            مؤسسة وشريك
+          } @else {
+            Enterprise Partners
+          }
+        </span>
+      </span>
+
+      <button
+        type="button"
+        class="view-toggle-btn"
+        [attr.aria-pressed]="viewMode() === 'grid'"
+        (click)="toggleViewMode()"
+      >
+        @if (viewMode() === 'marquee') {
+          <i class="fa-solid fa-table-cells" aria-hidden="true"></i>
+          <span>{{ lang() === 'ar' ? 'عرض الكل' : 'View All' }}</span>
+        } @else {
+          <i class="fa-solid fa-film" aria-hidden="true"></i>
+          <span>{{ lang() === 'ar' ? 'عرض متحرك' : 'Stream View' }}</span>
+        }
+      </button>
+    </div>
+  </header>
+
+  <!-- Kinetic Dual-Track Marquee View -->
+  @if (viewMode() === 'marquee') {
+    <div class="marquee-shell" dir="ltr">
+      <!-- Track 1: Leftward -->
+      <div class="marquee-row">
+        <div class="marquee-track track-forward">
+          @for (logo of rowOne; track logo.id) {
+            <div class="logo-tile">
+              <img
+                class="logo-img"
+                [src]="logo.src"
+                [alt]="lang() === 'ar' ? logo.altAr : logo.altEn"
+                width="800"
+                height="400"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          }
+          @for (logo of rowOne; track logo.id + '-dup') {
+            <div class="logo-tile" aria-hidden="true">
+              <img
+                class="logo-img"
+                [src]="logo.src"
+                alt=""
+                width="800"
+                height="400"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Track 2: Rightward (Counter-Flow) -->
+      <div class="marquee-row">
+        <div class="marquee-track track-reverse">
+          @for (logo of rowTwo; track logo.id) {
+            <div class="logo-tile">
+              <img
+                class="logo-img"
+                [src]="logo.src"
+                [alt]="lang() === 'ar' ? logo.altAr : logo.altEn"
+                width="800"
+                height="400"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          }
+          @for (logo of rowTwo; track logo.id + '-dup') {
+            <div class="logo-tile" aria-hidden="true">
+              <img
+                class="logo-img"
+                [src]="logo.src"
+                alt=""
+                width="800"
+                height="400"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    <!-- Full Architectural Grid View -->
+    <div #gridContainer class="references-grid">
+      @for (logo of allLogos; track logo.id) {
+        <div class="logo-tile grid-tile">
+          <img
+            class="logo-img"
+            [src]="logo.src"
+            [alt]="lang() === 'ar' ? logo.altAr : logo.altEn"
+            width="800"
+            height="400"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      }
+    </div>
+  }
+</section>

@@ -1,0 +1,209 @@
+<section
+  class="deck-section"
+  aria-roledescription="carousel"
+  aria-labelledby="solutions-deck-heading"
+  (keydown)="onKeydown($event)"
+>
+  <!-- Compact Full-Bleed Header -->
+  <header class="deck-header">
+    <div class="header-copy">
+      <p class="section-eyebrow">
+        <span class="eyebrow-num" aria-hidden="true">02 /</span>
+        <span>{{ t(copy.eyebrow) }}</span>
+      </p>
+      <h2 id="solutions-deck-heading" class="section-headline">
+        @if (lang() === 'ar') {
+          أنظمة حقيقية تُدير عملياتك.
+        } @else {
+          Systems engineered for real operations.
+        }
+      </h2>
+    </div>
+
+    <div class="header-counter" aria-live="polite">
+      <span class="counter-active">{{ formattedIndex() }}</span>
+      <span class="counter-sep" aria-hidden="true">/</span>
+      <span class="counter-total">{{ formattedTotal }}</span>
+    </div>
+  </header>
+
+  <!-- GSAP 3D Layered Center-Stage Deck -->
+  <div
+    class="deck-stage-wrap"
+    (touchstart)="onTouchStart($event)"
+    (touchend)="onTouchEnd($event)"
+  >
+    <!-- Desktop Flanking Arrows -->
+    <button
+      type="button"
+      class="stage-arrow stage-arrow-prev"
+      [attr.aria-label]="lang() === 'ar' ? 'الحل السابق' : 'Previous solution'"
+      (click)="prev()"
+    >
+      <svg class="nt-dir-icon" viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+        <path
+          d="M12.5 5L7.5 10l5 5"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+
+    <div class="deck-viewport">
+      <div class="deck-floor-glow" aria-hidden="true"></div>
+
+      @for (item of solutions; track item.slug; let idx = $index) {
+        <article
+          #deckCard
+          class="deck-card"
+          [class.is-active]="idx === activeIndex()"
+          [attr.aria-current]="idx === activeIndex() ? 'true' : null"
+          (click)="onCardClick(idx)"
+        >
+          <!-- Enterprise Display Top Bezel -->
+          <div class="card-bezel" aria-hidden="true">
+            <span class="bezel-status">
+              <span class="status-dot"></span>
+              <span class="bezel-code">{{ item.productCode }}</span>
+            </span>
+            <span class="bezel-index">{{ formatNum(idx) }}</span>
+          </div>
+
+          <!-- Full 16:10 Authentic Product Screenshot -->
+          <div class="card-screen">
+            <img
+              class="card-img"
+              [src]="item.screenshots[0].src"
+              [alt]="t(item.screenshots[0].alt)"
+              [width]="item.screenshots[0].width"
+              [height]="item.screenshots[0].height"
+              [attr.loading]="idx === 0 ? 'eager' : 'lazy'"
+              decoding="async"
+            />
+            <div class="card-dim-layer" aria-hidden="true"></div>
+          </div>
+
+          <!-- Subtle label overlay on inactive flanking cards -->
+          @if (idx !== activeIndex()) {
+            <button
+              type="button"
+              class="card-click-overlay"
+              [attr.aria-label]="
+                (lang() === 'ar' ? 'عرض ' : 'Select ') +
+                item.productCode +
+                ' — ' +
+                t(item.navLabel)
+              "
+              (click)="selectIndex(idx); $event.stopPropagation()"
+            >
+              <span class="side-tag">{{ formatNum(idx) }} · {{ t(item.navLabel) }}</span>
+            </button>
+          }
+        </article>
+      }
+    </div>
+
+    <button
+      type="button"
+      class="stage-arrow stage-arrow-next"
+      [attr.aria-label]="lang() === 'ar' ? 'الحل التالي' : 'Next solution'"
+      (click)="next()"
+    >
+      <svg class="nt-dir-icon" viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true">
+        <path
+          d="M7.5 5l5 5-5 5"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Active Product Spotlight Pill & Compact Details -->
+  <div #infoPanel class="spotlight-info">
+    <div class="spotlight-pill">
+      <span class="pill-dot" aria-hidden="true"></span>
+      <span class="pill-code">{{ activeSolution().productCode }}</span>
+      <span class="pill-sep" aria-hidden="true">·</span>
+      <span class="pill-cat">{{ t(activeSolution().navLabel) }}</span>
+    </div>
+
+    <p class="spotlight-desc">{{ t(activeSolution().valueStatement) }}</p>
+
+    <div class="spotlight-actions">
+      <a class="explore-cta" [routerLink]="activeSolution().route">
+        <span>{{ t(copy.exploreCta) }}</span>
+        <svg class="nt-dir-icon" viewBox="0 0 16 16" width="15" height="15" fill="none" aria-hidden="true">
+          <path
+            d="M3.5 8h9m0 0L9 4.5M12.5 8L9 11.5"
+            stroke="currentColor"
+            stroke-width="1.7"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </a>
+
+      <!-- Mobile Arrow Controls -->
+      <div class="mobile-arrows">
+        <button
+          type="button"
+          class="mobile-arrow-btn"
+          [attr.aria-label]="lang() === 'ar' ? 'الحل السابق' : 'Previous solution'"
+          (click)="prev()"
+        >
+          <svg class="nt-dir-icon" viewBox="0 0 18 18" width="16" height="16" fill="none" aria-hidden="true">
+            <path
+              d="M11.25 4.5L6.75 9l4.5 4.5"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="mobile-arrow-btn"
+          [attr.aria-label]="lang() === 'ar' ? 'الحل التالي' : 'Next solution'"
+          (click)="next()"
+        >
+          <svg class="nt-dir-icon" viewBox="0 0 18 18" width="16" height="16" fill="none" aria-hidden="true">
+            <path
+              d="M6.75 4.5L11.25 9l-4.5 4.5"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Solution Selector Strip -->
+  <div
+    class="deck-selector"
+    role="tablist"
+    [attr.aria-label]="t(copy.tablistLabel)"
+  >
+    @for (item of solutions; track item.slug; let idx = $index) {
+      <button
+        type="button"
+        role="tab"
+        class="selector-item"
+        [class.is-active]="idx === activeIndex()"
+        [attr.aria-selected]="idx === activeIndex()"
+        (click)="selectIndex(idx)"
+      >
+        <span class="selector-num">{{ formatNum(idx) }}</span>
+        <span class="selector-name">{{ t(item.navLabel) }}</span>
+      </button>
+    }
+  </div>
+</section>

@@ -1,0 +1,5 @@
+.app-main {
+  display: block;
+  min-height: calc(100vh - var(--nt-header-height));
+  background-color: transparent;
+}

@@ -1,59 +1,25 @@
-# NileTronix
+# Universal Senior Frontend Agent — v2.0
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.3.
+A **real Antigravity-ready, project-agnostic agent folder** for senior-level Angular/frontend engineering, product UI/UX, **mobile-specific UX**, Jira execution, contract-driven API logic, debugging, security, tests, responsive QA and low-token skill routing.
 
-## Development server
+This is an agent configuration package, not a browser app, dependency bundle, auto-Jira connector or guarantee of real-world correctness.
 
-To start a local development server, run:
+### Included
+- 16 selective `SKILL.md` bundles
+- 8 conditional Rules
+- 3 optional read-only reviewer subagents
+- 10 templates and 2 knowledge guides
+- 2 opt-in MCP configuration examples (Playwright + Context7)
+- Cross-platform dry-run-first installer, opt-in MCP configuration helper, static validator, examples and docs
 
-```bash
-ng serve
-```
+### Install
+Read **`INSTALL.md`**. Use **global** scope if you want one agent across every project, or **workspace** scope for one repository. For global, files go to `~/.gemini/config/`, not a folder named `.agents` nested inside it.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Tool choices
+The package does not automatically install downloaded GitHub code or run remote programs. External integration examples are provided with source links and explicit opt-in to prevent conflicts and unsafe side effects.
 
-## Code scaffolding
+### Source and adaptation
+Rearchitected from earlier Wasla-specific agent plus the originally supplied legacy agent rules/skills: converted to neutral project discovery, design system abstraction, appropriate mobile UX, and evidence-based Jira completion. No Wasla-specific brand/patient policy or third-party skill source code is included.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Quality check
+A static validator checks all package files and instruction metadata. Live Antigravity discovery, project integration, Jira tools and browser tests must be verified on your machine.

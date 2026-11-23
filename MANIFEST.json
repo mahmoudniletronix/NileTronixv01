@@ -1,0 +1,42 @@
+{
+  "name": "Universal Senior Frontend Agent",
+  "version": "2.0.0",
+  "created_utc": "2026-11-16",
+  "target": "Google Antigravity App / CLI / IDE",
+  "global_path": "~/.gemini/config",
+  "workspace_path": "<project>/.agents",
+  "skills": [
+    "accessibility-i18n",
+    "agent-operations",
+    "angular-engineering",
+    "api-contract-integration",
+    "code-review-refactor",
+    "debugging-root-cause",
+    "design-system",
+    "domain-workflow-analysis",
+    "frontend-engineering",
+    "jira-feature-delivery",
+    "mobile-ux-responsive",
+    "performance-scalability",
+    "project-onboarding",
+    "quality-testing",
+    "security-permissions",
+    "ui-ux-product-design"
+  ],
+  "rules": [
+    "accessibility-localization.md",
+    "api-state.md",
+    "efficiency-tools.md",
+    "engineering-quality.md",
+    "requirements-jira.md",
+    "security-privacy.md",
+    "ui-responsive.md",
+    "verification.md"
+  ],
+  "subagents": [
+    "acceptance-qa-reviewer.md",
+    "architecture-reviewer.md",
+    "ux-auditor.md"
+  ],
+  "external_integrations_installed": false
+}
