@@ -1,7 +1,12 @@
 <section
   class="deck-section"
+  [class.is-paused]="isPaused()"
   aria-roledescription="carousel"
   aria-labelledby="solutions-deck-heading"
+  (mouseenter)="setPaused(true)"
+  (mouseleave)="setPaused(false)"
+  (focusin)="setPaused(true)"
+  (focusout)="setPaused(false)"
   (keydown)="onKeydown($event)"
 >
   <!-- Compact Full-Bleed Header -->
@@ -13,9 +18,9 @@
       </p>
       <h2 id="solutions-deck-heading" class="section-headline">
         @if (lang() === 'ar') {
-          أنظمة حقيقية تُدير عملياتك.
+          أنظمة حقيقية تُدير عملياتك<span class="headline-dot" aria-hidden="true">.</span>
         } @else {
-          Systems engineered for real operations.
+          Systems engineered for real operations<span class="headline-dot" aria-hidden="true">.</span>
         }
       </h2>
     </div>
@@ -27,13 +32,13 @@
     </div>
   </header>
 
-  <!-- GSAP 3D Layered Center-Stage Deck -->
+  <!-- GSAP 3D Layered Center-Stage Deck (Frameless Showcase) -->
   <div
     class="deck-stage-wrap"
     (touchstart)="onTouchStart($event)"
     (touchend)="onTouchEnd($event)"
   >
-    <!-- Desktop Flanking Arrows -->
+    <!-- Balanced Flanking Arrow Buttons -->
     <button
       type="button"
       class="stage-arrow stage-arrow-prev"
@@ -54,16 +59,7 @@
           [attr.aria-current]="idx === activeIndex() ? 'true' : null"
           (click)="onCardClick(idx)"
         >
-          <!-- Enterprise Display Top Bezel -->
-          <div class="card-bezel" aria-hidden="true">
-            <span class="bezel-status">
-              <span class="status-dot"></span>
-              <span class="bezel-code">{{ item.productCode }}</span>
-            </span>
-            <span class="bezel-index">{{ formatNum(idx) }}</span>
-          </div>
-
-          <!-- Full 16:10 Authentic Product Screenshot -->
+          <!-- Frameless 16:10 Authentic Product Screenshot -->
           <div class="card-screen">
             <img
               class="card-img"
@@ -74,10 +70,21 @@
               [attr.loading]="idx === 0 ? 'eager' : 'lazy'"
               decoding="async"
             />
+
+            <!-- Floating Frosted Badge on Active Card Only -->
+            @if (idx === activeIndex()) {
+              <div class="active-glass-badge" aria-hidden="true">
+                <span class="status-dot"></span>
+                <span class="badge-code">{{ item.productCode }}</span>
+                <span class="badge-sep">·</span>
+                <span class="badge-num">{{ formatNum(idx) }}</span>
+              </div>
+            }
+
             <div class="card-dim-layer" aria-hidden="true"></div>
           </div>
 
-          <!-- Subtle label overlay on inactive flanking cards -->
+          <!-- Clean Click Target on Flanking Cards -->
           @if (idx !== activeIndex()) {
             <button
               type="button"
@@ -89,9 +96,7 @@
                 t(item.navLabel)
               "
               (click)="selectIndex(idx); $event.stopPropagation()"
-            >
-              <span class="side-tag">{{ formatNum(idx) }} · {{ t(item.navLabel) }}</span>
-            </button>
+            ></button>
           }
         </article>
       }
@@ -107,16 +112,26 @@
     </button>
   </div>
 
-  <!-- Active Product Spotlight Pill & Compact Details -->
+  <!-- Balanced Editorial Horizontal Spotlight Bar -->
   <div #infoPanel class="spotlight-info">
-    <div class="spotlight-pill">
-      <span class="pill-dot" aria-hidden="true"></span>
-      <span class="pill-code">{{ activeSolution().productCode }}</span>
-      <span class="pill-sep" aria-hidden="true">·</span>
-      <span class="pill-cat">{{ t(activeSolution().navLabel) }}</span>
-    </div>
+    <div class="spotlight-copy">
+      <div class="spotlight-title-row">
+        <h3 class="spotlight-name">{{ activeSolution().productCode }}</h3>
+        <span class="spotlight-sep" aria-hidden="true">—</span>
+        <span class="spotlight-cat">{{ t(activeSolution().navLabel) }}</span>
+      </div>
 
-    <p class="spotlight-desc">{{ t(activeSolution().valueStatement) }}</p>
+      <p class="spotlight-desc">{{ t(activeSolution().valueStatement) }}</p>
+
+      <ul class="spotlight-tags" aria-hidden="true">
+        @for (cap of activeCapabilities(); track cap.en) {
+          <li class="spotlight-tag">
+            <i class="fa-solid fa-check" aria-hidden="true"></i>
+            <span>{{ t(cap) }}</span>
+          </li>
+        }
+      </ul>
+    </div>
 
     <div class="spotlight-actions">
       <a class="explore-cta" [routerLink]="activeSolution().route">
@@ -146,7 +161,7 @@
     </div>
   </div>
 
-  <!-- Interactive Solution Selector Strip -->
+  <!-- Interactive Solution Selector Strip with Active Progress Line -->
   <div
     class="deck-selector"
     role="tablist"
@@ -163,6 +178,11 @@
       >
         <span class="selector-num">{{ formatNum(idx) }}</span>
         <span class="selector-name">{{ t(item.navLabel) }}</span>
+        <span class="selector-progress" aria-hidden="true">
+          @if (idx === activeIndex()) {
+            <span class="selector-progress-fill"></span>
+          }
+        </span>
       </button>
     }
   </div>

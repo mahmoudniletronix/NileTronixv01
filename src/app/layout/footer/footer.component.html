@@ -1,19 +1,32 @@
-<footer class="site-footer">
-  <div class="footer-accent-line" aria-hidden="true"></div>
+<footer #footerRoot class="site-footer">
+  <span class="footer-top-line" aria-hidden="true"></span>
+  <span class="footer-watermark" aria-hidden="true">NILETRONIX</span>
 
   <div class="footer-inner">
     <div class="footer-grid">
-      <!-- Brand Column -->
+      <!-- Brand Column (Seamless Dark-Mode Lockup — Zero White Sticker Box) -->
       <div class="footer-brand">
-        <a class="footer-logo-wrap" routerLink="/" [attr.aria-label]="content().brand.homeAriaLabel">
-          <img
-            class="footer-logo"
-            src="images/niletronix-logo.png"
-            [alt]="content().brand.name"
-            width="776"
-            height="193"
-            loading="lazy"
-          />
+        <a
+          class="footer-brand-lockup"
+          routerLink="/"
+          [attr.aria-label]="content().brand.homeAriaLabel"
+        >
+          <span class="brand-emblem-ring">
+            <img
+              class="brand-emblem"
+              src="images/niletronix-icon.png"
+              [alt]="content().brand.name"
+              width="40"
+              height="40"
+              loading="lazy"
+            />
+          </span>
+          <span class="brand-text-stack">
+            <span class="brand-wordmark">NILETRONIX</span>
+            <span class="brand-subline">
+              {{ lang() === 'ar' ? 'للحلول المتقدمة وتكامل الأنظمة' : 'Technology & Systems Integration' }}
+            </span>
+          </span>
         </a>
 
         <p class="footer-tagline">
@@ -31,6 +44,7 @@
             target="_blank"
             rel="noopener noreferrer"
             [attr.aria-label]="lang() === 'ar' ? 'موقعنا على خرائط جوجل' : 'NileTronix on Google Maps'"
+            [attr.title]="lang() === 'ar' ? 'موقعنا على الخريطة' : 'Google Maps'"
           >
             <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
           </a>
@@ -38,6 +52,7 @@
             class="social-btn"
             href="mailto:info@niletronix.com"
             [attr.aria-label]="lang() === 'ar' ? 'راسلنا عبر البريد الإلكتروني' : 'Email NileTronix'"
+            [attr.title]="lang() === 'ar' ? 'البريد الإلكتروني' : 'Email Us'"
           >
             <i class="fa-solid fa-envelope" aria-hidden="true"></i>
           </a>
@@ -46,6 +61,7 @@
             routerLink="/"
             fragment="contact"
             [attr.aria-label]="lang() === 'ar' ? 'اطلب استشارة' : 'Request a Consultation'"
+            [attr.title]="lang() === 'ar' ? 'اطلب استشارة' : 'Consultation'"
           >
             <i class="fa-solid fa-headset" aria-hidden="true"></i>
           </a>

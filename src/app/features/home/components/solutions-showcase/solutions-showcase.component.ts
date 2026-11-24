@@ -46,9 +46,14 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
   protected readonly total = SOLUTIONS_CATALOG.length;
 
   protected readonly activeIndex = signal<number>(0);
+  protected readonly isPaused = signal<boolean>(false);
 
   protected readonly activeSolution = computed<SolutionItem>(
     () => this.solutions[this.activeIndex()] ?? this.solutions[0]
+  );
+
+  protected readonly activeCapabilities = computed<readonly LocalizedText[]>(() =>
+    this.activeSolution().capabilities.slice(0, 3)
   );
 
   protected readonly formattedIndex = computed(() =>
@@ -60,6 +65,7 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
   private viewReady = false;
   private touchStartX: number | null = null;
   private touchStartY: number | null = null;
+  private autoPlayTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     effect(() => {
@@ -76,10 +82,12 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
     this.viewReady = true;
     if (this.isBrowser) {
       this.animateDeck(this.activeIndex(), this.isRtl(), true);
+      this.startAutoPlay();
     }
   }
 
   ngOnDestroy(): void {
+    this.stopAutoPlay();
     if (!this.isBrowser) return;
     if (this.cardRefs) {
       this.cardRefs.forEach((ref) => gsap.killTweensOf(ref.nativeElement));
@@ -104,17 +112,24 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
     return String(index + 1).padStart(2, '0');
   }
 
+  protected setPaused(paused: boolean): void {
+    this.isPaused.set(paused);
+  }
+
   protected next(): void {
     this.activeIndex.update((i) => (i + 1) % this.total);
+    this.resetAutoPlay();
   }
 
   protected prev(): void {
     this.activeIndex.update((i) => (i - 1 + this.total) % this.total);
+    this.resetAutoPlay();
   }
 
   protected selectIndex(index: number): void {
     if (index >= 0 && index < this.total && index !== this.activeIndex()) {
       this.activeIndex.set(index);
+      this.resetAutoPlay();
     }
   }
 
@@ -165,6 +180,34 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  private startAutoPlay(): void {
+    const reducedMotion =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) return;
+
+    this.stopAutoPlay();
+    this.autoPlayTimer = setInterval(() => {
+      if (!this.isPaused() && typeof document !== 'undefined' && !document.hidden) {
+        this.activeIndex.update((i) => (i + 1) % this.total);
+      }
+    }, 6500);
+  }
+
+  private resetAutoPlay(): void {
+    if (this.autoPlayTimer !== null) {
+      this.startAutoPlay();
+    }
+  }
+
+  private stopAutoPlay(): void {
+    if (this.autoPlayTimer !== null) {
+      clearInterval(this.autoPlayTimer);
+      this.autoPlayTimer = null;
+    }
+  }
+
   private getCircularOffset(cardIndex: number, active: number): number {
     let diff = cardIndex - active;
     if (diff > this.total / 2) diff -= this.total;
@@ -182,10 +225,10 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
 
     const vw = typeof window !== 'undefined' ? window.innerWidth : 1440;
     const dirSign = isRtl ? -1 : 1;
-    const duration = immediate || reducedMotion ? 0 : 0.62;
+    const duration = immediate || reducedMotion ? 0 : 0.64;
 
-    const sideX = vw >= 1280 ? 60 : vw >= 1024 ? 54 : vw >= 768 ? 50 : 40;
-    const outerX = vw >= 1280 ? 96 : 78;
+    const sideX = vw >= 1280 ? 58 : vw >= 1024 ? 52 : vw >= 768 ? 48 : 38;
+    const outerX = vw >= 1280 ? 94 : 76;
     const showOuter = vw >= 1200;
 
     this.cardRefs.forEach((ref, i) => {
@@ -199,21 +242,24 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
       let rotationY = 0;
       let opacity = 1;
       let zIndex = 30;
+      let filter = 'blur(0px)';
 
       if (absDiff === 1) {
         xPercent = diff * dirSign * sideX;
         y = 14;
         scale = vw < 768 ? 0.84 : 0.8;
-        rotationY = -diff * dirSign * (vw < 768 ? 8 : 13);
-        opacity = vw < 768 ? 0.45 : 0.84;
+        rotationY = -diff * dirSign * (vw < 768 ? 10 : 16);
+        opacity = vw < 768 ? 0.42 : 0.72;
         zIndex = 20;
+        filter = 'blur(1.5px)';
       } else if (absDiff >= 2) {
         xPercent = Math.sign(diff) * dirSign * outerX;
-        y = 28;
+        y = 26;
         scale = 0.64;
-        rotationY = -Math.sign(diff) * dirSign * 20;
-        opacity = showOuter ? 0.4 : 0;
+        rotationY = -Math.sign(diff) * dirSign * 24;
+        opacity = showOuter ? 0.32 : 0;
         zIndex = 10;
+        filter = 'blur(3px)';
       }
 
       gsap.to(el, {
@@ -223,6 +269,7 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
         rotationY,
         opacity,
         zIndex,
+        filter,
         duration,
         ease: 'power3.out',
         overwrite: 'auto',
@@ -241,8 +288,8 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
 
     gsap.fromTo(
       this.infoPanelRef.nativeElement,
-      { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.36, ease: 'power2.out', overwrite: 'auto' }
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.38, ease: 'power2.out', overwrite: 'auto' }
     );
   }
 }

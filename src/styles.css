@@ -24,9 +24,11 @@
   --nt-focus-ring: #0b7897;
 
   /* Typography Families */
-  --nt-font-en: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --nt-font-ar: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  --nt-font-en: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --nt-font-en-display: 'Space Grotesk', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --nt-font-ar: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
   --nt-font-sans: var(--nt-font-en);
+  --nt-font-display: var(--nt-font-en-display);
 
   /* Unified Typography Scale */
   --nt-h1-size: clamp(2.5rem, 4.4vw, 4.25rem);
@@ -54,6 +56,7 @@
 
 html[lang='ar'] {
   --nt-font-sans: var(--nt-font-ar);
+  --nt-font-display: var(--nt-font-ar);
 }
 
 *,
@@ -92,6 +95,13 @@ body::before {
   background-position: center;
   background-repeat: no-repeat;
   pointer-events: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--nt-font-display);
 }
 
 img,

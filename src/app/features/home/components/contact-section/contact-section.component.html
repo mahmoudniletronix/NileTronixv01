@@ -48,7 +48,24 @@
           </span>
           <div class="info-text">
             <span class="info-label">{{ lang() === 'ar' ? 'البريد الإلكتروني' : 'Business Inquiries' }}</span>
-            <a class="info-value info-link" href="mailto:info@niletronix.com">info&#64;niletronix.com</a>
+            <div class="email-row">
+              <a class="info-value info-link" href="mailto:info@niletronix.com">info&#64;niletronix.com</a>
+              <button
+                type="button"
+                class="copy-btn"
+                [class.is-copied]="emailCopied()"
+                [attr.aria-label]="lang() === 'ar' ? 'نسخ البريد الإلكتروني' : 'Copy email address'"
+                (click)="copyEmail()"
+              >
+                @if (emailCopied()) {
+                  <i class="fa-solid fa-check" aria-hidden="true"></i>
+                  <span>{{ lang() === 'ar' ? 'تم النسخ' : 'Copied' }}</span>
+                } @else {
+                  <i class="fa-regular fa-copy" aria-hidden="true"></i>
+                  <span>{{ lang() === 'ar' ? 'نسخ' : 'Copy' }}</span>
+                }
+              </button>
+            </div>
           </div>
         </div>
 
@@ -65,16 +82,28 @@
         </div>
       </div>
 
-      <!-- Interactive Google Map Frame -->
-      <div class="map-frame">
-        <iframe
-          class="map-iframe"
-          [src]="mapEmbedUrl"
-          [title]="lang() === 'ar' ? 'موقع مقر نايل ترونكس للحلول المتقدمة على خرائط جوجل' : 'Niletronix For Advanced Solutions location on Google Maps'"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          allowfullscreen
-        ></iframe>
+      <!-- Interactive Google Map Frame (Click-to-Interact prevents scroll capture) -->
+      <div
+        class="map-frame"
+        [class.is-map-active]="mapActive()"
+        (mouseleave)="deactivateMap()"
+      >
+        <div class="map-viewport" (click)="activateMap()">
+          <iframe
+            class="map-iframe"
+            [src]="mapEmbedUrl"
+            [title]="lang() === 'ar' ? 'موقع مقر نايل ترونكس للحلول المتقدمة على خرائط جوجل' : 'Niletronix For Advanced Solutions location on Google Maps'"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+          @if (!mapActive()) {
+            <span class="map-interact-hint" aria-hidden="true">
+              <i class="fa-solid fa-hand-pointer"></i>
+              <span>{{ lang() === 'ar' ? 'اضغط للتفاعل مع الخريطة' : 'Click to interact with map' }}</span>
+            </span>
+          }
+        </div>
 
         <div class="map-bar">
           <div class="map-bar-info">
@@ -235,6 +264,17 @@
             <span>{{ lang() === 'ar' ? 'إرسال طلب الاستشارة' : 'Send Consultation Request' }}</span>
             <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
           </button>
+
+          <p class="form-footnote">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            <span>
+              {{
+                lang() === 'ar'
+                  ? 'يتم مراجعة طلبك مباشرةً من قِبل فريق مهندسي الحلول في نايل ترونكس.'
+                  : 'Reviewed directly by our NileTronix solutions engineering team.'
+              }}
+            </span>
+          </p>
         </form>
       }
     </div>

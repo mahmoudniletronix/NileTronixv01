@@ -274,6 +274,21 @@ export const SOLUTIONS_CATALOG: readonly SolutionItem[] = [
         },
       },
       {
+        id: 'cf-anonymous-survey',
+        src: 'solutions/customer-feedback/anonymous-survey.webp',
+        width: 1024,
+        height: 508,
+        addressBar: 'feedback / public / anonymous-survey',
+        alt: {
+          en: 'NileTronix standalone anonymous patient feedback and complaints survey interface.',
+          ar: 'واجهة استبيان الشكاوى والمقترحات المستقل لقياس رضا العملاء من نايل ترونكس.',
+        },
+        caption: {
+          en: 'Anonymous Public Survey — streamlined multi-step bilingual feedback collection powered by NileTronix.',
+          ar: 'استبيان المستفيدين المستقل — جمع آراء ومقترحات العملاء بخطوات بسيطة ثنائية اللغة.',
+        },
+      },
+      {
         id: 'cf-branches',
         src: 'solutions/customer-feedback/branches.webp',
         width: 1440,
@@ -321,6 +336,21 @@ export const SOLUTIONS_CATALOG: readonly SolutionItem[] = [
       },
     ],
     screenshots: [
+      {
+        id: 'traffic-dashboard-map',
+        src: 'solutions/projects/traffic-signal.webp',
+        width: 1440,
+        height: 900,
+        addressBar: 'traffic-signals / map-view / green-way',
+        alt: {
+          en: 'NileTronix Traffic Signals Dashboard showing interactive intersection map view and greenway corridor control.',
+          ar: 'لوحة تحكم إشارات المرور من نايل ترونكس تعرض خريطة التقاطعات التفاعلية والمسار الأخضر.',
+        },
+        caption: {
+          en: 'Traffic Signals Map & Green Way — interactive intersection monitoring, marker placement, and corridor synchronization.',
+          ar: 'خريطة إشارات المرور والمسار الأخضر — مراقبة التقاطعات التفاعلية ومزامنة المسارات المرورية.',
+        },
+      },
       {
         id: 'traffic-controller',
         src: 'solutions/traffic-management/controller.webp',

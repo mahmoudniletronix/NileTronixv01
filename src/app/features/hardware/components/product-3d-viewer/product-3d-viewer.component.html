@@ -1,0 +1,110 @@
+<div
+  #viewerShell
+  class="viewer-shell"
+  [class.is-fullscreen]="isFullscreen()"
+  [class.is-ready]="viewerState() === 'ready' && viewMode() === '3d'"
+  tabindex="0"
+  role="region"
+  [attr.aria-label]="t(product().name)"
+>
+  <!-- Subtle Model Code Watermark -->
+  <span class="viewer-watermark" aria-hidden="true">{{ product().modelCode }}</span>
+
+  <!-- Top Telemetry & Mode Bar -->
+  <div class="viewer-top-bar">
+    <div class="viewer-ident">
+      <span class="model-code-pill">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span>{{ product().modelCode }}</span>
+      </span>
+
+      @if (viewerState() === 'ready' && viewMode() === '3d') {
+        <span class="badge-360">
+          <i class="fa-solid fa-cube" aria-hidden="true"></i>
+          <span>{{ t(copy.badge360) }}</span>
+        </span>
+      }
+    </div>
+
+    @if (viewerState() === 'ready') {
+      <div class="mode-switch" role="group" [attr.aria-label]="t(copy.badge360)">
+        <button
+          type="button"
+          class="mode-btn"
+          [class.is-active]="viewMode() === '3d'"
+          (click)="setViewMode('3d')"
+        >
+          <i class="fa-solid fa-cube" aria-hidden="true"></i>
+          <span>{{ t(copy.interactiveModeLabel) }}</span>
+        </button>
+        <button
+          type="button"
+          class="mode-btn"
+          [class.is-active]="viewMode() === 'photo'"
+          (click)="setViewMode('photo')"
+        >
+          <i class="fa-regular fa-image" aria-hidden="true"></i>
+          <span>{{ t(copy.posterModeLabel) }}</span>
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Three.js WebGL Canvas Host (Always LTR so 3D hardware is never mirrored in Arabic) -->
+  <div
+    #canvasHost
+    class="canvas-host"
+    dir="ltr"
+    [class.is-hidden]="viewMode() === 'photo' || viewerState() === 'webgl-unavailable'"
+  ></div>
+
+  <!-- Real Product Poster / Loading / Error Fallback -->
+  @if (showPosterFallback()) {
+    <app-product-loading-state
+      [product]="product()"
+      [mode]="posterMode()"
+      [progress]="loadProgress()"
+      (retryClicked)="onRetry()"
+    />
+  }
+
+  <!-- Interactive 3D Hotspots Layer -->
+  @if (viewerState() === 'ready' && viewMode() === '3d' && hotspotsVisible() && hasHotspots()) {
+    <app-product-hotspots
+      [projectedHotspots]="projectedHotspots()"
+      [selectedHotspotId]="selectedHotspotId()"
+      [activeHotspot]="activeHotspot()"
+      (hotspotSelected)="onHotspotSelected($event)"
+      (dismissed)="onHotspotDismissed()"
+    />
+  }
+
+  <!-- Subtle Interaction Hint (Fades out after first user orbit) -->
+  @if (viewerState() === 'ready' && viewMode() === '3d' && !hasInteracted()) {
+    <div class="interaction-hint" aria-hidden="true">
+      <i class="fa-solid fa-hand-pointer"></i>
+      <span class="hint-desktop">{{ t(copy.dragHintDesktop) }}</span>
+      <span class="hint-mobile">{{ t(copy.dragHintMobile) }}</span>
+    </div>
+  }
+
+  <!-- Compact Camera Controls Toolbar -->
+  @if (viewerState() === 'ready' && viewMode() === '3d') {
+    <div class="viewer-controls-wrap">
+      <app-product-controls
+        [activePreset]="activePreset()"
+        [autoRotate]="autoRotate()"
+        [isFullscreen]="isFullscreen()"
+        [hotspotsVisible]="hotspotsVisible()"
+        [hasHotspots]="hasHotspots()"
+        (presetSelected)="onPresetSelected($event)"
+        (zoomInClicked)="onZoomIn()"
+        (zoomOutClicked)="onZoomOut()"
+        (autoRotateToggled)="onToggleAutoRotate()"
+        (hotspotsToggled)="onToggleHotspots()"
+        (resetClicked)="onResetView()"
+        (fullscreenToggled)="onToggleFullscreen()"
+      />
+    </div>
+  }
+</div>

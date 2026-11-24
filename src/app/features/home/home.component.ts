@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  OnDestroy,
+  PLATFORM_ID,
+  inject,
+} from '@angular/core';
+import { ScrollChoreographyService } from '../../core/animation/scroll-choreography.service';
+import { LanguageService } from '../../core/i18n/language.service';
 import { ContactSectionComponent } from './components/contact-section/contact-section.component';
 import { HeroComponent } from './components/hero/hero.component';
 import { IndustriesServeComponent } from './components/industries-serve/industries-serve.component';
@@ -26,4 +37,32 @@ import { SolutionsShowcaseComponent } from './components/solutions-showcase/solu
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent {}
+export class HomeComponent implements AfterViewInit, OnDestroy {
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly hostEl = inject(ElementRef<HTMLElement>);
+  private readonly langService = inject(LanguageService);
+  private readonly scrollChoreography = inject(ScrollChoreographyService);
+
+  private cleanupScroll: (() => void) | null = null;
+  private destroyed = false;
+
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    void this.scrollChoreography
+      .initHomeScrollAnimations(this.hostEl.nativeElement, this.langService.isRtl())
+      .then((cleanup) => {
+        if (this.destroyed) {
+          cleanup?.();
+        } else {
+          this.cleanupScroll = cleanup;
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    this.cleanupScroll?.();
+    this.cleanupScroll = null;
+  }
+}

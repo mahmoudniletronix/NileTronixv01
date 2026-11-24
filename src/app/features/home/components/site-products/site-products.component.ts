@@ -4,7 +4,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener,
   OnDestroy,
   PLATFORM_ID,
   ViewChild,
@@ -15,21 +14,21 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import gsap from 'gsap';
+import type { ScrollTrigger as ScrollTriggerType } from 'gsap/ScrollTrigger';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { Product3DViewerComponent } from '../../../hardware/components/product-3d-viewer/product-3d-viewer.component';
+import { HARDWARE_PRODUCTS_CATALOG } from '../../../hardware/data/hardware-products.data';
+import { HardwareProductItem } from '../../../hardware/models/hardware-product.model';
 import {
   PRODUCT_CATEGORIES,
-  SITE_PRODUCTS_CATALOG,
   SITE_PRODUCTS_COPY,
 } from '../../../site-products/data/site-products.data';
-import {
-  ProductCategoryId,
-  SiteProductItem,
-} from '../../../site-products/models/site-product.model';
+import { ProductCategoryId } from '../../../site-products/models/site-product.model';
 import { LocalizedText } from '../../../solutions/models/solution.model';
 
 @Component({
   selector: 'app-site-products',
-  imports: [RouterLink],
+  imports: [RouterLink, Product3DViewerComponent],
   templateUrl: './site-products.component.html',
   styleUrl: './site-products.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,9 +38,10 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
-  @ViewChild('pedestalFigure') private pedestalFigureRef?: ElementRef<HTMLElement>;
-  @ViewChild('pedestalImg') private pedestalImgRef?: ElementRef<HTMLImageElement>;
-  @ViewChild('watermarkEl') private watermarkRef?: ElementRef<HTMLElement>;
+  @ViewChild('sectionRoot', { static: true }) private sectionRootRef!: ElementRef<HTMLElement>;
+  @ViewChild('sectionHeader') private sectionHeaderRef?: ElementRef<HTMLElement>;
+  @ViewChild('techDivider') private techDividerRef?: ElementRef<HTMLElement>;
+  @ViewChild('studioCol') private studioColRef?: ElementRef<HTMLElement>;
   @ViewChild('dossierCopy') private dossierCopyRef?: ElementRef<HTMLElement>;
   @ViewChild('specRows') private specRowsRef?: ElementRef<HTMLElement>;
 
@@ -52,13 +52,12 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
 
   protected readonly activeCategory = signal<ProductCategoryId>('kiosks');
   protected readonly activeModelIndex = signal<number>(0);
-  protected readonly lightboxOpen = signal<boolean>(false);
 
-  protected readonly categoryProducts = computed<readonly SiteProductItem[]>(() =>
-    SITE_PRODUCTS_CATALOG.filter((item) => item.category === this.activeCategory())
+  protected readonly categoryProducts = computed<readonly HardwareProductItem[]>(() =>
+    HARDWARE_PRODUCTS_CATALOG.filter((item) => item.category === this.activeCategory())
   );
 
-  protected readonly activeProduct = computed<SiteProductItem>(() => {
+  protected readonly activeProduct = computed<HardwareProductItem>(() => {
     const list = this.categoryProducts();
     return list[this.activeModelIndex()] ?? list[0];
   });
@@ -72,47 +71,48 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
   );
 
   private viewReady = false;
-  private activeTimeline: gsap.core.Timeline | null = null;
-  private tiltRotX: gsap.QuickToFunc | null = null;
-  private tiltRotY: gsap.QuickToFunc | null = null;
+  private swapTimeline: gsap.core.Timeline | null = null;
+  private entranceTimeline: gsap.core.Timeline | null = null;
+  private entranceTrigger: ScrollTriggerType | null = null;
+  private destroyed = false;
 
   constructor() {
     effect(() => {
       this.activeCategory();
       this.activeModelIndex();
       if (this.viewReady && this.isBrowser) {
-        queueMicrotask(() => this.animateDeviceSwap());
+        queueMicrotask(() => this.animateDossierSwap());
       }
     });
   }
 
   ngAfterViewInit(): void {
     this.viewReady = true;
-    if (!this.isBrowser) return;
-
-    const reducedMotion =
-      typeof window !== 'undefined' &&
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (!reducedMotion && this.pedestalFigureRef) {
-      this.tiltRotX = gsap.quickTo(this.pedestalFigureRef.nativeElement, 'rotationX', {
-        duration: 0.45,
-        ease: 'power2.out',
-      });
-      this.tiltRotY = gsap.quickTo(this.pedestalFigureRef.nativeElement, 'rotationY', {
-        duration: 0.45,
-        ease: 'power2.out',
-      });
+    if (!this.isBrowser || typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return;
     }
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) return;
+
+    void import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
+      if (this.destroyed) return;
+      gsap.registerPlugin(ScrollTrigger);
+      this.entranceTrigger = ScrollTrigger.create({
+        trigger: this.sectionRootRef.nativeElement,
+        start: 'top 80%',
+        once: true,
+        onEnter: () => this.playSectionEntrance(),
+      });
+    });
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     if (!this.isBrowser) return;
-    this.activeTimeline?.kill();
-    if (this.pedestalFigureRef) {
-      gsap.killTweensOf(this.pedestalFigureRef.nativeElement);
-    }
+    this.swapTimeline?.kill();
+    this.entranceTimeline?.kill();
+    this.entranceTrigger?.kill();
   }
 
   protected t(text: LocalizedText): string {
@@ -148,37 +148,49 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
     this.activeModelIndex.update((i) => (i - 1 + total) % total);
   }
 
-  protected onStagePointerMove(event: MouseEvent): void {
-    if (!this.tiltRotX || !this.tiltRotY || !this.pedestalFigureRef) return;
-    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    const relX = (event.clientX - rect.left) / rect.width - 0.5;
-    const relY = (event.clientY - rect.top) / rect.height - 0.5;
-    this.tiltRotY(relX * 14);
-    this.tiltRotX(-relY * 10);
-  }
+  private playSectionEntrance(): void {
+    this.entranceTimeline?.kill();
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out', overwrite: 'auto' } });
+    this.entranceTimeline = tl;
 
-  protected onStagePointerLeave(): void {
-    if (!this.tiltRotX || !this.tiltRotY) return;
-    this.tiltRotX(0);
-    this.tiltRotY(0);
-  }
+    if (this.sectionHeaderRef) {
+      tl.fromTo(
+        this.sectionHeaderRef.nativeElement,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.55, clearProps: 'transform' },
+        0
+      );
+    }
 
-  protected openLightbox(): void {
-    this.lightboxOpen.set(true);
-  }
+    if (this.techDividerRef) {
+      tl.fromTo(
+        this.techDividerRef.nativeElement,
+        { scaleX: 0, transformOrigin: this.isRtl() ? 'right center' : 'left center' },
+        { scaleX: 1, duration: 0.65, ease: 'power2.out', clearProps: 'transform' },
+        0.08
+      );
+    }
 
-  protected closeLightbox(): void {
-    this.lightboxOpen.set(false);
-  }
+    if (this.studioColRef) {
+      tl.fromTo(
+        this.studioColRef.nativeElement,
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.6, clearProps: 'transform' },
+        0.14
+      );
+    }
 
-  @HostListener('document:keydown.escape')
-  protected onEscape(): void {
-    if (this.lightboxOpen()) {
-      this.closeLightbox();
+    if (this.specRowsRef?.nativeElement.children.length) {
+      tl.fromTo(
+        this.specRowsRef.nativeElement.children,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.36, stagger: 0.06, clearProps: 'transform' },
+        0.22
+      );
     }
   }
 
-  private animateDeviceSwap(): void {
+  private animateDossierSwap(): void {
     const reducedMotion =
       typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
@@ -186,51 +198,33 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
 
     if (reducedMotion) return;
 
-    this.activeTimeline?.kill();
+    this.swapTimeline?.kill();
     const dirSign = this.isRtl() ? -1 : 1;
     const tl = gsap.timeline({ defaults: { ease: 'power3.out', overwrite: 'auto' } });
-    this.activeTimeline = tl;
-
-    if (this.watermarkRef) {
-      tl.fromTo(
-        this.watermarkRef.nativeElement,
-        { opacity: 0, x: -24 * dirSign },
-        { opacity: 1, x: 0, duration: 0.55, clearProps: 'transform' },
-        0
-      );
-    }
-
-    if (this.pedestalImgRef) {
-      tl.fromTo(
-        this.pedestalImgRef.nativeElement,
-        { opacity: 0, y: 24, scale: 0.92 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.58, ease: 'power3.out', clearProps: 'transform' },
-        0.02
-      );
-    }
+    this.swapTimeline = tl;
 
     if (this.dossierCopyRef) {
       tl.fromTo(
         this.dossierCopyRef.nativeElement,
-        { opacity: 0, y: 14 },
-        { opacity: 1, y: 0, duration: 0.36, clearProps: 'transform' },
-        0.06
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.34, clearProps: 'transform' },
+        0
       );
     }
 
     if (this.specRowsRef?.nativeElement.children.length) {
       tl.fromTo(
         this.specRowsRef.nativeElement.children,
-        { opacity: 0, x: 14 * dirSign },
+        { opacity: 0, x: 12 * dirSign },
         {
           opacity: 1,
           x: 0,
-          duration: 0.32,
-          stagger: 0.06,
+          duration: 0.3,
+          stagger: 0.055,
           ease: 'power2.out',
           clearProps: 'transform',
         },
-        0.12
+        0.06
       );
     }
   }

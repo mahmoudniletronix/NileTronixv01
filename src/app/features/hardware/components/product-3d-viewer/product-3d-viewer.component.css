@@ -1,0 +1,232 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.viewer-shell {
+  position: relative;
+  width: 100%;
+  min-height: clamp(470px, 44vw, 600px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.15rem;
+  border-radius: 14px;
+  border: 0;
+  background: linear-gradient(180deg, rgba(240, 245, 249, 0.55) 0%, rgba(235, 242, 247, 0.78) 100%);
+  overflow: hidden;
+  outline: none;
+  user-select: none;
+}
+
+.viewer-shell:focus-visible {
+  outline: 2px solid var(--nt-focus-ring);
+  outline-offset: 2px;
+}
+
+.viewer-shell.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  min-height: 100dvh;
+  border-radius: 0;
+  border: 0;
+  padding: 1.5rem;
+}
+
+/* Watermark */
+.viewer-watermark {
+  position: absolute;
+  inset-inline: 1rem;
+  top: 46%;
+  transform: translateY(-50%);
+  text-align: center;
+  font-family: var(--nt-font-display);
+  font-size: clamp(2.85rem, 6.8vw, 5.75rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: rgba(8, 47, 67, 0.042);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Top Bar */
+.viewer-top-bar {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  pointer-events: none;
+}
+
+.viewer-ident {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.model-code-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.15rem;
+  background: transparent;
+  border: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--nt-dark-navy);
+  font-variant-numeric: tabular-nums;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--nt-cyan-accent);
+}
+
+.badge-360 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  background-color: rgba(8, 47, 67, 0.06);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--nt-ink-muted);
+}
+
+.badge-360 i {
+  color: var(--nt-nile-blue);
+}
+
+.mode-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  background-color: rgba(255, 255, 255, 0.72);
+  border: 0;
+  border-radius: 8px;
+  pointer-events: auto;
+}
+
+.mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 30px;
+  padding: 0 0.65rem;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--nt-ink-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms var(--nt-ease), color 160ms var(--nt-ease);
+}
+
+.mode-btn:hover {
+  color: var(--nt-dark-navy);
+}
+
+.mode-btn.is-active {
+  background-color: var(--nt-dark-navy);
+  color: #ffffff;
+}
+
+/* WebGL Canvas Layer */
+.canvas-host {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.viewer-shell.is-fullscreen .canvas-host {
+  touch-action: none;
+}
+
+.canvas-host:active {
+  cursor: grabbing;
+}
+
+.canvas-host.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+:host ::ng-deep .nt-3d-canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+/* Interaction Hint (Quiet top-center caption — never overlaps hardware base) */
+.interaction-hint {
+  position: absolute;
+  inset-inline-start: 50%;
+  top: 1.25rem;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  background-color: rgba(8, 47, 67, 0.06);
+  color: var(--nt-ink-muted);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+:host-context([dir='rtl']) .interaction-hint {
+  transform: translateX(50%);
+}
+
+.hint-mobile {
+  display: none;
+}
+
+/* Bottom Controls Wrapper */
+.viewer-controls-wrap {
+  position: relative;
+  z-index: 6;
+  margin-top: auto;
+}
+
+@media (max-width: 767px) {
+  .viewer-shell {
+    min-height: 410px;
+    padding: 0.85rem;
+  }
+
+  .badge-360 {
+    display: none;
+  }
+
+  .hint-desktop {
+    display: none;
+  }
+
+  .hint-mobile {
+    display: inline;
+  }
+
+  .interaction-hint {
+    display: none;
+  }
+}

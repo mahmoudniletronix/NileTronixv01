@@ -41,6 +41,9 @@ export class ContactSectionComponent {
 
   protected readonly selectedTopic = signal<string>('queue');
   protected readonly submitted = signal<boolean>(false);
+  protected readonly mapActive = signal<boolean>(false);
+  protected readonly emailCopied = signal<boolean>(false);
+  private copyTimer: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly contactForm = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(2)]],
@@ -56,6 +59,23 @@ export class ContactSectionComponent {
 
   protected selectTopic(id: string): void {
     this.selectedTopic.set(id);
+  }
+
+  protected activateMap(): void {
+    this.mapActive.set(true);
+  }
+
+  protected deactivateMap(): void {
+    this.mapActive.set(false);
+  }
+
+  protected copyEmail(): void {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      void navigator.clipboard.writeText('info@niletronix.com');
+    }
+    this.emailCopied.set(true);
+    if (this.copyTimer) clearTimeout(this.copyTimer);
+    this.copyTimer = setTimeout(() => this.emailCopied.set(false), 2000);
   }
 
   protected onSubmit(): void {

@@ -42,3 +42,6 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Local reference archives (not deployed)
+public/Site product/*.zip
