@@ -9,181 +9,176 @@
   (focusout)="setPaused(false)"
   (keydown)="onKeydown($event)"
 >
-  <!-- Compact Full-Bleed Header -->
+  <!-- Editorial Top Header + Floating Segmented Pill Switcher -->
   <header class="deck-header">
     <div class="header-copy">
       <p class="section-eyebrow">
-        <span class="eyebrow-num" aria-hidden="true">02 /</span>
         <span>{{ t(copy.eyebrow) }}</span>
       </p>
       <h2 id="solutions-deck-heading" class="section-headline">
         @if (lang() === 'ar') {
-          أنظمة حقيقية تُدير عملياتك<span class="headline-dot" aria-hidden="true">.</span>
+          أنظمة حقيقية تُدير عملياتك
         } @else {
-          Systems engineered for real operations<span class="headline-dot" aria-hidden="true">.</span>
+          Systems engineered for real operations
         }
       </h2>
     </div>
 
-    <div class="header-counter" aria-live="polite">
-      <span class="counter-active">{{ formattedIndex() }}</span>
-      <span class="counter-sep" aria-hidden="true">/</span>
-      <span class="counter-total">{{ formattedTotal }}</span>
+    <div class="header-nav-group">
+      <div
+        class="deck-selector"
+        role="tablist"
+        [attr.aria-label]="t(copy.tablistLabel)"
+      >
+        @for (item of solutions; track item.slug; let idx = $index) {
+          <button
+            type="button"
+            role="tab"
+            class="selector-item"
+            [class.is-active]="idx === activeIndex()"
+            [attr.aria-selected]="idx === activeIndex()"
+            (click)="selectIndex(idx)"
+          >
+            <span class="selector-name">{{ t(item.navLabel) }}</span>
+          </button>
+        }
+      </div>
+
+      <div class="header-counter nt-sr-only" aria-live="polite">
+        <span class="counter-active">{{ formattedIndex() }}</span>
+        <span class="counter-sep" aria-hidden="true">/</span>
+        <span class="counter-total">{{ formattedTotal }}</span>
+      </div>
     </div>
   </header>
 
-  <!-- GSAP 3D Layered Center-Stage Deck (Frameless Showcase) -->
-  <div
-    class="deck-stage-wrap"
-    (touchstart)="onTouchStart($event)"
-    (touchend)="onTouchEnd($event)"
-  >
-    <!-- Balanced Flanking Arrow Buttons -->
-    <button
-      type="button"
-      class="stage-arrow stage-arrow-prev"
-      [attr.aria-label]="lang() === 'ar' ? 'الحل السابق' : 'Previous solution'"
-      (click)="prev()"
+  <!-- Concept 1: Cinematic Dark-Stage Spotlight Container -->
+  <div class="cinema-stage">
+    <!-- GSAP 3D Layered Center-Stage Deck (Preserved 100%) -->
+    <div
+      class="deck-stage-wrap"
+      (touchstart)="onTouchStart($event)"
+      (touchend)="onTouchEnd($event)"
     >
-      <i class="fa-solid fa-chevron-left nt-dir-icon" aria-hidden="true"></i>
-    </button>
-
-    <div class="deck-viewport">
-      <div class="deck-floor-glow" aria-hidden="true"></div>
-
-      @for (item of solutions; track item.slug; let idx = $index) {
-        <article
-          #deckCard
-          class="deck-card"
-          [class.is-active]="idx === activeIndex()"
-          [attr.aria-current]="idx === activeIndex() ? 'true' : null"
-          (click)="onCardClick(idx)"
-        >
-          <!-- Frameless 16:10 Authentic Product Screenshot -->
-          <div class="card-screen">
-            <img
-              class="card-img"
-              [src]="item.screenshots[0].src"
-              [alt]="t(item.screenshots[0].alt)"
-              [width]="item.screenshots[0].width"
-              [height]="item.screenshots[0].height"
-              [attr.loading]="idx === 0 ? 'eager' : 'lazy'"
-              decoding="async"
-            />
-
-            <!-- Floating Frosted Badge on Active Card Only -->
-            @if (idx === activeIndex()) {
-              <div class="active-glass-badge" aria-hidden="true">
-                <span class="status-dot"></span>
-                <span class="badge-code">{{ item.productCode }}</span>
-                <span class="badge-sep">·</span>
-                <span class="badge-num">{{ formatNum(idx) }}</span>
-              </div>
-            }
-
-            <div class="card-dim-layer" aria-hidden="true"></div>
-          </div>
-
-          <!-- Clean Click Target on Flanking Cards -->
-          @if (idx !== activeIndex()) {
-            <button
-              type="button"
-              class="card-click-overlay"
-              [attr.aria-label]="
-                (lang() === 'ar' ? 'عرض ' : 'Select ') +
-                item.productCode +
-                ' — ' +
-                t(item.navLabel)
-              "
-              (click)="selectIndex(idx); $event.stopPropagation()"
-            ></button>
-          }
-        </article>
-      }
-    </div>
-
-    <button
-      type="button"
-      class="stage-arrow stage-arrow-next"
-      [attr.aria-label]="lang() === 'ar' ? 'الحل التالي' : 'Next solution'"
-      (click)="next()"
-    >
-      <i class="fa-solid fa-chevron-right nt-dir-icon" aria-hidden="true"></i>
-    </button>
-  </div>
-
-  <!-- Balanced Editorial Horizontal Spotlight Bar -->
-  <div #infoPanel class="spotlight-info">
-    <div class="spotlight-copy">
-      <div class="spotlight-title-row">
-        <h3 class="spotlight-name">{{ activeSolution().productCode }}</h3>
-        <span class="spotlight-sep" aria-hidden="true">—</span>
-        <span class="spotlight-cat">{{ t(activeSolution().navLabel) }}</span>
-      </div>
-
-      <p class="spotlight-desc">{{ t(activeSolution().valueStatement) }}</p>
-
-      <ul class="spotlight-tags" aria-hidden="true">
-        @for (cap of activeCapabilities(); track cap.en) {
-          <li class="spotlight-tag">
-            <i class="fa-solid fa-check" aria-hidden="true"></i>
-            <span>{{ t(cap) }}</span>
-          </li>
-        }
-      </ul>
-    </div>
-
-    <div class="spotlight-actions">
-      <a class="explore-cta" [routerLink]="activeSolution().route">
-        <span>{{ t(copy.exploreCta) }}</span>
-        <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
-      </a>
-
-      <!-- Mobile Arrow Controls -->
-      <div class="mobile-arrows">
-        <button
-          type="button"
-          class="mobile-arrow-btn"
-          [attr.aria-label]="lang() === 'ar' ? 'الحل السابق' : 'Previous solution'"
-          (click)="prev()"
-        >
-          <i class="fa-solid fa-chevron-left nt-dir-icon" aria-hidden="true"></i>
-        </button>
-        <button
-          type="button"
-          class="mobile-arrow-btn"
-          [attr.aria-label]="lang() === 'ar' ? 'الحل التالي' : 'Next solution'"
-          (click)="next()"
-        >
-          <i class="fa-solid fa-chevron-right nt-dir-icon" aria-hidden="true"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Interactive Solution Selector Strip with Active Progress Line -->
-  <div
-    class="deck-selector"
-    role="tablist"
-    [attr.aria-label]="t(copy.tablistLabel)"
-  >
-    @for (item of solutions; track item.slug; let idx = $index) {
       <button
         type="button"
-        role="tab"
-        class="selector-item"
-        [class.is-active]="idx === activeIndex()"
-        [attr.aria-selected]="idx === activeIndex()"
-        (click)="selectIndex(idx)"
+        class="stage-arrow stage-arrow-prev"
+        [attr.aria-label]="lang() === 'ar' ? 'الحل السابق' : 'Previous solution'"
+        (click)="prev()"
       >
-        <span class="selector-num">{{ formatNum(idx) }}</span>
-        <span class="selector-name">{{ t(item.navLabel) }}</span>
-        <span class="selector-progress" aria-hidden="true">
-          @if (idx === activeIndex()) {
-            <span class="selector-progress-fill"></span>
-          }
-        </span>
+        <i class="fa-solid fa-chevron-left nt-dir-icon" aria-hidden="true"></i>
       </button>
-    }
+
+      <div class="deck-viewport">
+        @for (item of solutions; track item.slug; let idx = $index) {
+          <article
+            #deckCard
+            class="deck-card"
+            [class.is-active]="idx === activeIndex()"
+            [attr.aria-current]="idx === activeIndex() ? 'true' : null"
+            (click)="onCardClick(idx)"
+          >
+            <!-- Clean Frameless 16:10 Authentic Product Screenshot -->
+            <div class="card-screen">
+              <img
+                class="card-img"
+                [src]="item.screenshots[0].src"
+                [alt]="t(item.screenshots[0].alt)"
+                [width]="item.screenshots[0].width"
+                [height]="item.screenshots[0].height"
+                [attr.loading]="idx === 0 ? 'eager' : 'lazy'"
+                decoding="async"
+              />
+              <div class="card-dim-layer" aria-hidden="true"></div>
+            </div>
+
+            <!-- Click Target on Flanking Cards -->
+            @if (idx !== activeIndex()) {
+              <button
+                type="button"
+                class="card-click-overlay"
+                [attr.aria-label]="
+                  (lang() === 'ar' ? 'عرض ' : 'Select ') +
+                  item.productCode +
+                  ' — ' +
+                  t(item.navLabel)
+                "
+                (click)="selectIndex(idx); $event.stopPropagation()"
+              ></button>
+            }
+          </article>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="stage-arrow stage-arrow-next"
+        [attr.aria-label]="lang() === 'ar' ? 'الحل التالي' : 'Next solution'"
+        (click)="next()"
+      >
+        <i class="fa-solid fa-chevron-right nt-dir-icon" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <!-- Seamlessly Integrated Dark-Stage Spotlight Info -->
+    <div #infoPanel class="spotlight-info">
+      <div class="spotlight-copy">
+        <div class="spotlight-title-row">
+          <h3 class="spotlight-name">{{ activeSolution().productCode }}</h3>
+          <span class="spotlight-sep" aria-hidden="true">—</span>
+          <span class="spotlight-cat">{{ t(activeSolution().navLabel) }}</span>
+        </div>
+
+        <p class="spotlight-desc">{{ t(activeSolution().valueStatement) }}</p>
+      </div>
+
+      <div class="spotlight-actions">
+        <a class="explore-cta" [routerLink]="activeSolution().route">
+          <span>{{ t(copy.exploreCta) }}</span>
+          <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+        </a>
+
+        <!-- Mobile Arrow Controls -->
+        <div class="mobile-arrows">
+          <button
+            type="button"
+            class="mobile-arrow-btn"
+            [attr.aria-label]="lang() === 'ar' ? 'الحل السابق' : 'Previous solution'"
+            (click)="prev()"
+          >
+            <i class="fa-solid fa-chevron-left nt-dir-icon" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            class="mobile-arrow-btn"
+            [attr.aria-label]="lang() === 'ar' ? 'الحل التالي' : 'Next solution'"
+            (click)="next()"
+          >
+            <i class="fa-solid fa-chevron-right nt-dir-icon" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 Interactive Story-Style Progress Bars -->
+    <div class="story-progress-rail" [attr.aria-label]="t(copy.tablistLabel)">
+      @for (item of solutions; track item.slug; let idx = $index) {
+        <button
+          type="button"
+          class="story-bar-btn"
+          [class.is-active]="idx === activeIndex()"
+          [class.is-passed]="idx < activeIndex()"
+          [attr.aria-label]="formatNum(idx) + ' — ' + t(item.navLabel)"
+          [attr.aria-current]="idx === activeIndex() ? 'step' : null"
+          (click)="selectIndex(idx)"
+        >
+          <span class="story-bar-track" aria-hidden="true">
+            @if (idx === activeIndex()) {
+              <span class="story-bar-fill"></span>
+            }
+          </span>
+        </button>
+      }
+    </div>
   </div>
 </section>

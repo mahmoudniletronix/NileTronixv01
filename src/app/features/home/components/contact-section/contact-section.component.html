@@ -7,15 +7,14 @@
     <div class="contact-info-col">
       <header class="contact-header">
         <p class="section-eyebrow">
-          <span class="eyebrow-num" aria-hidden="true">06 /</span>
           <span>{{ lang() === 'ar' ? 'تواصل معنا' : 'CONTACT US' }}</span>
         </p>
 
         <h2 id="contact-section-heading" class="section-headline">
           @if (lang() === 'ar') {
-            لنبدأ هندسة مشروعك القادم<span class="headline-dot" aria-hidden="true">.</span>
+            لنبدأ هندسة مشروعك القادم
           } @else {
-            Let’s engineer your next project<span class="headline-dot" aria-hidden="true">.</span>
+            Let’s engineer your next project
           }
         </h2>
 
@@ -189,9 +188,13 @@
                   id="nt-full-name"
                   type="text"
                   formControlName="fullName"
+                  [attr.aria-invalid]="hasError('fullName')"
                   [placeholder]="lang() === 'ar' ? 'الاسم بالكامل' : 'e.g. Ahmed Hassan'"
                 />
               </div>
+              @if (hasError('fullName')) {
+                <p class="field-error" role="alert">{{ getErrorMessage('fullName') }}</p>
+              }
             </div>
 
             <div class="field-group">
@@ -204,9 +207,13 @@
                   id="nt-org"
                   type="text"
                   formControlName="organization"
+                  [attr.aria-invalid]="hasError('organization')"
                   [placeholder]="lang() === 'ar' ? 'اسم المستشفى أو الشركة' : 'Hospital, Bank, or Enterprise'"
                 />
               </div>
+              @if (hasError('organization')) {
+                <p class="field-error" role="alert">{{ getErrorMessage('organization') }}</p>
+              }
             </div>
           </div>
 
@@ -221,9 +228,13 @@
                   id="nt-email"
                   type="email"
                   formControlName="email"
+                  [attr.aria-invalid]="hasError('email')"
                   placeholder="name@company.com"
                 />
               </div>
+              @if (hasError('email')) {
+                <p class="field-error" role="alert">{{ getErrorMessage('email') }}</p>
+              }
             </div>
 
             <div class="field-group">
@@ -236,9 +247,13 @@
                   id="nt-phone"
                   type="tel"
                   formControlName="phone"
+                  [attr.aria-invalid]="hasError('phone')"
                   placeholder="+20 1XX XXX XXXX"
                 />
               </div>
+              @if (hasError('phone')) {
+                <p class="field-error" role="alert">{{ getErrorMessage('phone') }}</p>
+              }
             </div>
           </div>
 
@@ -250,6 +265,7 @@
               id="nt-message"
               class="textarea-input"
               [class.has-error]="hasError('message')"
+              [attr.aria-invalid]="hasError('message')"
               rows="4"
               formControlName="message"
               [placeholder]="
@@ -258,6 +274,9 @@
                   : 'Tell us about your facility, number of branches/gates, or integration goals...'
               "
             ></textarea>
+            @if (hasError('message')) {
+              <p class="field-error" role="alert">{{ getErrorMessage('message') }}</p>
+            }
           </div>
 
           <button type="submit" class="submit-btn">

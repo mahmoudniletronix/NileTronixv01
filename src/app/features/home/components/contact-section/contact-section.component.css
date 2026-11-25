@@ -12,7 +12,7 @@
   --ct-cyan: var(--nt-cyan-accent);
   --ct-muted: var(--nt-ink-muted);
   --ct-border: var(--nt-border-subtle);
-  background-color: rgba(255, 255, 255, 0.72);
+  background-color: var(--nt-surface-primary);
   color: var(--ct-navy);
   padding-block: var(--nt-section-py);
   padding-inline: var(--ct-gutter);
@@ -174,15 +174,11 @@
 
 /* Google Map Frame (Glass Surface + Click-to-Interact) */
 .map-frame {
-  background-color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(220, 229, 234, 0.85);
+  background-color: #ffffff;
+  border: 1px solid var(--ct-border);
   border-radius: 14px;
   overflow: hidden;
-  box-shadow:
-    0 20px 44px -14px rgba(8, 47, 67, 0.1),
-    0 4px 12px rgba(8, 47, 67, 0.04);
+  box-shadow: 0 12px 28px -12px rgba(10, 25, 36, 0.08);
 }
 
 .map-viewport {
@@ -276,15 +272,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(220, 229, 234, 0.85);
+  background-color: #ffffff;
+  border: 1px solid var(--ct-border);
   border-radius: 14px;
   padding: clamp(1.65rem, 3vw, 2.5rem);
-  box-shadow:
-    0 24px 52px -16px rgba(8, 47, 67, 0.11),
-    0 6px 16px rgba(8, 47, 67, 0.04);
+  box-shadow: 0 16px 36px -16px rgba(10, 25, 36, 0.08);
 }
 
 .consultation-form {
@@ -352,7 +344,7 @@
 }
 
 .topic-pill.is-active i {
-  color: var(--ct-cyan);
+  color: #ffffff;
 }
 
 /* Form Inputs */
@@ -394,6 +386,14 @@
 .input-wrap.has-error,
 .textarea-input.has-error {
   border-color: var(--nt-brand-red);
+}
+
+.field-error {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--nt-brand-red);
+  line-height: 1.4;
 }
 
 .input-icon {

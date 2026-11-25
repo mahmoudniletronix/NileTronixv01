@@ -20,7 +20,7 @@ describe('SolutionsShowcaseComponent', () => {
     const cards = el.querySelectorAll('.deck-card');
     expect(cards.length).toBe(5);
     expect(cards[0].classList.contains('is-active')).toBe(true);
-    expect(el.querySelector('.pill-code')?.textContent?.trim()).toBe('Q-Control');
+    expect(el.querySelector('.spotlight-name')?.textContent?.trim()).toBe('Q-Control');
     expect(el.querySelector('.counter-active')?.textContent?.trim()).toBe('01');
   });
 
@@ -36,13 +36,13 @@ describe('SolutionsShowcaseComponent', () => {
     prevBtn.click();
     fixture.detectChanges();
     expect(el.querySelector('.counter-active')?.textContent?.trim()).toBe('05');
-    expect(el.querySelector('.pill-code')?.textContent?.trim()).toBe('AI Vision & Security');
+    expect(el.querySelector('.spotlight-name')?.textContent?.trim()).toBe('AI Vision & Security');
 
     // Wrap forward 05 -> 01
     nextBtn.click();
     fixture.detectChanges();
     expect(el.querySelector('.counter-active')?.textContent?.trim()).toBe('01');
-    expect(el.querySelector('.pill-code')?.textContent?.trim()).toBe('Q-Control');
+    expect(el.querySelector('.spotlight-name')?.textContent?.trim()).toBe('Q-Control');
   });
 
   it('should bring a clicked selector tab or side card to the front', () => {
@@ -55,7 +55,7 @@ describe('SolutionsShowcaseComponent', () => {
     fixture.detectChanges();
 
     expect(el.querySelector('.counter-active')?.textContent?.trim()).toBe('03');
-    expect(el.querySelector('.pill-code')?.textContent?.trim()).toBe('Feedback & Surveys');
+    expect(el.querySelector('.spotlight-name')?.textContent?.trim()).toBe('Feedback & Surveys');
     expect(el.querySelector('.explore-cta')?.getAttribute('href')).toBe(
       '/solutions/customer-feedback'
     );

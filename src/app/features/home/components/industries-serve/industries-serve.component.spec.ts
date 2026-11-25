@@ -50,7 +50,6 @@ describe('IndustriesServeComponent', () => {
 
     const el = fixture.nativeElement as HTMLElement;
     const prevBtn = el.querySelector('.stage-arrow:first-child') as HTMLButtonElement;
-    const nextBtn = el.querySelector('.stage-arrow:last-child') as HTMLButtonElement;
 
     prevBtn.click(); // 01 -> 05 Government
     fixture.detectChanges();
@@ -58,6 +57,7 @@ describe('IndustriesServeComponent', () => {
       'Government & Public Services'
     );
 
+    const nextBtn = el.querySelector('.stage-arrow:last-child') as HTMLButtonElement;
     nextBtn.click(); // 05 -> 01 Healthcare
     fixture.detectChanges();
     expect(el.querySelector('.stage-title')?.textContent?.trim()).toBe('Healthcare');

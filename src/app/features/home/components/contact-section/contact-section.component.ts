@@ -95,4 +95,45 @@ export class ContactSectionComponent {
     const ctrl = this.contactForm.controls[controlName];
     return ctrl.invalid && (ctrl.dirty || ctrl.touched);
   }
+
+  protected getErrorMessage(
+    controlName: 'fullName' | 'organization' | 'email' | 'phone' | 'message'
+  ): string {
+    const ctrl = this.contactForm.controls[controlName];
+    if (!ctrl.errors) return '';
+    const isAr = this.lang() === 'ar';
+
+    if (ctrl.errors['required']) {
+      switch (controlName) {
+        case 'fullName':
+          return isAr ? 'الاسم الكامل مطلوب.' : 'Full name is required.';
+        case 'organization':
+          return isAr ? 'اسم الشركة أو المنشأة مطلوب.' : 'Company or facility name is required.';
+        case 'email':
+          return isAr ? 'البريد الإلكتروني مطلوب.' : 'Work email is required.';
+        case 'phone':
+          return isAr ? 'رقم الهاتف مطلوب.' : 'Phone number is required.';
+        case 'message':
+          return isAr ? 'تفاصيل المشروع مطلوبة.' : 'Project details are required.';
+      }
+    }
+
+    if (ctrl.errors['email']) {
+      return isAr ? 'أدخل بريداً إلكترونياً صالحاً.' : 'Enter a valid email address.';
+    }
+
+    if (ctrl.errors['minlength']) {
+      if (controlName === 'phone') {
+        return isAr ? 'أدخل رقم هاتف صحيحاً.' : 'Enter a valid phone number.';
+      }
+      if (controlName === 'message') {
+        return isAr
+          ? 'أضف تفاصيل مختصرة لا تقل عن 10 أحرف.'
+          : 'Please share at least 10 characters about your project.';
+      }
+      return isAr ? 'القيمة المدخلة قصيرة جداً.' : 'Value is too short.';
+    }
+
+    return '';
+  }
 }

@@ -3,24 +3,24 @@
    ========================================================================== */
 
 :root {
-  /* Official Brand Palette (aligned with NileTronix logo) */
-  --nt-dark-navy: #082f43;
-  --nt-deep-navy: #103c55;
+  /* Official Brand Palette (Refined Architectural Navy + Disciplined Nile Blue) */
+  --nt-dark-navy: #0a1924;
+  --nt-deep-navy: #122634;
   --nt-nile-blue: #0b7897;
-  --nt-cyan-accent: #00b6d6;
-  --nt-brand-red: #ed1b2f;
+  --nt-cyan-accent: #0b7897;
+  --nt-brand-red: #c81e1e;
   --nt-white: #ffffff;
-  --nt-light-bg: #f5f8fa;
+  --nt-light-bg: #f5f7f9;
 
-  /* Semantic Surfaces & Text */
+  /* Semantic Surfaces & Text (Flat B4 Surfaces) */
   --nt-surface-primary: #ffffff;
-  --nt-surface-secondary: #f5f8fa;
-  --nt-ink: #102a3a;
-  --nt-ink-muted: #526674;
-  --nt-placeholder: #768996;
-  --nt-border-subtle: #dce5ea;
+  --nt-surface-secondary: #f5f7f9;
+  --nt-ink: #0f1e29;
+  --nt-ink-muted: #526370;
+  --nt-placeholder: #7a8a97;
+  --nt-border-subtle: #e2e8ee;
   --nt-border-light: rgba(255, 255, 255, 0.16);
-  --nt-surface-hover: #eef5f8;
+  --nt-surface-hover: #eef3f7;
   --nt-focus-ring: #0b7897;
 
   /* Typography Families */
@@ -78,23 +78,11 @@ body {
   font-family: var(--nt-font-sans);
   font-size: 1rem;
   color: var(--nt-ink);
-  background-color: var(--nt-surface-secondary);
+  background-color: var(--nt-surface-primary);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-image: url('../public/images/niletronix-bg.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  pointer-events: none;
 }
 
 h1,

@@ -173,7 +173,13 @@
       </p>
 
       <div class="footer-bottom-meta">
-        <span>{{ lang() === 'ar' ? 'برمجيات · أجهزة · تكامل أنظمة' : 'Software · Hardware · Systems Integration' }}</span>
+        <a routerLink="/privacy">
+          {{ lang() === 'ar' ? 'سياسة الخصوصية' : 'Privacy Policy' }}
+        </a>
+        <span aria-hidden="true">·</span>
+        <a routerLink="/terms">
+          {{ lang() === 'ar' ? 'الشروط والأحكام' : 'Terms of Service' }}
+        </a>
       </div>
     </div>
   </div>

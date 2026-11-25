@@ -93,7 +93,7 @@ import { LanguageService } from '../../core/i18n/language.service';
 
     .ring-fill {
       fill: none;
-      stroke: var(--nt-cyan-accent);
+      stroke: #ffffff;
       stroke-width: 2.5;
       stroke-linecap: round;
       transition: stroke-dashoffset 80ms linear;

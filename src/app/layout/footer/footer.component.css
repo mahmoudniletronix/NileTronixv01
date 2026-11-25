@@ -5,7 +5,7 @@
 
 .site-footer {
   position: relative;
-  background: linear-gradient(180deg, #07293b 0%, #051e2c 100%);
+  background-color: var(--nt-dark-navy);
   color: rgba(255, 255, 255, 0.82);
   overflow: hidden;
 }
@@ -14,13 +14,7 @@
   display: block;
   width: 100%;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(242, 92, 102, 0.55) 28%,
-    rgba(255, 255, 255, 0.16) 72%,
-    transparent 100%
-  );
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Subtle Architectural Ghost Watermark */
@@ -91,8 +85,8 @@
 }
 
 .footer-brand-lockup:hover .brand-emblem-ring {
-  background-color: rgba(255, 255, 255, 0.11);
-  border-color: rgba(242, 92, 102, 0.45);
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
 }
 
 .brand-emblem {
@@ -157,9 +151,9 @@
 }
 
 .social-btn:hover {
-  background-color: #f25c66;
-  border-color: #f25c66;
-  color: #ffffff;
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: var(--nt-dark-navy);
   transform: translateY(-2px);
 }
 
@@ -170,7 +164,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #f25c66;
+  color: #ffffff;
 }
 
 :host-context([dir='rtl']) .footer-heading {
@@ -215,7 +209,7 @@
 }
 
 .footer-contact-list i {
-  color: #f25c66;
+  color: #9ba8b4;
   margin-block-start: 0.25rem;
   width: 16px;
   text-align: center;
@@ -250,8 +244,21 @@
 }
 
 .footer-bottom-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.66);
+}
+
+.footer-bottom-meta a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 180ms var(--nt-ease);
+}
+
+.footer-bottom-meta a:hover {
+  color: #ffffff;
 }
 
 /* Responsive */

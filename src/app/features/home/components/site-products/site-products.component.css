@@ -11,7 +11,7 @@
   --bp-cyan: var(--nt-cyan-accent);
   --bp-muted: var(--nt-ink-muted);
   --bp-line: var(--nt-border-subtle);
-  background-color: rgba(255, 255, 255, 0.68);
+  background-color: var(--nt-surface-primary);
   color: var(--bp-navy);
   padding-block: var(--nt-section-py);
   padding-inline: var(--bp-gutter);

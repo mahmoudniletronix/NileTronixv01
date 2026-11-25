@@ -6,7 +6,7 @@
 
 .references-section {
   --ref-gutter: var(--nt-gutter);
-  background-color: rgba(245, 248, 250, 0.72);
+  background-color: var(--nt-surface-secondary);
   color: var(--nt-dark-navy);
   padding-block: var(--nt-section-py);
   border-block-start: 1px solid var(--nt-border-subtle);
@@ -126,7 +126,7 @@
 }
 
 .view-toggle-btn:hover i {
-  color: var(--nt-cyan-accent);
+  color: #ffffff;
 }
 
 /* Dual-Track Kinetic Marquee */

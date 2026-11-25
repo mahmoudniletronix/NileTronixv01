@@ -84,7 +84,7 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
     .hotspot-pin:hover,
     .hotspot-pin.is-selected {
       transform: translate(-50%, -50%) scale(1.2);
-      background-color: var(--nt-cyan-accent);
+      background-color: var(--nt-nile-blue);
     }
 
     .pin-core {
@@ -95,7 +95,7 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
     }
 
     .hotspot-pin.is-selected .pin-core {
-      background-color: var(--nt-dark-navy);
+      background-color: #ffffff;
     }
 
     .hotspot-card {

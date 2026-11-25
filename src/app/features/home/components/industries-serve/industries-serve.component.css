@@ -5,7 +5,7 @@
 }
 
 .industries-section {
-  background-color: rgba(245, 248, 250, 0.72);
+  background-color: var(--nt-surface-secondary);
   color: var(--nt-ink);
   padding-block: var(--nt-section-py);
   padding-inline: var(--nt-gutter);
@@ -115,7 +115,7 @@
 }
 
 .sector-tab.is-active .tab-icon {
-  color: var(--nt-cyan-accent);
+  color: #ffffff;
 }
 
 /* ==========================================================================
@@ -190,9 +190,9 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(8, 47, 67, 0.25) 0%,
-    rgba(8, 47, 67, 0.45) 55%,
-    rgba(8, 47, 67, 0.88) 100%
+    rgba(10, 25, 36, 0.25) 0%,
+    rgba(10, 25, 36, 0.48) 55%,
+    rgba(10, 25, 36, 0.9) 100%
   );
   transition: opacity 400ms var(--nt-ease);
 }
@@ -200,10 +200,10 @@
 .industry-panel.is-active .panel-scrim {
   background: linear-gradient(
     90deg,
-    rgba(8, 47, 67, 0.96) 0%,
-    rgba(8, 47, 67, 0.88) 34%,
-    rgba(16, 60, 85, 0.52) 52%,
-    rgba(8, 47, 67, 0.08) 74%,
+    rgba(10, 25, 36, 0.96) 0%,
+    rgba(10, 25, 36, 0.88) 34%,
+    rgba(10, 25, 36, 0.52) 52%,
+    rgba(10, 25, 36, 0.08) 74%,
     transparent 100%
   );
 }
@@ -211,10 +211,10 @@
 :host-context([dir='rtl']) .industry-panel.is-active .panel-scrim {
   background: linear-gradient(
     270deg,
-    rgba(8, 47, 67, 0.96) 0%,
-    rgba(8, 47, 67, 0.88) 34%,
-    rgba(16, 60, 85, 0.52) 52%,
-    rgba(8, 47, 67, 0.08) 74%,
+    rgba(10, 25, 36, 0.96) 0%,
+    rgba(10, 25, 36, 0.88) 34%,
+    rgba(10, 25, 36, 0.52) 52%,
+    rgba(10, 25, 36, 0.08) 74%,
     transparent 100%
   );
 }
@@ -230,7 +230,7 @@
   gap: 0.45rem;
   padding: 0.42rem 0.85rem;
   border-radius: 999px;
-  background-color: rgba(8, 47, 67, 0.68);
+  background-color: rgba(10, 25, 36, 0.78);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: rgba(255, 255, 255, 0.92);
@@ -240,7 +240,7 @@
 }
 
 .env-badge i {
-  color: var(--nt-cyan-accent);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.8rem;
 }
 
@@ -265,7 +265,7 @@
   margin-block-end: 0.45rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--nt-cyan-accent);
+  color: rgba(255, 255, 255, 0.76);
 }
 
 .stage-index {
@@ -322,8 +322,8 @@
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background-color: rgba(0, 182, 214, 0.18);
-  color: var(--nt-cyan-accent);
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
   font-size: 0.82rem;
   flex-shrink: 0;
 }
@@ -342,7 +342,7 @@
   gap: 0.55rem;
   min-height: 46px;
   padding: 0.65rem 1.4rem;
-  background-color: var(--nt-cyan-accent);
+  background-color: #ffffff;
   color: var(--nt-dark-navy);
   font-size: var(--nt-ui-size);
   font-weight: 700;
@@ -353,7 +353,7 @@
 }
 
 .stage-cta:hover {
-  background-color: #1cc9e8;
+  background-color: #eaf0f4;
   transform: translateY(-1px);
 }
 
@@ -413,7 +413,7 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.08em;
-  color: var(--nt-cyan-accent);
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .spine-icon {
@@ -432,7 +432,7 @@
 }
 
 .industry-panel:not(.is-active):hover .spine-icon {
-  background-color: var(--nt-cyan-accent);
+  background-color: #ffffff;
   color: var(--nt-dark-navy);
 }
 
@@ -488,7 +488,7 @@
   }
 
   .industry-panel.is-active .panel-scrim {
-    background: linear-gradient(180deg, transparent 45%, #082f43 100%);
+    background: linear-gradient(180deg, transparent 45%, #0a1924 100%);
   }
 
   .env-badge {

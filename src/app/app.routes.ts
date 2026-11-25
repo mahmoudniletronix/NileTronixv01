@@ -46,7 +46,23 @@ export const routes: Routes = [
     title: 'Request a Consultation — NileTronix',
   },
   {
+    path: 'privacy',
+    loadComponent: () =>
+      import('./features/legal/legal-page.component').then((m) => m.LegalPageComponent),
+    data: { doc: 'privacy' },
+    title: 'Privacy Policy — NileTronix',
+  },
+  {
+    path: 'terms',
+    loadComponent: () =>
+      import('./features/legal/legal-page.component').then((m) => m.LegalPageComponent),
+    data: { doc: 'terms' },
+    title: 'Terms of Service — NileTronix',
+  },
+  {
     path: '**',
-    redirectTo: '',
+    loadComponent: () =>
+      import('./features/not-found/not-found.component').then((m) => m.NotFoundComponent),
+    title: 'Page Not Found — NileTronix',
   },
 ];

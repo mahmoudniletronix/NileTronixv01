@@ -168,7 +168,7 @@ export class ThreeSceneService {
     fillLight.position.set(-2.8, 2.4, 2.6);
     scene.add(fillLight);
 
-    const rimLight = new T.DirectionalLight(0x88e1f2, 0.38);
+    const rimLight = new T.DirectionalLight(0xeef2f6, 0.42);
     rimLight.position.set(-1.6, 3.2, -3.4);
     scene.add(rimLight);
 
