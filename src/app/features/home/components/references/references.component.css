@@ -5,12 +5,20 @@
 }
 
 .references-section {
-  --ref-gutter: var(--nt-gutter);
-  background-color: var(--nt-surface-secondary);
-  color: var(--nt-dark-navy);
-  padding-block: var(--nt-section-py);
-  border-block-start: 1px solid var(--nt-border-subtle);
+  background-color: var(--nt-surface-quiet);
+  background-image: linear-gradient(
+    180deg,
+    var(--nt-bg-main) 0px,
+    var(--nt-surface-quiet) 80px,
+    var(--nt-surface-quiet) calc(100% - 80px),
+    var(--nt-bg-main) 100%
+  );
+  color: var(--nt-text-primary);
   overflow-x: clip;
+}
+
+.references-inner {
+  padding-block: clamp(56px, 5.2vw, 92px);
 }
 
 /* Header */
@@ -20,82 +28,39 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 1.5rem 2.5rem;
-  padding-inline: var(--ref-gutter);
-  margin-block-end: clamp(1.75rem, 3vw, 2.5rem);
+  margin-block-end: clamp(1.75rem, 2.8vw, 2.5rem);
 }
 
 .header-copy {
-  max-width: 640px;
-}
-
-.section-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin: 0 0 0.5rem;
-  font-size: var(--nt-eyebrow-size);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--nt-nile-blue);
-}
-
-:host-context([dir='rtl']) .section-eyebrow {
-  letter-spacing: 0.02em;
-  font-size: 0.875rem;
-}
-
-.eyebrow-num {
-  color: var(--nt-brand-red);
-  font-variant-numeric: tabular-nums;
+  max-width: 680px;
 }
 
 .section-headline {
-  margin: 0 0 0.6rem;
-  font-size: var(--nt-h2-size);
-  font-weight: 800;
-  line-height: 1.12;
-  letter-spacing: -0.025em;
-  color: var(--nt-dark-navy);
-}
-
-:host-context([dir='rtl']) .section-headline {
-  letter-spacing: 0;
-  line-height: 1.24;
-}
-
-.headline-dot {
-  color: var(--nt-cyan-accent);
-}
-
-.header-desc {
-  margin: 0;
-  font-size: var(--nt-body-size);
-  line-height: 1.65;
-  color: var(--nt-ink-muted);
+  margin-block-end: 0.65rem;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.15rem;
   flex-shrink: 0;
 }
 
 .partner-count {
   display: inline-flex;
   align-items: baseline;
-  gap: 0.4rem;
-  padding-inline-end: 1rem;
-  border-inline-end: 1px solid var(--nt-border-subtle);
+  gap: 0.45rem;
+  padding-inline-end: 1.15rem;
+  border-inline-end: 1px solid var(--nt-border);
   font-size: 0.84375rem;
-  color: var(--nt-ink-muted);
+  color: var(--nt-text-secondary);
 }
 
 .partner-count strong {
-  font-size: 1.25rem;
+  font-family: var(--nt-font-display);
+  font-size: 1.35rem;
   font-weight: 800;
-  color: var(--nt-nile-blue);
+  color: var(--nt-navy);
   font-variant-numeric: tabular-nums;
 }
 
@@ -105,123 +70,156 @@
   gap: 0.5rem;
   min-height: 42px;
   padding: 0.5rem 1.05rem;
-  background-color: #f4f7f9;
-  border: 1px solid #d5dfe5;
-  border-radius: 999px;
+  background-color: var(--nt-bg-main);
+  border: 1px solid var(--nt-border);
+  border-radius: var(--nt-radius-sm);
   font-size: 0.84375rem;
   font-weight: 600;
-  color: var(--nt-dark-navy);
+  color: var(--nt-text-primary);
   cursor: pointer;
-  transition: background-color 180ms var(--nt-ease), border-color 180ms var(--nt-ease), color 180ms var(--nt-ease);
+  transition:
+    background-color var(--nt-dur-fast) var(--nt-ease),
+    border-color var(--nt-dur-fast) var(--nt-ease),
+    color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .view-toggle-btn i {
-  color: var(--nt-nile-blue);
+  color: var(--nt-slate-icon);
+  transition: color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .view-toggle-btn:hover {
-  background-color: var(--nt-dark-navy);
-  border-color: var(--nt-dark-navy);
-  color: #ffffff;
+  background-color: var(--nt-navy);
+  border-color: var(--nt-navy);
+  color: var(--nt-text-on-dark);
 }
 
 .view-toggle-btn:hover i {
-  color: #ffffff;
+  color: var(--nt-silver-on-dark);
 }
 
-/* Dual-Track Kinetic Marquee */
+/* Calm Dual-Track Logo Stream (Zero Boxed Cards, Hairline-Bounded) */
 .marquee-shell {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  border-block: 1px solid var(--nt-border);
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 7%, #000 93%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, #000 7%, #000 93%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
 }
 
 .marquee-row {
   display: flex;
   width: 100%;
   overflow: hidden;
+  padding-block: 0.5rem;
+}
+
+.marquee-row + .marquee-row {
+  border-block-start: 1px solid var(--nt-border);
 }
 
 .marquee-track {
   display: flex;
   align-items: center;
-  gap: 1rem;
   width: max-content;
   will-change: transform;
 }
 
 .track-forward {
-  animation: ntMarqueeLeft 38s linear infinite;
+  animation: ntMarqueeLeft 44s linear infinite;
 }
 
 .track-reverse {
-  animation: ntMarqueeRight 42s linear infinite;
+  animation: ntMarqueeRight 48s linear infinite;
 }
 
-.marquee-row:hover .marquee-track {
+.marquee-row:hover .marquee-track,
+:host.is-offscreen .marquee-track {
   animation-play-state: paused;
 }
 
 @keyframes ntMarqueeLeft {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-50% - 0.5rem)); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes ntMarqueeRight {
-  0% { transform: translateX(calc(-50% - 0.5rem)); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
-/* Clean Architectural Logo Tile */
+/* Normalized Borderless Logo Slot (Preserves Original Brand Colors & Aspect Ratios) */
 .logo-tile {
+  position: relative;
   flex: 0 0 auto;
-  width: clamp(168px, 14.5vw, 218px);
-  height: clamp(86px, 7.5vw, 110px);
-  padding: 0.85rem 1.25rem;
-  background-color: #ffffff;
-  border: 1px solid var(--nt-border-subtle);
-  border-radius: var(--nt-radius-md);
+  width: clamp(168px, 15vw, 224px);
+  height: clamp(82px, 7vw, 102px);
+  padding: 1.15rem 2rem;
+  background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: border-color 220ms var(--nt-ease), background-color 220ms var(--nt-ease), box-shadow 220ms var(--nt-ease);
 }
 
-.logo-tile:hover {
-  background-color: #ffffff;
-  border-color: var(--nt-border-subtle);
-  box-shadow: 0 10px 24px rgba(8, 47, 67, 0.08);
+.marquee-track .logo-tile::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 28px;
+  background-color: var(--nt-border);
 }
 
 .logo-img {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  filter: grayscale(10%);
-  opacity: 0.94;
-  transition: filter 220ms var(--nt-ease), opacity 220ms var(--nt-ease), transform 220ms var(--nt-ease);
+  opacity: 0.88;
+  transition:
+    opacity var(--nt-dur-base) var(--nt-ease),
+    transform var(--nt-dur-base) var(--nt-ease);
 }
 
 .logo-tile:hover .logo-img {
-  filter: grayscale(0%);
   opacity: 1;
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 
-/* Full Grid Mode */
+/* Full Architectural Hairline Matrix View (Zero Gray Orphan Slots) */
 .references-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
-  gap: 1rem;
-  padding-inline: var(--ref-gutter);
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0;
+  background-color: var(--nt-surface-quiet);
+  border-block-start: 1px solid var(--nt-border);
+  border-inline-start: 1px solid var(--nt-border);
 }
 
 .grid-tile {
   width: 100%;
-  height: 102px;
+  height: 108px;
+  padding: 1.25rem 1.85rem;
+  background-color: var(--nt-bg-main);
+  border-inline-end: 1px solid var(--nt-border);
+  border-block-end: 1px solid var(--nt-border);
+  transition: background-color var(--nt-dur-fast) var(--nt-ease);
+}
+
+.grid-tile:hover {
+  background-color: var(--nt-surface-soft);
 }
 
 /* Reduced motion: stop infinite stream cleanly */
@@ -229,7 +227,6 @@
   .marquee-shell {
     mask-image: none;
     -webkit-mask-image: none;
-    padding-inline: var(--ref-gutter);
   }
 
   .marquee-track {
@@ -237,11 +234,15 @@
     flex-wrap: wrap;
     width: 100%;
   }
+
+  .marquee-track .logo-tile[aria-hidden='true'] {
+    display: none;
+  }
 }
 
 @media (max-width: 767px) {
-  .references-section {
-    padding-block: 2.5rem 3rem;
+  .references-inner {
+    padding-block: var(--nt-section-py-mobile);
   }
 
   .header-actions {
@@ -254,8 +255,19 @@
     padding-inline-end: 0;
   }
 
+  .logo-tile {
+    width: 152px;
+    height: 76px;
+    padding: 0.9rem 1.25rem;
+  }
+
   .references-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+  }
+
+  .grid-tile {
+    width: 100%;
+    height: 92px;
+    padding: 1rem 1.15rem;
   }
 }

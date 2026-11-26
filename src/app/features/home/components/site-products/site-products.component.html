@@ -3,138 +3,139 @@
   class="blueprint-section"
   aria-labelledby="site-products-heading"
 >
-  <!-- Editorial Section Header -->
-  <header #sectionHeader class="blueprint-header">
-    <div class="header-main">
-      <p class="section-eyebrow">
-        <span>{{ t(copy.eyebrowText) }}</span>
-      </p>
-      <h2 id="site-products-heading" class="section-headline">
-        <span>{{ t(copy.headline) }}</span>
-      </h2>
-    </div>
-
-    <p class="header-desc">
-      {{ t(copy.supportingText) }}
-    </p>
-  </header>
-
-  <!-- Minimal Architectural Category Line -->
-  <div class="category-bar-wrap">
-    <nav
-      class="category-bar"
-      role="tablist"
-      [attr.aria-label]="t(copy.filterAriaLabel)"
-    >
-      @for (cat of categories; track cat.id) {
-        <button
-          type="button"
-          role="tab"
-          class="cat-tab"
-          [class.is-active]="cat.id === activeCategory()"
-          [attr.aria-selected]="cat.id === activeCategory()"
-          (click)="selectCategory(cat.id)"
-        >
-          <i [class]="cat.icon" aria-hidden="true"></i>
-          <span>{{ t(cat.label) }}</span>
-        </button>
-      }
-    </nav>
-    <span #techDivider class="tech-divider" aria-hidden="true"></span>
-  </div>
-
-  <!-- Interactive 3D Hardware Studio (55/45 Desktop Split) -->
-  <div class="showroom-grid">
-    <!-- Left 55%: Reusable Interactive Three.js 3D Product Studio -->
-    <div #studioCol class="studio-column">
-      <app-product-3d-viewer [product]="activeProduct()" />
-    </div>
-
-    <!-- Right 45%: Swiss Technical Spec Dossier -->
-    <div class="spec-dossier">
-      <div #dossierCopy class="dossier-head">
-        <div class="dossier-meta">
-          <span class="dossier-counter">{{ formattedIndex() }} / {{ formattedTotal() }}</span>
-          <span class="dossier-sep" aria-hidden="true">—</span>
-          <span class="dossier-badge">{{ t(activeProduct().categoryBadge) }}</span>
-        </div>
-
-        <h3 class="dossier-title">{{ t(activeProduct().name) }}</h3>
-        <p class="dossier-summary">{{ t(activeProduct().summary) }}</p>
+  <div class="site-container blueprint-inner">
+    <!-- Editorial Section Header -->
+    <header #sectionHeader class="blueprint-header">
+      <div class="header-main">
+        <p class="section-eyebrow nt-eyebrow">
+          <span class="nt-eyebrow-index" aria-hidden="true">03</span>
+          <span>{{ t(copy.eyebrowText) }}</span>
+        </p>
+        <h2 id="site-products-heading" class="section-headline nt-section-title">
+          <span>{{ t(copy.headline) }}</span>
+        </h2>
       </div>
 
-      <!-- Technical Specifications Table (Clean Hairlines) -->
-      <dl #specRows class="spec-table">
-        @for (spec of activeProduct().specs; track spec.label.en) {
-          <div class="spec-row">
-            <dt class="spec-key">
-              <i [class]="spec.icon" aria-hidden="true"></i>
-              <span>{{ t(spec.label) }}</span>
-            </dt>
-            <dd class="spec-val">{{ t(spec.value) }}</dd>
-          </div>
-        }
-      </dl>
+      <p class="header-desc nt-section-lead">
+        {{ t(copy.supportingText) }}
+      </p>
+    </header>
 
-      <!-- Interactive Model Index List -->
-      @if (categoryProducts().length > 1) {
-        <div class="model-index-block">
-          <p class="index-heading">{{ t(copy.modelsInCategory) }}</p>
-          <ul class="model-index-list">
-            @for (prod of categoryProducts(); track prod.id; let idx = $index) {
-              <li>
-                <button
-                  type="button"
-                  class="index-row-btn"
-                  [class.is-active]="idx === activeModelIndex()"
-                  (click)="selectModel(idx)"
-                >
-                  <span class="index-thumb" aria-hidden="true">
-                    <img
-                      [src]="prod.image.src"
-                      alt=""
-                      [width]="prod.image.width"
-                      [height]="prod.image.height"
-                      loading="lazy"
-                    />
-                  </span>
-                  <span class="index-num">{{ formatNum(idx) }}</span>
-                  <span class="index-name">{{ t(prod.name) }}</span>
-                  <span class="index-code">{{ prod.modelCode }}</span>
-                </button>
-              </li>
-            }
-          </ul>
+    <!-- Minimal Architectural Category Line -->
+    <div class="category-bar-wrap">
+      <nav
+        class="category-bar"
+        role="tablist"
+        [attr.aria-label]="t(copy.filterAriaLabel)"
+      >
+        @for (cat of categories; track cat.id) {
+          <button
+            type="button"
+            role="tab"
+            class="cat-tab"
+            [class.is-active]="cat.id === activeCategory()"
+            [attr.aria-selected]="cat.id === activeCategory()"
+            (click)="selectCategory(cat.id)"
+          >
+            <span>{{ t(cat.label) }}</span>
+          </button>
+        }
+      </nav>
+      <span #techDivider class="tech-divider" aria-hidden="true"></span>
+    </div>
+
+    <!-- Interactive 3D Hardware Studio (56/44 Desktop Split) -->
+    <div class="showroom-grid">
+      <!-- Left 56%: Reusable Interactive Three.js 3D Product Studio -->
+      <div #studioCol class="studio-column">
+        <app-product-3d-viewer [product]="activeProduct()" />
+      </div>
+
+      <!-- Right 44%: Engineering Technical Spec Dossier -->
+      <div class="spec-dossier">
+        <div #dossierCopy class="dossier-head">
+          <div class="dossier-meta">
+            <span class="dossier-counter">{{ formattedIndex() }} / {{ formattedTotal() }}</span>
+            <span class="dossier-sep" aria-hidden="true">—</span>
+            <span class="dossier-badge">{{ t(activeProduct().categoryBadge) }}</span>
+          </div>
+
+          <h3 class="dossier-title">{{ t(activeProduct().name) }}</h3>
+          <p class="dossier-summary">{{ t(activeProduct().summary) }}</p>
         </div>
-      }
 
-      <!-- Bottom Action & Device Stepper -->
-      <div class="dossier-footer">
-        <a class="dossier-cta" routerLink="/consultation">
-          <span>{{ t(copy.requestQuoteCta) }}</span>
-          <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
-        </a>
+        <!-- Technical Specifications Table (Clean Hairlines) -->
+        <dl #specRows class="spec-table">
+          @for (spec of activeProduct().specs; track spec.label.en) {
+            <div class="spec-row">
+              <dt class="spec-key">
+                <span>{{ t(spec.label) }}</span>
+              </dt>
+              <dd class="spec-val">{{ t(spec.value) }}</dd>
+            </div>
+          }
+        </dl>
 
+        <!-- Interactive Model Index List -->
         @if (categoryProducts().length > 1) {
-          <div class="dossier-arrows">
-            <button
-              type="button"
-              class="dossier-arrow"
-              [attr.aria-label]="t(copy.prevDevice)"
-              (click)="prevModel()"
-            >
-              <i class="fa-solid fa-arrow-left nt-dir-icon" aria-hidden="true"></i>
-            </button>
-            <button
-              type="button"
-              class="dossier-arrow"
-              [attr.aria-label]="t(copy.nextDevice)"
-              (click)="nextModel()"
-            >
-              <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
-            </button>
+          <div class="model-index-block">
+            <p class="index-heading">{{ t(copy.modelsInCategory) }}</p>
+            <ul class="model-index-list">
+              @for (prod of categoryProducts(); track prod.id; let idx = $index) {
+                <li>
+                  <button
+                    type="button"
+                    class="index-row-btn"
+                    [class.is-active]="idx === activeModelIndex()"
+                    (click)="selectModel(idx)"
+                  >
+                    <span class="index-thumb" aria-hidden="true">
+                      <img
+                        [src]="prod.image.src"
+                        alt=""
+                        [width]="prod.image.width"
+                        [height]="prod.image.height"
+                        loading="lazy"
+                      />
+                    </span>
+                    <span class="index-num">{{ formatNum(idx) }}</span>
+                    <span class="index-name">{{ t(prod.name) }}</span>
+                    <span class="index-code">{{ prod.modelCode }}</span>
+                  </button>
+                </li>
+              }
+            </ul>
           </div>
         }
+
+        <!-- Bottom Action & Device Stepper -->
+        <div class="dossier-footer">
+          <a class="dossier-cta" appNtMagnetic routerLink="/" fragment="contact">
+            <span>{{ t(copy.requestQuoteCta) }}</span>
+            <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="15" />
+          </a>
+
+          @if (categoryProducts().length > 1) {
+            <div class="dossier-arrows">
+              <button
+                type="button"
+                class="dossier-arrow"
+                [attr.aria-label]="t(copy.prevDevice)"
+                (click)="prevModel()"
+              >
+                <app-nt-icon name="arrow-left" class="nt-dir-icon" [size]="15" />
+              </button>
+              <button
+                type="button"
+                class="dossier-arrow"
+                [attr.aria-label]="t(copy.nextDevice)"
+                (click)="nextModel()"
+              >
+                <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="15" />
+              </button>
+            </div>
+          }
+        </div>
       </div>
     </div>
   </div>

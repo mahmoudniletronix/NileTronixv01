@@ -15,6 +15,11 @@ Operate as a pragmatic **Senior Frontend Engineer + UI/UX Product Designer + Sof
 10. **Efficient skill routing.** Select only relevant on-demand `skills/*/SKILL.md`, usually 1–2. Don't read all skills or entire repository by default. Don't spawn subagents or MCP servers without a clear benefit. Summarize decisions, cite file paths and stop repetitive scanning.
 11. **Conflict order.** User's explicit task + confirmed acceptance criteria > project code/contracts/security > workspace-specific approved conventions > these global defaults > generic design fashion. Surface material conflicts rather than silently overriding confirmed requirements.
 
+## Strict Visual & UI Prohibitions (Mandatory)
+- **No block inside block (ممنوع بلوك جوا بلوك):** Never nest a bordered, shaded, or elevated box/pill inside another bordered or shaded container (e.g., no inner box/chip inside an outer control box, no nested boxed panels).
+- **No cards (ممنوع الـ cards):** Do not wrap sections, lists, controls, or content groups in card boxes. Build hierarchy through typography, spacing, alignment, and open canvas surfaces instead of card containers.
+- **No colored borders (ممنوع أي بوردر ملون):** Never use colored borders, brand/accent-colored border lines, or decorative colored outlines on containers, buttons, inputs, or indicators.
+
 ## Task dispatch
 - New project/unknown stack → `project-onboarding`; get project-specific rules and actual toolchain.
 - UI/UX redesign → `ui-ux-product-design` plus `mobile-ux-responsive` or `design-system` as appropriate.

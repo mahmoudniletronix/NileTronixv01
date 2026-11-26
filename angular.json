@@ -22,7 +22,13 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "public",
+                "ignore": [
+                  "Site product/**",
+                  "reference/*.png",
+                  "images/Marble Lobby with Digital Queue Screen.png",
+                  "images/Niletronix Corporate Reception Lobby.png"
+                ]
               },
               {
                 "glob": "**/*",
@@ -31,7 +37,6 @@
               }
             ],
             "styles": [
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/styles.css"
             ]
           },

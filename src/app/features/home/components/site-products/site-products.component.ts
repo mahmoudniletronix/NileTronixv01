@@ -16,6 +16,8 @@ import { RouterLink } from '@angular/router';
 import gsap from 'gsap';
 import type { ScrollTrigger as ScrollTriggerType } from 'gsap/ScrollTrigger';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { NtMagneticDirective } from '../../../../shared/directives/nt-magnetic.directive';
+import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 import { Product3DViewerComponent } from '../../../hardware/components/product-3d-viewer/product-3d-viewer.component';
 import { HARDWARE_PRODUCTS_CATALOG } from '../../../hardware/data/hardware-products.data';
 import { HardwareProductItem } from '../../../hardware/models/hardware-product.model';
@@ -28,7 +30,7 @@ import { LocalizedText } from '../../../solutions/models/solution.model';
 
 @Component({
   selector: 'app-site-products',
-  imports: [RouterLink, Product3DViewerComponent],
+  imports: [RouterLink, Product3DViewerComponent, NtIconComponent, NtMagneticDirective],
   templateUrl: './site-products.component.html',
   styleUrl: './site-products.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -150,41 +152,72 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
 
   private playSectionEntrance(): void {
     this.entranceTimeline?.kill();
+    const dirSign = this.isRtl() ? -1 : 1;
     const tl = gsap.timeline({ defaults: { ease: 'power3.out', overwrite: 'auto' } });
     this.entranceTimeline = tl;
 
     if (this.sectionHeaderRef) {
-      tl.fromTo(
-        this.sectionHeaderRef.nativeElement,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.55, clearProps: 'transform' },
-        0
-      );
+      const root = this.sectionHeaderRef.nativeElement;
+      const eyebrow = root.querySelector('.section-eyebrow');
+      const title = root.querySelector('.section-headline');
+      const desc = root.querySelector('.header-desc');
+
+      if (eyebrow) {
+        tl.fromTo(
+          eyebrow,
+          { opacity: 0.25, x: -12 * dirSign },
+          { opacity: 1, x: 0, duration: 0.55, clearProps: 'transform,opacity' },
+          0
+        );
+      }
+      if (title) {
+        tl.fromTo(
+          title,
+          { opacity: 0.35, y: 22, clipPath: 'inset(0 0 100% 0)' },
+          {
+            opacity: 1,
+            y: 0,
+            clipPath: 'inset(0 0 0% 0)',
+            duration: 0.72,
+            ease: 'power4.out',
+            clearProps: 'clipPath,transform,opacity',
+          },
+          0.05
+        );
+      }
+      if (desc) {
+        tl.fromTo(
+          desc,
+          { opacity: 0.35, y: 16 },
+          { opacity: 1, y: 0, duration: 0.58, clearProps: 'transform,opacity' },
+          0.14
+        );
+      }
     }
 
     if (this.techDividerRef) {
       tl.fromTo(
         this.techDividerRef.nativeElement,
         { scaleX: 0, transformOrigin: this.isRtl() ? 'right center' : 'left center' },
-        { scaleX: 1, duration: 0.65, ease: 'power2.out', clearProps: 'transform' },
-        0.08
+        { scaleX: 1, duration: 0.72, ease: 'power3.out', clearProps: 'transform' },
+        0.12
       );
     }
 
     if (this.studioColRef) {
       tl.fromTo(
         this.studioColRef.nativeElement,
-        { opacity: 0, y: 24 },
-        { opacity: 1, y: 0, duration: 0.6, clearProps: 'transform' },
-        0.14
+        { opacity: 0.55, y: 20, scale: 0.988 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.65, clearProps: 'transform,opacity' },
+        0.16
       );
     }
 
     if (this.specRowsRef?.nativeElement.children.length) {
       tl.fromTo(
         this.specRowsRef.nativeElement.children,
-        { opacity: 0, y: 12 },
-        { opacity: 1, y: 0, duration: 0.36, stagger: 0.06, clearProps: 'transform' },
+        { opacity: 0.4, y: 10 },
+        { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, clearProps: 'transform,opacity' },
         0.22
       );
     }

@@ -12,10 +12,12 @@ import {
 import { RouterLink } from '@angular/router';
 import gsap from 'gsap';
 import { LanguageService } from '../../core/i18n/language.service';
+import { NtSpotlightDirective } from '../../shared/directives/nt-spotlight.directive';
+import { NtIconComponent } from '../../shared/ui/nt-icon.component';
 
 @Component({
   selector: 'app-footer',
-  imports: [RouterLink],
+  imports: [RouterLink, NtIconComponent, NtSpotlightDirective],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,11 +34,25 @@ export class FooterComponent implements AfterViewInit, OnDestroy {
   protected readonly mapsLink = 'https://maps.app.goo.gl/wRaZuHYx6UQc4bCj9';
 
   private gsapCtx: gsap.Context | null = null;
+  private visibilityObserver: IntersectionObserver | null = null;
   private destroyed = false;
 
   ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      this.visibilityObserver = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (!entry) return;
+          this.footerRootRef.nativeElement.classList.toggle('is-offscreen', !entry.isIntersecting);
+        },
+        { threshold: 0.01 }
+      );
+      this.visibilityObserver.observe(this.footerRootRef.nativeElement);
+    }
+
     if (
-      !isPlatformBrowser(this.platformId) ||
       typeof window === 'undefined' ||
       typeof window.matchMedia !== 'function' ||
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -51,63 +67,49 @@ export class FooterComponent implements AfterViewInit, OnDestroy {
       const root = this.footerRootRef.nativeElement;
       const isRtl = this.langService.isRtl();
 
+      // Safe onEnter reveal: footer always stays at opacity: 1 in resting DOM
       this.gsapCtx = gsap.context(() => {
-        const tl = gsap.timeline({
-          defaults: { ease: 'power3.out', clearProps: 'transform,opacity' },
-          scrollTrigger: {
-            trigger: root,
-            start: 'top 86%',
-            once: true,
+        ScrollTrigger.create({
+          trigger: root,
+          start: 'top 95%',
+          once: true,
+          onEnter: () => {
+            const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+            const topLine = root.querySelector('.footer-top-line');
+            const cols = root.querySelectorAll('.footer-brand, .footer-col');
+
+            if (topLine) {
+              tl.fromTo(
+                topLine,
+                { scaleX: 0, transformOrigin: isRtl ? 'right center' : 'left center' },
+                { scaleX: 1, duration: 0.65, ease: 'power2.out', clearProps: 'transform' },
+                0
+              );
+            }
+            if (cols.length) {
+              tl.fromTo(
+                cols,
+                { opacity: 0.55, y: 12 },
+                {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.45,
+                  stagger: 0.06,
+                  clearProps: 'transform,opacity',
+                },
+                0.06
+              );
+            }
           },
         });
-
-        const topLine = root.querySelector('.footer-top-line');
-        const brandLockup = root.querySelector('.footer-brand-lockup');
-        const tagline = root.querySelector('.footer-tagline');
-        const socialBtns = root.querySelectorAll('.social-btn');
-        const cols = root.querySelectorAll('.footer-col');
-        const bottomBar = root.querySelector('.footer-bottom');
-        const watermark = root.querySelector('.footer-watermark');
-
-        if (topLine) {
-          tl.from(
-            topLine,
-            {
-              scaleX: 0,
-              transformOrigin: isRtl ? 'right center' : 'left center',
-              duration: 0.75,
-              ease: 'power2.out',
-            },
-            0
-          );
-        }
-        if (brandLockup) tl.from(brandLockup, { opacity: 0, y: 18, duration: 0.52 }, 0.08);
-        if (tagline) tl.from(tagline, { opacity: 0, y: 14, duration: 0.48 }, 0.16);
-        if (socialBtns.length) {
-          tl.from(
-            socialBtns,
-            {
-              opacity: 0,
-              y: 12,
-              scale: 0.85,
-              duration: 0.4,
-              stagger: 0.06,
-              ease: 'back.out(1.5)',
-            },
-            0.22
-          );
-        }
-        if (cols.length) {
-          tl.from(cols, { opacity: 0, y: 22, duration: 0.55, stagger: 0.09 }, 0.14);
-        }
-        if (bottomBar) tl.from(bottomBar, { opacity: 0, y: 12, duration: 0.45 }, 0.36);
-        if (watermark) tl.from(watermark, { opacity: 0, y: 24, duration: 0.8 }, 0.25);
       }, root);
     });
   }
 
   ngOnDestroy(): void {
     this.destroyed = true;
+    this.visibilityObserver?.disconnect();
+    this.visibilityObserver = null;
     this.gsapCtx?.revert();
     this.gsapCtx = null;
   }

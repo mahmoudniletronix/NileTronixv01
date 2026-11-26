@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -16,6 +17,7 @@ import {
   signal,
 } from '@angular/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 import { LocalizedText } from '../../../solutions/models/solution.model';
 import { HARDWARE_STUDIO_COPY } from '../../data/hardware-products.data';
 import { CameraPresetId } from '../../models/camera-preset.model';
@@ -36,6 +38,7 @@ type ViewerState = 'idle' | 'loading' | 'ready' | 'error' | 'webgl-unavailable';
     ProductControlsComponent,
     ProductHotspotsComponent,
     ProductLoadingStateComponent,
+    NtIconComponent,
   ],
   providers: [ThreeSceneService, CameraControllerService, ProductAnimationService],
   templateUrl: './product-3d-viewer.component.html',
@@ -46,6 +49,7 @@ export class Product3DViewerComponent implements AfterViewInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
   private readonly ngZone = inject(NgZone);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly langService = inject(LanguageService);
   private readonly sceneService = inject(ThreeSceneService);
 
@@ -88,6 +92,7 @@ export class Product3DViewerComponent implements AfterViewInit, OnDestroy {
     () => {
       if (this.viewMode() === 'photo') return 'poster';
       const state = this.viewerState();
+      if (state === 'idle') return 'poster';
       if (state === 'error') return 'error';
       if (state === 'webgl-unavailable') return 'webgl-unavailable';
       return 'loading';
@@ -142,7 +147,7 @@ export class Product3DViewerComponent implements AfterViewInit, OnDestroy {
             this.sceneService.setViewportVisibility(inView);
           }
         },
-        { rootMargin: '220px 0px' }
+        { rootMargin: '100px 0px' }
       );
       this.intersectionObserver.observe(this.viewerShellRef.nativeElement);
     } else {
@@ -169,6 +174,7 @@ export class Product3DViewerComponent implements AfterViewInit, OnDestroy {
       this.sceneService.requestRender();
     } else {
       this.selectedHotspotId.set(null);
+      this.sceneService.setViewportVisibility(false);
     }
   }
 
@@ -301,7 +307,9 @@ export class Product3DViewerComponent implements AfterViewInit, OnDestroy {
         onContextLost: () => this.ngZone.run(() => this.viewerState.set('error')),
         onHotspotsProjected: (projected) => {
           if (this.hotspotsVisible()) {
-            this.ngZone.run(() => this.projectedHotspots.set(projected));
+            // Update local viewer subtree only (avoids full-app NgZone CD during 3D orbit)
+            this.projectedHotspots.set(projected);
+            this.cdr.detectChanges();
           }
         },
         onUserInteract: () =>

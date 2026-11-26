@@ -105,7 +105,7 @@ export class ModelLoaderService {
     gltf.scene.traverse((obj) => {
       if (obj instanceof T.Mesh) {
         obj.castShadow = true;
-        obj.receiveShadow = true;
+        obj.receiveShadow = false;
         if (obj.geometry) geometries.push(obj.geometry);
         const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
         for (const m of mats) {

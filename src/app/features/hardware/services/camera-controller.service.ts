@@ -33,17 +33,62 @@ export class CameraControllerService {
     };
   }
 
-  getIdealDistance(
+  /**
+   * Computes exact view-aligned camera distance from the 3D bounding box so every
+   * model proportion (tall kiosks, landscape displays, LED boards, compact terminals)
+   * fills ~74–80% of usable viewer height/width without clipping on rotation or resize.
+   */
+  getIdealDistanceForDirection(
+    T: typeof ThreeNamespace,
     camera: ThreeNamespace.PerspectiveCamera,
     framing: FramingBox,
-    distanceScale = 1.18
+    viewDir: ThreeNamespace.Vector3,
+    isTopView = false
   ): number {
+    const dir = viewDir.clone().normalize();
+    const worldUp = isTopView ? new T.Vector3(0, 0, -1) : new T.Vector3(0, 1, 0);
+    const right = new T.Vector3().crossVectors(worldUp, dir);
+    if (right.lengthSq() < 1e-6) {
+      right.set(1, 0, 0);
+    } else {
+      right.normalize();
+    }
+    const up = new T.Vector3().crossVectors(dir, right).normalize();
+
+    const hx = framing.size.x * 0.5;
+    const hy = framing.size.y * 0.5;
+    const hz = framing.size.z * 0.5;
+
+    // Exact projected bounding extents along the camera's local right, up, and depth axes
+    const projHalfW = hx * Math.abs(right.x) + hy * Math.abs(right.y) + hz * Math.abs(right.z);
+    const projHalfH = hx * Math.abs(up.x) + hy * Math.abs(up.y) + hz * Math.abs(up.z);
+    const projHalfD = hx * Math.abs(dir.x) + hy * Math.abs(dir.y) + hz * Math.abs(dir.z);
+
     const fovRad = (camera.fov * Math.PI) / 180;
-    const aspect = Math.max(camera.aspect, 0.65);
-    const vDist = (framing.size.y * 0.6) / Math.tan(fovRad / 2);
-    const hFov = 2 * Math.atan(Math.tan(fovRad / 2) * aspect);
-    const hDist = (framing.size.x * 0.64) / Math.tan(hFov / 2);
-    return Math.max(vDist, hDist, framing.radius * 2.05) * distanceScale;
+    const tanHalfV = Math.tan(fovRad / 2);
+    const aspect = Math.max(camera.aspect, 0.55);
+    const tanHalfH = tanHalfV * aspect;
+
+    // Target ~76–80% of usable viewer area (leaving balanced room for top telemetry & bottom toolbar)
+    const fillV = aspect < 0.9 ? 0.72 : 0.78;
+    const fillH = aspect < 0.9 ? 0.84 : 0.8;
+
+    const depthMargin = projHalfD * 0.68;
+    const vDist = projHalfH / (fillV * tanHalfV) + depthMargin;
+    const hDist = projHalfW / (fillH * tanHalfH) + depthMargin;
+
+    return Math.max(vDist, hDist, framing.radius * 1.45);
+  }
+
+  getIdealDistance(
+    T: typeof ThreeNamespace,
+    camera: ThreeNamespace.PerspectiveCamera,
+    framing: FramingBox,
+    defaultYawDeg = 20,
+    defaultPitchDeg = 10
+  ): number {
+    const dir = this.getPresetDirection(T, 'perspective', defaultYawDeg, defaultPitchDeg);
+    return this.getIdealDistanceForDirection(T, camera, framing, dir, false);
   }
 
   cancelTransition(): void {
@@ -61,48 +106,22 @@ export class CameraControllerService {
     preset: CameraPresetId,
     defaultYawDeg: number,
     defaultPitchDeg: number,
-    distanceScale: number,
     immediate: boolean,
-    onFrameUpdate: () => void
+    onFrameUpdate: () => void,
+    onComplete?: () => void
   ): void {
-    const dist = this.getIdealDistance(camera, framing, distanceScale);
-    const target = framing.center.clone();
-    // Slight downward target offset lifts the model cleanly above the bottom controls bar
-    target.y -= framing.size.y * 0.08;
-    const pos = target.clone();
+    const isTop = preset === 'top';
+    const dir = this.getPresetDirection(T, preset, defaultYawDeg, defaultPitchDeg);
+    const dist = this.getIdealDistanceForDirection(T, camera, framing, dir, isTop);
 
-    switch (preset) {
-      case 'front':
-        pos.add(new T.Vector3(0, framing.size.y * 0.02, dist));
-        break;
-      case 'back':
-        pos.add(new T.Vector3(0, framing.size.y * 0.04, -dist));
-        break;
-      case 'left':
-        pos.add(new T.Vector3(-dist, framing.size.y * 0.03, 0));
-        break;
-      case 'right':
-        pos.add(new T.Vector3(dist, framing.size.y * 0.03, 0));
-        break;
-      case 'top':
-        pos.add(new T.Vector3(0, dist * 1.05, dist * 0.14));
-        break;
-      case 'perspective':
-      default: {
-        const yaw = (defaultYawDeg * Math.PI) / 180;
-        const pitch = (defaultPitchDeg * Math.PI) / 180;
-        pos.add(
-          new T.Vector3(
-            Math.sin(yaw) * Math.cos(pitch) * dist,
-            Math.sin(pitch) * dist,
-            Math.cos(yaw) * Math.cos(pitch) * dist
-          )
-        );
-        break;
-      }
+    const target = framing.center.clone();
+    // Slight vertical framing offset keeps product centered cleanly between top & bottom UI chrome
+    if (!isTop) {
+      target.y -= framing.size.y * 0.03;
     }
 
-    this.animateCameraTo(camera, controls, pos, target, immediate, onFrameUpdate);
+    const pos = target.clone().addScaledVector(dir, dist);
+    this.animateCameraTo(camera, controls, pos, target, immediate, onFrameUpdate, 0.68, onComplete);
   }
 
   focusHotspot(
@@ -126,7 +145,7 @@ export class CameraControllerService {
       hotspot.cameraOffset.z
     )
       .normalize()
-      .multiplyScalar(Math.max(framing.radius * 1.45, 1.15));
+      .multiplyScalar(Math.max(framing.radius * 1.35, 1.05));
 
     const pos = anchor.clone().add(offset);
     this.animateCameraTo(camera, controls, pos, anchor, immediate, onFrameUpdate);
@@ -147,6 +166,36 @@ export class CameraControllerService {
     this.animateCameraTo(camera, controls, nextPos, controls.target.clone(), immediate, onFrameUpdate, 0.42);
   }
 
+  private getPresetDirection(
+    T: typeof ThreeNamespace,
+    preset: CameraPresetId,
+    defaultYawDeg: number,
+    defaultPitchDeg: number
+  ): ThreeNamespace.Vector3 {
+    switch (preset) {
+      case 'front':
+        return new T.Vector3(0, 0.02, 1).normalize();
+      case 'back':
+        return new T.Vector3(0, 0.03, -1).normalize();
+      case 'left':
+        return new T.Vector3(-1, 0.02, 0).normalize();
+      case 'right':
+        return new T.Vector3(1, 0.02, 0).normalize();
+      case 'top':
+        return new T.Vector3(0, 0.99, 0.14).normalize();
+      case 'perspective':
+      default: {
+        const yaw = (defaultYawDeg * Math.PI) / 180;
+        const pitch = (defaultPitchDeg * Math.PI) / 180;
+        return new T.Vector3(
+          Math.sin(yaw) * Math.cos(pitch),
+          Math.sin(pitch),
+          Math.cos(yaw) * Math.cos(pitch)
+        ).normalize();
+      }
+    }
+  }
+
   private animateCameraTo(
     camera: ThreeNamespace.PerspectiveCamera,
     controls: OrbitControls,
@@ -154,15 +203,20 @@ export class CameraControllerService {
     destTarget: ThreeNamespace.Vector3,
     immediate: boolean,
     onFrameUpdate: () => void,
-    duration = 0.72
+    duration = 0.68,
+    onComplete?: () => void
   ): void {
     this.cancelTransition();
 
     if (immediate) {
+      const prevDamping = controls.enableDamping;
+      controls.enableDamping = false;
       camera.position.copy(destPos);
       controls.target.copy(destTarget);
       controls.update();
+      controls.enableDamping = prevDamping;
       onFrameUpdate();
+      onComplete?.();
       return;
     }
 
@@ -175,6 +229,7 @@ export class CameraControllerService {
       onComplete: () => {
         this.activeTween = null;
         onFrameUpdate();
+        onComplete?.();
       },
     });
 

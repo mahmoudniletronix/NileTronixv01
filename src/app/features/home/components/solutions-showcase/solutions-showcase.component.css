@@ -5,58 +5,24 @@
 }
 
 .deck-section {
-  --deck-gutter: var(--nt-gutter);
-  background-color: var(--nt-surface-primary);
-  color: var(--nt-ink);
-  padding-block: clamp(2.75rem, 4.2vw, 3.75rem);
-  padding-inline: var(--deck-gutter);
-  border-block-start: 1px solid var(--nt-border-subtle);
+  background-color: var(--nt-bg-main);
+  color: var(--nt-text-primary);
+  padding-block: var(--nt-section-py);
   overflow-x: clip;
 }
 
-/* Top Header + Sleek Segmented Pill Switcher */
+/* Editorial Top Header + Architectural Segmented Switcher */
 .deck-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1rem 1.5rem;
-  margin-block-end: 1.35rem;
+  gap: 1.25rem 2rem;
+  margin-block-end: var(--nt-section-header-gap);
 }
 
 .header-copy {
-  max-width: 480px;
-}
-
-.section-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin: 0 0 0.35rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--nt-nile-blue);
-}
-
-:host-context([dir='rtl']) .section-eyebrow {
-  letter-spacing: 0.02em;
-  font-size: 0.8125rem;
-}
-
-.section-headline {
-  margin: 0;
-  font-size: clamp(1.65rem, 2.4vw, 2.25rem);
-  font-weight: 800;
-  line-height: 1.14;
-  letter-spacing: -0.025em;
-  color: var(--nt-dark-navy);
-}
-
-:host-context([dir='rtl']) .section-headline {
-  letter-spacing: 0;
-  line-height: 1.25;
+  max-width: 680px;
 }
 
 .header-nav-group {
@@ -65,15 +31,15 @@
   max-width: 100%;
 }
 
-/* Compact Floating Segmented Pill Switcher */
+/* Crisp Architectural Segmented Tab Track */
 .deck-selector {
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
   padding: 0.25rem;
-  background-color: #f1f4f7;
-  border: 1px solid var(--nt-border-subtle);
-  border-radius: 999px;
+  background-color: var(--nt-surface-soft);
+  border: 1px solid var(--nt-border);
+  border-radius: var(--nt-radius-md);
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -85,62 +51,124 @@
 }
 
 .selector-item {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  min-height: 32px;
-  padding: 0.32rem 0.8rem;
+  min-height: 36px;
+  padding: 0.4rem 0.9rem;
   background-color: transparent;
   border: 0;
-  border-radius: 999px;
-  font-size: 0.8125rem;
+  border-radius: var(--nt-radius-sm);
+  font-size: 0.84375rem;
   font-weight: 600;
-  color: var(--nt-ink-muted);
+  color: var(--nt-text-secondary);
   cursor: pointer;
   white-space: nowrap;
   transition:
-    background-color 220ms var(--nt-ease),
-    color 220ms var(--nt-ease);
+    background-color var(--nt-dur-fast) var(--nt-ease),
+    color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .selector-item:hover {
-  color: var(--nt-dark-navy);
+  color: var(--nt-text-primary);
 }
 
 .selector-item.is-active {
-  background-color: var(--nt-dark-navy);
-  color: #ffffff;
+  background-color: var(--nt-navy);
+  color: var(--nt-text-on-dark);
 }
 
 /* ==========================================================================
-   Compact Proportioned Cinematic Dark Stage (Fits Cleanly in 1 Viewport)
+   Wide Commanding Dark Stage (Restored Visual Impact & Clarity)
    ========================================================================== */
 .cinema-stage {
-  background-color: var(--nt-dark-navy);
-  color: #ffffff;
-  border-radius: 18px;
-  padding: clamp(1.35rem, 2.2vw, 1.85rem) clamp(1.25rem, 2.5vw, 2.25rem) clamp(1rem, 1.6vw, 1.35rem);
+  position: relative;
+  background-color: var(--nt-navy);
+  color: var(--nt-text-on-dark);
+  border: 1px solid rgba(16, 36, 50, 0.22);
+  border-radius: var(--nt-radius-lg);
+  padding: clamp(2rem, 3vw, 2.85rem) clamp(1.5rem, 3.2vw, 3rem) clamp(1.4rem, 2.2vw, 2rem);
   overflow: hidden;
+  contain: layout paint;
 }
 
-/* 3D Layered Deck Stage */
+:host.is-offscreen .stage-pulse,
+:host.is-offscreen .story-bar-fill {
+  animation-play-state: paused;
+}
+
+.stage-signal-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.stage-track {
+  stroke: rgba(255, 255, 255, 0.045);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.stage-pulse {
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 16 84;
+  stroke-dashoffset: 116;
+}
+
+.stage-pulse-1 {
+  animation: ntStageSignal 14s linear infinite;
+}
+
+.stage-pulse-2 {
+  stroke-width: 1.3;
+  stroke-dasharray: 12 88;
+  animation: ntStageSignalReverse 18s linear infinite;
+  animation-delay: -6s;
+}
+
+@keyframes ntStageSignal {
+  0% {
+    stroke-dashoffset: 116;
+  }
+  100% {
+    stroke-dashoffset: -16;
+  }
+}
+
+@keyframes ntStageSignalReverse {
+  0% {
+    stroke-dashoffset: -16;
+  }
+  100% {
+    stroke-dashoffset: 116;
+  }
+}
+
+/* 3D Layered Deck Stage — Full Wide Container Presence */
 .deck-stage-wrap {
   position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 1120px;
+  max-width: 1440px;
   margin-inline: auto;
-  margin-block-end: 1.1rem;
+  margin-block-end: 1.65rem;
 }
 
 .deck-viewport {
   position: relative;
   width: 100%;
-  height: clamp(210px, 26vw, 350px);
-  perspective: 1400px;
+  height: clamp(240px, 31vw, 445px);
+  perspective: 1500px;
   transform-style: preserve-3d;
   overflow: hidden;
   display: flex;
@@ -148,24 +176,21 @@
   justify-content: center;
 }
 
-/* Crisp Frameless Showcase Card on Dark Stage */
+/* Heroic Active Product Card on Wide Dark Stage */
 .deck-card {
   position: absolute;
-  width: clamp(270px, 39vw, 520px);
-  border-radius: 12px;
-  background-color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 16px 34px -10px rgba(0, 0, 0, 0.42);
+  width: clamp(276px, 44vw, 660px);
+  border-radius: var(--nt-radius-md);
+  background-color: var(--nt-bg-main);
+  border: 1px solid var(--nt-border-on-dark);
+  box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.38);
   overflow: hidden;
-  will-change: transform, opacity, filter;
   cursor: pointer;
 }
 
 .deck-card.is-active {
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow:
-    0 26px 56px -12px rgba(0, 0, 0, 0.58),
-    0 8px 20px -6px rgba(0, 0, 0, 0.34);
+  border-color: rgba(255, 255, 255, 0.26);
+  box-shadow: var(--nt-shadow-dark-stage);
   cursor: default;
 }
 
@@ -173,7 +198,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 10;
-  background-color: #eef2f5;
+  background-color: var(--nt-surface-soft);
   overflow: hidden;
 }
 
@@ -189,8 +214,8 @@
 .card-dim-layer {
   position: absolute;
   inset: 0;
-  background: rgba(10, 25, 36, 0.34);
-  transition: opacity 260ms var(--nt-ease);
+  background: rgba(10, 25, 36, 0.36);
+  transition: opacity var(--nt-dur-base) var(--nt-ease);
   pointer-events: none;
 }
 
@@ -199,7 +224,7 @@
 }
 
 .deck-card:not(.is-active):hover .card-dim-layer {
-  opacity: 0.12;
+  opacity: 0.14;
 }
 
 .card-click-overlay {
@@ -211,7 +236,7 @@
   cursor: pointer;
 }
 
-/* Sleek Dark-Stage Flanking Arrows */
+/* Architectural Flanking Arrows */
 .stage-arrow {
   position: absolute;
   top: 50%;
@@ -220,19 +245,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--nt-radius-sm);
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--nt-border-on-dark);
+  color: var(--nt-text-on-dark);
   font-size: 0.85rem;
   cursor: pointer;
   transition:
-    background-color 200ms var(--nt-ease),
-    border-color 200ms var(--nt-ease),
-    color 200ms var(--nt-ease),
-    transform 200ms var(--nt-ease);
+    background-color var(--nt-dur-fast) var(--nt-ease),
+    border-color var(--nt-dur-fast) var(--nt-ease),
+    color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .stage-arrow-prev {
@@ -244,28 +268,29 @@
 }
 
 .stage-arrow:hover {
-  background-color: #ffffff;
-  border-color: #ffffff;
-  color: var(--nt-dark-navy);
-  transform: translateY(-50%) scale(1.05);
+  background-color: var(--nt-bg-main);
+  border-color: var(--nt-bg-main);
+  color: var(--nt-navy);
 }
 
-/* Tight Integrated Dark-Stage Spotlight Info */
+/* Integrated Dark-Stage Spotlight Info */
 .spotlight-info {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem 2rem;
-  max-width: 1120px;
+  gap: 1.25rem 2.5rem;
+  max-width: 1440px;
   margin-inline: auto;
-  padding-block-start: 0.75rem;
-  border-block-start: 1px solid rgba(255, 255, 255, 0.08);
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid rgba(255, 255, 255, 0.11);
 }
 
 .spotlight-copy {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.35rem;
   min-width: 0;
 }
 
@@ -273,14 +298,23 @@
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  gap: 0.5rem;
+}
+
+.spotlight-index {
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  color: var(--nt-silver-on-dark);
+  padding-inline-end: 0.2rem;
 }
 
 .spotlight-name {
   margin: 0;
   font-size: clamp(1.15rem, 1.55vw, 1.4rem);
   font-weight: 700;
-  color: #ffffff;
+  color: var(--nt-text-on-dark);
   line-height: 1.2;
   letter-spacing: -0.015em;
 }
@@ -290,22 +324,22 @@
 }
 
 .spotlight-sep {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.32);
 }
 
 .spotlight-cat {
-  font-size: clamp(0.95rem, 1.25vw, 1.1rem);
+  font-size: clamp(0.95rem, 1.2vw, 1.0625rem);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.74);
+  color: var(--nt-text-on-dark-muted);
 }
 
 .spotlight-desc {
   margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.66);
-  max-width: 62ch;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 64ch;
 }
 
 .spotlight-actions {
@@ -315,33 +349,29 @@
   flex-shrink: 0;
 }
 
-/* Compact Pure White Pill CTA */
+/* Unified Architectural Primary CTA on Dark */
 .explore-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  min-height: 40px;
-  padding: 0.5rem 1.25rem;
-  background-color: #ffffff;
-  color: var(--nt-dark-navy);
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.6rem 1.35rem;
+  background-color: var(--nt-bg-main);
+  color: var(--nt-navy);
   font-size: 0.875rem;
   font-weight: 700;
   text-decoration: none;
-  border-radius: 999px;
+  border-radius: var(--nt-radius-sm);
   white-space: nowrap;
   transition:
-    background-color 200ms var(--nt-ease),
-    transform 200ms var(--nt-ease);
+    background-color var(--nt-dur-fast) var(--nt-ease),
+    color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .explore-cta:hover {
-  background-color: #eaf0f4;
-  transform: translateY(-1px);
-}
-
-.explore-cta:active {
-  transform: scale(0.98);
+  background-color: var(--nt-brand-red);
+  color: var(--nt-text-on-dark);
 }
 
 .mobile-arrows {
@@ -354,35 +384,37 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  color: #ffffff;
+  width: 44px;
+  height: 44px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--nt-border-on-dark);
+  border-radius: var(--nt-radius-sm);
+  color: var(--nt-text-on-dark);
   cursor: pointer;
-  transition: background-color 180ms var(--nt-ease);
+  transition: background-color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .mobile-arrow-btn:hover {
-  background-color: rgba(255, 255, 255, 0.16);
+  background-color: rgba(255, 255, 255, 0.14);
 }
 
-/* Compact Bottom 5 Interactive Story Progress Bars */
+/* Interactive Progress Rail */
 .story-progress-rail {
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.55rem;
-  max-width: 1120px;
+  gap: 0.7rem;
+  max-width: 1440px;
   margin-inline: auto;
-  margin-block-start: 0.85rem;
+  margin-block-start: 1.15rem;
 }
 
 .story-bar-btn {
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0.45rem 0;
+  padding: 0.5rem 0;
   background: transparent;
   border: 0;
   cursor: pointer;
@@ -392,11 +424,10 @@
   position: relative;
   display: block;
   width: 100%;
-  height: 2.5px;
-  border-radius: 999px;
-  background-color: rgba(255, 255, 255, 0.18);
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.16);
   overflow: hidden;
-  transition: background-color 200ms var(--nt-ease);
+  transition: background-color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .story-bar-btn:hover .story-bar-track {
@@ -404,15 +435,14 @@
 }
 
 .story-bar-btn.is-passed .story-bar-track {
-  background-color: rgba(255, 255, 255, 0.45);
+  background-color: rgba(255, 255, 255, 0.42);
 }
 
 .story-bar-fill {
   display: block;
   width: 100%;
   height: 100%;
-  border-radius: 999px;
-  background-color: #ffffff;
+  background-color: var(--nt-brand-red);
   transform-origin: left center;
   animation: deckTabProgress 6.5s linear forwards;
 }
@@ -434,14 +464,14 @@
   }
 }
 
-/* Laptop / Tablet */
+/* Tablet */
 @media (max-width: 1023px) {
   .deck-viewport {
     height: clamp(210px, 40vw, 330px);
   }
 
   .deck-card {
-    width: clamp(270px, 60vw, 480px);
+    width: clamp(270px, 62vw, 480px);
   }
 
   .spotlight-info {
@@ -454,11 +484,11 @@
 /* Mobile */
 @media (max-width: 767px) {
   .deck-section {
-    padding-block: 2.25rem 2.5rem;
+    padding-block: var(--nt-section-py-mobile);
   }
 
   .cinema-stage {
-    border-radius: 16px;
+    border-radius: var(--nt-radius-md);
     padding: 1.25rem 1rem 1rem;
   }
 
@@ -467,11 +497,11 @@
   }
 
   .deck-viewport {
-    height: clamp(195px, 58vw, 260px);
+    height: clamp(190px, 56vw, 250px);
   }
 
   .deck-card {
-    width: 88%;
+    width: 90%;
   }
 
   .spotlight-actions {
@@ -492,9 +522,37 @@
   }
 }
 
+@media (max-width: 479px) {
+  .spotlight-actions {
+    gap: 0.45rem;
+  }
+
+  .explore-cta {
+    min-width: 0;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.8125rem;
+    gap: 0.4rem;
+  }
+
+  .mobile-arrows {
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .mobile-arrow-btn {
+    width: 38px;
+    height: 38px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .story-bar-fill {
     animation: none;
     transform: scaleX(1);
+  }
+
+  .stage-pulse {
+    animation: none;
+    opacity: 0;
   }
 }

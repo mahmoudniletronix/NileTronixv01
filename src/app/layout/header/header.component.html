@@ -49,7 +49,7 @@
             (click)="toggleSolutionsMenu()"
           >
             <span>{{ content().nav.solutions }}</span>
-            <i class="fa-solid fa-chevron-down chevron-icon" aria-hidden="true"></i>
+            <app-nt-icon name="chevron-down" class="chevron-icon" [size]="14" />
           </button>
         </li>
 
@@ -101,23 +101,49 @@
 
     <!-- Desktop Actions -->
     <div class="header-actions">
-      <button
-        type="button"
+      <div
         class="lang-switcher"
+        role="group"
         [attr.aria-label]="content().nav.languageSwitchLabel"
-        (click)="lang.toggleLanguage()"
+        dir="ltr"
       >
-        <i class="fa-solid fa-globe" aria-hidden="true"></i>
-        <span>{{ content().nav.languageCode }}</span>
-      </button>
+        <span class="lang-icon" aria-hidden="true">
+          <app-nt-icon name="globe" [size]="15" [strokeWidth]="1.65" />
+        </span>
+        <div class="lang-options">
+          <button
+            type="button"
+            class="lang-option"
+            [class.is-active]="lang.lang() === 'en'"
+            [attr.aria-pressed]="lang.lang() === 'en'"
+            aria-label="English"
+            (click)="lang.setLanguage('en')"
+          >
+            EN
+          </button>
+          <span class="lang-sep" aria-hidden="true">/</span>
+          <button
+            type="button"
+            class="lang-option lang-option-ar"
+            [class.is-active]="lang.lang() === 'ar'"
+            [attr.aria-pressed]="lang.lang() === 'ar'"
+            aria-label="العربية"
+            (click)="lang.setLanguage('ar')"
+          >
+            عربي
+          </button>
+        </div>
+      </div>
 
       <a
         class="header-cta"
+        appNtMagnetic
+        [magneticMax]="3.5"
         href="#contact"
         (click)="navigateToSection('contact', $event)"
       >
         <span>{{ content().nav.consultationCta }}</span>
-        <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+        <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="14" />
       </a>
 
       <!-- Mobile Menu Trigger -->
@@ -132,9 +158,9 @@
         (click)="toggleMobileDrawer()"
       >
         @if (mobileDrawerOpen()) {
-          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          <app-nt-icon name="close" [size]="20" />
         } @else {
-          <i class="fa-solid fa-bars" aria-hidden="true"></i>
+          <app-nt-icon name="menu" [size]="20" />
         }
       </button>
     </div>
@@ -160,7 +186,7 @@
             (click)="navigateToSection('solutions', $event)"
           >
             <span>{{ content().nav.viewAllSolutions }}</span>
-            <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+            <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="14" />
           </a>
         </div>
 
@@ -202,6 +228,8 @@
           [alt]="content().brand.name"
           width="776"
           height="193"
+          loading="lazy"
+          decoding="async"
         />
       </a>
       <button
@@ -210,11 +238,11 @@
         [attr.aria-label]="content().nav.closeMenuLabel"
         (click)="closeMobileDrawer()"
       >
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        <app-nt-icon name="close" [size]="20" />
       </button>
     </div>
 
-    <nav class="drawer-nav" [attr.aria-label]="content().nav.mobileAriaLabel">
+    <nav class="drawer-nav" data-lenis-prevent [attr.aria-label]="content().nav.mobileAriaLabel">
       <ul class="drawer-list">
         <li>
           <a
@@ -236,11 +264,12 @@
             (click)="toggleMobileSolutions()"
           >
             <span>{{ content().nav.solutions }}</span>
-            <i
-              class="fa-solid fa-chevron-down chevron-icon"
+            <app-nt-icon
+              name="chevron-down"
+              class="chevron-icon"
               [class.is-rotated]="mobileSolutionsOpen()"
-              aria-hidden="true"
-            ></i>
+              [size]="16"
+            />
           </button>
 
           @if (mobileSolutionsOpen()) {
@@ -318,7 +347,7 @@
         (click)="navigateToSection('contact', $event)"
       >
         <span>{{ content().nav.consultationCta }}</span>
-        <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+        <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="14" />
       </a>
     </div>
   </aside>

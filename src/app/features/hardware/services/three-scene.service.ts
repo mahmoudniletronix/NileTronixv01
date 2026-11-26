@@ -39,6 +39,7 @@ export class ThreeSceneService {
   private contactShadowGeo: ThreeNamespace.BufferGeometry | null = null;
   private contactShadowMat: ThreeNamespace.Material | null = null;
   private contactShadowTex: ThreeNamespace.Texture | null = null;
+  private contactShadowMesh: ThreeNamespace.Mesh | null = null;
 
   private containerEl: HTMLElement | null = null;
   private resizeObserver: ResizeObserver | null = null;
@@ -47,16 +48,28 @@ export class ThreeSceneService {
   private currentProduct: HardwareProductItem | null = null;
   private currentModelRoot: ThreeNamespace.Group | null = null;
   private currentFraming: FramingBox | null = null;
+  private activePreset: CameraPresetId | null = 'perspective';
+  private userHasOrbited = false;
 
   private rafId: number | null = null;
+  private isTicking = false;
+  private introRotateTimer: ReturnType<typeof setTimeout> | null = null;
   private isVisibleInViewport = true;
   private isDocumentVisible = true;
   private autoRotateEnabled = false;
+  private introRotateActive = false;
   private needsRender = true;
   private dampingActive = false;
   private reducedMotion = false;
   private loadGeneration = 0;
   private destroyed = false;
+  private lastHotspotEmitTime = 0;
+  private lastHotspotSignature = '';
+  private scratchPrevPos: ThreeNamespace.Vector3 | null = null;
+  private scratchWorldPos: ThreeNamespace.Vector3 | null = null;
+  private scratchNormal: ThreeNamespace.Vector3 | null = null;
+  private scratchToCam: ThreeNamespace.Vector3 | null = null;
+  private scratchNdc: ThreeNamespace.Vector3 | null = null;
 
   private readonly boundVisibilityChange = () => this.onVisibilityChange();
   private readonly boundContextLost = (e: Event) => {
@@ -102,6 +115,11 @@ export class ThreeSceneService {
 
     if (this.destroyed) return false;
     this.T = T;
+    this.scratchPrevPos = new T.Vector3();
+    this.scratchWorldPos = new T.Vector3();
+    this.scratchNormal = new T.Vector3();
+    this.scratchToCam = new T.Vector3();
+    this.scratchNdc = new T.Vector3();
 
     const width = Math.max(container.clientWidth, 300);
     const height = Math.max(container.clientHeight, 300);
@@ -111,13 +129,14 @@ export class ThreeSceneService {
       alpha: true,
       powerPreference: 'high-performance',
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
     renderer.setSize(width, height, false);
     renderer.outputColorSpace = T.SRGBColorSpace;
     renderer.toneMapping = T.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.06;
+    renderer.toneMappingExposure = 1.0;
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = T.PCFSoftShadowMap;
+    renderer.shadowMap.type = T.PCFShadowMap;
+    renderer.shadowMap.autoUpdate = false;
 
     renderer.domElement.className = 'nt-3d-canvas';
     renderer.domElement.setAttribute('aria-hidden', 'true');
@@ -130,30 +149,30 @@ export class ThreeSceneService {
     const scene = new T.Scene();
     this.scene = scene;
 
-    // Neutral industrial studio IBL environment (no external HDRI network fetch required)
+    // Neutral industrial studio IBL environment (balanced for white & dark powder-coated metals)
     const pmrem = new T.PMREMGenerator(renderer);
     pmrem.compileEquirectangularShader();
     const roomEnv = new RoomEnvironment();
-    const envTarget = pmrem.fromScene(roomEnv, 0.04);
+    const envTarget = pmrem.fromScene(roomEnv, 0.045);
     roomEnv.dispose();
     scene.environment = envTarget.texture;
-    scene.environmentIntensity = 0.72;
+    scene.environmentIntensity = 0.62;
     this.pmremGenerator = pmrem;
     this.envRenderTarget = envTarget;
 
-    // Perspective camera
-    const camera = new T.PerspectiveCamera(36, width / height, 0.05, 50);
-    camera.position.set(1.2, 1.0, 2.8);
+    // Perspective camera (34deg telephoto architectural lens reduces distortion & enhances proportion)
+    const camera = new T.PerspectiveCamera(34, width / height, 0.05, 50);
+    camera.position.set(1.1, 0.95, 2.5);
     this.camera = camera;
 
-    // 3-point studio photography lighting (soft overhead key + balanced front fill)
-    const hemi = new T.HemisphereLight(0xf8fcff, 0xdce5ec, 0.85);
+    // Soft calibrated studio lighting (preserves crisp shading on white kiosks & matte terminals)
+    const hemi = new T.HemisphereLight(0xf6fafd, 0xc9d7e2, 0.8);
     scene.add(hemi);
 
-    const keyLight = new T.DirectionalLight(0xffffff, 1.45);
-    keyLight.position.set(1.6, 5.2, 2.8);
+    const keyLight = new T.DirectionalLight(0xfffdf9, 1.42);
+    keyLight.position.set(2.1, 5.0, 2.9);
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.set(1024, 1024);
+    keyLight.shadow.mapSize.set(512, 512);
     keyLight.shadow.camera.near = 0.5;
     keyLight.shadow.camera.far = 14;
     keyLight.shadow.camera.left = -2.2;
@@ -161,20 +180,20 @@ export class ThreeSceneService {
     keyLight.shadow.camera.top = 2.5;
     keyLight.shadow.camera.bottom = -1.5;
     keyLight.shadow.bias = -0.0005;
-    keyLight.shadow.radius = 8;
+    keyLight.shadow.radius = 3;
     scene.add(keyLight);
 
-    const fillLight = new T.DirectionalLight(0xe4f1f9, 0.82);
-    fillLight.position.set(-2.8, 2.4, 2.6);
+    const fillLight = new T.DirectionalLight(0xd9eaf4, 0.78);
+    fillLight.position.set(-3.0, 2.2, 2.4);
     scene.add(fillLight);
 
-    const rimLight = new T.DirectionalLight(0xeef2f6, 0.42);
-    rimLight.position.set(-1.6, 3.2, -3.4);
+    const rimLight = new T.DirectionalLight(0xc8e4f2, 0.68);
+    rimLight.position.set(-1.5, 3.0, -3.5);
     scene.add(rimLight);
 
     // Subtle ground directional shadow catcher
     const shadowGeo = new T.PlaneGeometry(5.5, 5.5);
-    const shadowMat = new T.ShadowMaterial({ opacity: 0.085 });
+    const shadowMat = new T.ShadowMaterial({ opacity: 0.13 });
     const shadowPlane = new T.Mesh(shadowGeo, shadowMat);
     shadowPlane.rotation.x = -Math.PI / 2;
     shadowPlane.position.y = -0.003;
@@ -183,21 +202,21 @@ export class ThreeSceneService {
     this.groundShadowGeo = shadowGeo;
     this.groundShadowMat = shadowMat;
 
-    // Soft radial studio contact shadow directly beneath the hardware base
+    // Soft radial studio contact shadow dynamically scaled to each model footprint
     const contactCanvas = document.createElement('canvas');
     contactCanvas.width = 256;
     contactCanvas.height = 256;
     const cCtx = contactCanvas.getContext('2d');
     if (cCtx) {
-      const grad = cCtx.createRadialGradient(128, 128, 12, 128, 128, 124);
-      grad.addColorStop(0, 'rgba(8, 47, 67, 0.24)');
-      grad.addColorStop(0.5, 'rgba(8, 47, 67, 0.09)');
-      grad.addColorStop(1, 'rgba(8, 47, 67, 0)');
+      const grad = cCtx.createRadialGradient(128, 128, 14, 128, 128, 124);
+      grad.addColorStop(0, 'rgba(10, 25, 36, 0.34)');
+      grad.addColorStop(0.45, 'rgba(10, 25, 36, 0.14)');
+      grad.addColorStop(1, 'rgba(10, 25, 36, 0)');
       cCtx.fillStyle = grad;
       cCtx.fillRect(0, 0, 256, 256);
     }
     const contactTex = new T.CanvasTexture(contactCanvas);
-    const contactGeo = new T.PlaneGeometry(1.45, 1.45);
+    const contactGeo = new T.PlaneGeometry(1, 1);
     const contactMat = new T.MeshBasicMaterial({
       map: contactTex,
       transparent: true,
@@ -210,6 +229,7 @@ export class ThreeSceneService {
     this.contactShadowGeo = contactGeo;
     this.contactShadowMat = contactMat;
     this.contactShadowTex = contactTex;
+    this.contactShadowMesh = contactMesh;
 
     // Stage container holding the active hardware model
     const stageGroup = new T.Group();
@@ -231,6 +251,9 @@ export class ThreeSceneService {
     controls.autoRotateSpeed = 1.15;
 
     controls.addEventListener('start', () => {
+      this.stopIntroRotate();
+      this.userHasOrbited = true;
+      this.activePreset = null;
       this.cameraController.cancelTransition();
       this.dampingActive = true;
       this.callbacks?.onUserInteract();
@@ -293,15 +316,31 @@ export class ThreeSceneService {
       this.stageGroup.position.set(0, 0, 0);
       this.stageGroup.rotation.set(0, 0, 0);
 
+      // Always halt any active intro rotation before framing the new hardware model
+      this.stopIntroRotate();
+
       this.currentFraming = this.cameraController.computeFraming(this.T, this.stageGroup);
+      this.activePreset = 'perspective';
+      this.userHasOrbited = false;
+
+      // Dynamically scale contact shadow to match the loaded hardware footprint
+      if (this.contactShadowMesh) {
+        const footprintX = Math.max(this.currentFraming.size.x * 1.9, 0.85);
+        const footprintZ = Math.max(this.currentFraming.size.z * 1.9, 0.85);
+        this.contactShadowMesh.scale.set(footprintX, footprintZ, 1);
+      }
+
       const idealDist = this.cameraController.getIdealDistance(
+        this.T,
         this.camera,
         this.currentFraming,
-        product.model3d.distanceScale ?? 1.1
+        product.model3d.defaultYawDeg,
+        product.model3d.defaultPitchDeg
       );
-      this.controls.minDistance = Math.max(this.currentFraming.radius * 1.1, 0.85);
-      this.controls.maxDistance = Math.max(idealDist * 2.1, 4.8);
+      this.controls.minDistance = Math.max(this.currentFraming.radius * 1.05, 0.75);
+      this.controls.maxDistance = Math.max(idealDist * 2.2, 4.8);
 
+      // Snap cleanly to the new model's front-facing 3/4 pose before starting subtle intro spin
       this.cameraController.moveToPreset(
         this.T,
         this.camera,
@@ -310,15 +349,26 @@ export class ThreeSceneService {
         'perspective',
         product.model3d.defaultYawDeg,
         product.model3d.defaultPitchDeg,
-        product.model3d.distanceScale ?? 1.1,
-        !animateSwap || this.reducedMotion,
-        () => this.requestRender()
+        true,
+        () => this.requestRender(),
+        () => {
+          if (!this.destroyed && gen === this.loadGeneration) {
+            this.startIntroRotate();
+          }
+        }
       );
 
-      this.animator.animateEntrance(this.stageGroup, this.reducedMotion, () =>
-        this.requestRender()
-      );
+      this.animator.animateEntrance(this.stageGroup, this.reducedMotion, () => {
+        if (this.renderer) {
+          this.renderer.shadowMap.needsUpdate = true;
+        }
+        this.requestRender();
+      });
 
+      this.lastHotspotSignature = '';
+      if (this.renderer) {
+        this.renderer.shadowMap.needsUpdate = true;
+      }
       this.callbacks?.onModelReady(product.id);
       this.requestRender();
     } catch (err) {
@@ -333,6 +383,9 @@ export class ThreeSceneService {
     if (!this.T || !this.camera || !this.controls || !this.currentFraming || !this.currentProduct) {
       return;
     }
+    this.stopIntroRotate();
+    this.activePreset = preset;
+    this.userHasOrbited = false;
     this.cameraController.moveToPreset(
       this.T,
       this.camera,
@@ -341,7 +394,6 @@ export class ThreeSceneService {
       preset,
       this.currentProduct.model3d.defaultYawDeg,
       this.currentProduct.model3d.defaultPitchDeg,
-      this.currentProduct.model3d.distanceScale ?? 1.1,
       this.reducedMotion,
       () => this.requestRender()
     );
@@ -349,6 +401,9 @@ export class ThreeSceneService {
 
   focusHotspot(hotspot: ProductHotspot): void {
     if (!this.T || !this.camera || !this.controls || !this.currentFraming) return;
+    this.stopIntroRotate();
+    this.userHasOrbited = true;
+    this.activePreset = null;
     this.cameraController.focusHotspot(
       this.T,
       this.camera,
@@ -362,6 +417,8 @@ export class ThreeSceneService {
 
   zoomIn(): void {
     if (!this.camera || !this.controls) return;
+    this.stopIntroRotate();
+    this.userHasOrbited = true;
     this.cameraController.zoomByFactor(
       this.camera,
       this.controls,
@@ -373,6 +430,8 @@ export class ThreeSceneService {
 
   zoomOut(): void {
     if (!this.camera || !this.controls) return;
+    this.stopIntroRotate();
+    this.userHasOrbited = true;
     this.cameraController.zoomByFactor(
       this.camera,
       this.controls,
@@ -383,8 +442,10 @@ export class ThreeSceneService {
   }
 
   setAutoRotate(enabled: boolean): void {
+    this.stopIntroRotate();
     this.autoRotateEnabled = enabled && !this.reducedMotion;
     if (this.controls) {
+      this.controls.autoRotateSpeed = 1.15;
       this.controls.autoRotate = this.autoRotateEnabled;
     }
     if (this.autoRotateEnabled) {
@@ -408,13 +469,36 @@ export class ThreeSceneService {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height, false);
-    this.requestRender();
+
+    // Recalculate auto-framing cleanly on resize while preserving user's manual camera angle
+    if (
+      !this.userHasOrbited &&
+      this.activePreset &&
+      this.T &&
+      this.controls &&
+      this.currentFraming &&
+      this.currentProduct
+    ) {
+      this.cameraController.moveToPreset(
+        this.T,
+        this.camera,
+        this.controls,
+        this.currentFraming,
+        this.activePreset,
+        this.currentProduct.model3d.defaultYawDeg,
+        this.currentProduct.model3d.defaultPitchDeg,
+        true,
+        () => this.requestRender()
+      );
+    } else {
+      this.requestRender();
+    }
   }
 
   requestRender(): void {
     if (this.destroyed || !this.isVisibleInViewport || !this.isDocumentVisible) return;
     this.needsRender = true;
-    if (this.rafId === null) {
+    if (!this.isTicking && this.rafId === null) {
       this.ngZone.runOutsideAngular(() => {
         this.rafId = requestAnimationFrame(() => this.tick());
       });
@@ -427,64 +511,139 @@ export class ThreeSceneService {
       return;
     }
 
-    const prevPos = this.camera.position.clone();
-    const controlsUpdated = this.controls.update();
-    const moved = prevPos.distanceToSquared(this.camera.position) > 1e-8;
+    this.isTicking = true;
+    try {
+      const prevPos = this.scratchPrevPos!;
+      prevPos.copy(this.camera.position);
+      const controlsUpdated = this.controls.update();
+      const moved = prevPos.distanceToSquared(this.camera.position) > 1e-7;
 
-    if (this.needsRender || controlsUpdated || moved || this.autoRotateEnabled) {
-      this.renderer.render(this.scene, this.camera);
-      this.projectHotspots();
-      this.needsRender = false;
-    }
-
-    // Keep animating only while autoRotate or OrbitControls damping is actively settling
-    if (
-      this.isVisibleInViewport &&
-      this.isDocumentVisible &&
-      (this.autoRotateEnabled || moved || this.dampingActive)
-    ) {
-      if (!moved && !this.autoRotateEnabled) {
-        this.dampingActive = false;
+      const isRotating = this.autoRotateEnabled || this.introRotateActive;
+      const shouldRender = this.needsRender || controlsUpdated || moved || isRotating;
+      if (shouldRender) {
+        this.renderer.render(this.scene, this.camera);
+        this.projectHotspots(!moved && !isRotating);
+        this.needsRender = false;
       }
-      this.rafId = requestAnimationFrame(() => this.tick());
+
+      // Keep animating only while autoRotate, brief intro spin, or OrbitControls damping is active
+      if (
+        this.isVisibleInViewport &&
+        this.isDocumentVisible &&
+        (isRotating || moved || this.dampingActive)
+      ) {
+        if (!moved && !isRotating) {
+          this.dampingActive = false;
+        }
+        if (this.rafId === null) {
+          this.rafId = requestAnimationFrame(() => this.tick());
+        }
+      }
+    } finally {
+      this.isTicking = false;
     }
   }
 
-  private projectHotspots(): void {
-    if (!this.T || !this.camera || !this.currentProduct || !this.currentFraming || !this.stageGroup) {
-      return;
+  private startIntroRotate(): void {
+    this.stopIntroRotate();
+    if (this.reducedMotion || this.autoRotateEnabled || !this.controls) return;
+
+    this.introRotateActive = true;
+    this.controls.autoRotateSpeed = 0.65;
+    this.controls.autoRotate = true;
+    this.requestRender();
+
+    this.ngZone.runOutsideAngular(() => {
+      this.introRotateTimer = setTimeout(() => {
+        this.stopIntroRotate();
+      }, 2600);
+    });
+  }
+
+  private stopIntroRotate(): void {
+    if (this.introRotateTimer !== null) {
+      clearTimeout(this.introRotateTimer);
+      this.introRotateTimer = null;
     }
-    const hotspots = this.currentProduct.model3d.hotspots;
-    if (!hotspots.length) {
-      this.callbacks?.onHotspotsProjected([]);
+    if (this.introRotateActive) {
+      this.introRotateActive = false;
+      if (this.controls) {
+        this.controls.autoRotate = this.autoRotateEnabled;
+        this.controls.autoRotateSpeed = 1.15;
+      }
+      this.projectHotspots(true);
+    }
+  }
+
+  private projectHotspots(force = false): void {
+    if (
+      !this.T ||
+      !this.camera ||
+      !this.currentProduct ||
+      !this.currentFraming ||
+      !this.stageGroup ||
+      !this.scratchWorldPos ||
+      !this.scratchNormal ||
+      !this.scratchToCam ||
+      !this.scratchNdc
+    ) {
       return;
     }
 
-    const T = this.T;
+    const now = performance.now();
+    if (!force && now - this.lastHotspotEmitTime < 34) {
+      return;
+    }
+
+    const hotspots = this.currentProduct.model3d.hotspots;
+    if (!hotspots.length) {
+      if (this.lastHotspotSignature !== 'empty') {
+        this.lastHotspotSignature = 'empty';
+        this.lastHotspotEmitTime = now;
+        this.callbacks?.onHotspotsProjected([]);
+      }
+      return;
+    }
+
     const camPos = this.camera.position;
     const framing = this.currentFraming;
+    const worldPos = this.scratchWorldPos;
+    const normal = this.scratchNormal;
+    const toCam = this.scratchToCam;
+    const ndc = this.scratchNdc;
+
+    let signature = '';
     const projected: ProjectedHotspot[] = hotspots.map((hs) => {
-      const worldPos = new T.Vector3(
+      worldPos.set(
         framing.center.x + hs.anchor.x * framing.size.x,
         framing.center.y + hs.anchor.y * framing.size.y,
         framing.center.z + hs.anchor.z * framing.size.z
       );
 
-      const normal = new T.Vector3(hs.normal.x, hs.normal.y, hs.normal.z).normalize();
-      const toCam = camPos.clone().sub(worldPos).normalize();
+      normal.set(hs.normal.x, hs.normal.y, hs.normal.z).normalize();
+      toCam.copy(camPos).sub(worldPos).normalize();
       const facingCamera = normal.dot(toCam) > 0.08;
 
-      const ndc = worldPos.clone().project(this.camera!);
+      ndc.copy(worldPos).project(this.camera!);
       const inBounds = ndc.z > -1 && ndc.z < 1 && Math.abs(ndc.x) <= 0.96 && Math.abs(ndc.y) <= 0.94;
+      const visible = facingCamera && inBounds;
+      const xPercent = Math.round((ndc.x * 0.5 + 0.5) * 200) / 2;
+      const yPercent = Math.round((-ndc.y * 0.5 + 0.5) * 200) / 2;
 
+      signature += `${hs.id}:${visible ? 1 : 0}:${xPercent}:${yPercent}|`;
       return {
         hotspot: hs,
-        xPercent: (ndc.x * 0.5 + 0.5) * 100,
-        yPercent: (-ndc.y * 0.5 + 0.5) * 100,
-        visible: facingCamera && inBounds,
+        xPercent,
+        yPercent,
+        visible,
       };
     });
 
+    if (!force && signature === this.lastHotspotSignature) {
+      return;
+    }
+    this.lastHotspotSignature = signature;
+    this.lastHotspotEmitTime = now;
     this.callbacks?.onHotspotsProjected(projected);
   }
 
@@ -506,7 +665,9 @@ export class ThreeSceneService {
 
   destroy(): void {
     this.destroyed = true;
+    this.stopIntroRotate();
     this.stopLoop();
+    this.contactShadowMesh = null;
     this.cameraController.destroy();
     this.animator.destroy();
     document.removeEventListener('visibilitychange', this.boundVisibilityChange);

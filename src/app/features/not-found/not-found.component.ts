@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LanguageService } from '../../core/i18n/language.service';
+import { NtIconComponent } from '../../shared/ui/nt-icon.component';
 
 @Component({
   selector: 'app-not-found',
-  imports: [RouterLink],
+  imports: [RouterLink, NtIconComponent],
   template: `
     <section class="not-found-page" aria-labelledby="not-found-heading">
       <div class="nt-container not-found-inner">
@@ -20,7 +21,7 @@ import { LanguageService } from '../../core/i18n/language.service';
           }
         </p>
         <a class="home-cta" routerLink="/">
-          <i class="fa-solid fa-arrow-left nt-dir-icon" aria-hidden="true"></i>
+          <app-nt-icon name="arrow-left" class="nt-dir-icon" [size]="15" />
           <span>{{ lang() === 'ar' ? 'العودة إلى الرئيسية' : 'Back to Home' }}</span>
         </a>
       </div>
@@ -52,7 +53,7 @@ import { LanguageService } from '../../core/i18n/language.service';
       font-size: 0.8125rem;
       font-weight: 700;
       letter-spacing: 0.08em;
-      color: var(--nt-nile-blue);
+      color: var(--nt-brand-red-ink);
     }
 
     .not-found-title {
@@ -87,7 +88,7 @@ import { LanguageService } from '../../core/i18n/language.service';
     }
 
     .home-cta:hover {
-      background-color: var(--nt-nile-blue);
+      background-color: var(--nt-brand-red);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

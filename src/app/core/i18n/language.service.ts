@@ -124,7 +124,7 @@ const CONTENT_EN: SiteContent = {
     description:
       'Integrated software, intelligent systems, and reliable infrastructure — engineered to simplify business operations across your facilities.',
     primaryCta: 'Explore Solutions',
-    secondaryCta: 'View Our Projects',
+    secondaryCta: 'Explore Hardware',
     imageAlt:
       'Modern enterprise service lobby equipped with a NileTronix self-service ticketing kiosk, overhead digital queue display, and organized service counters.',
     indicatorsLabel: 'Core integrated capabilities',
@@ -203,7 +203,7 @@ const CONTENT_AR: SiteContent = {
     description:
       'برمجيات متكاملة، وأنظمة ذكية، وبنية تحتية موثوقة — مُصممة لتبسيط العمليات التشغيلية ورفع كفاءة منشآتك.',
     primaryCta: 'استكشف الحلول',
-    secondaryCta: 'استعرض مشاريعنا',
+    secondaryCta: 'استعرض الأجهزة',
     imageAlt:
       'ردهة خدمة مؤسسية حديثة مجهزة بكشك خدمة ذاتية لإصدار التذاكر من نايل ترونكس وشاشة رقمية لإدارة الانتظار ومكاتب استقبال منظمة.',
     indicatorsLabel: 'القدرات المتكاملة الأساسية',

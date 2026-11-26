@@ -2,161 +2,154 @@
   class="industries-section"
   aria-labelledby="industries-section-heading"
 >
-  <!-- Editorial Header -->
-  <header class="industries-header">
-    <div class="header-left">
-      <p class="section-eyebrow">
-        <span>{{ t(copy.eyebrowText) }}</span>
+  <div class="site-container industries-inner">
+    <!-- Editorial Header -->
+    <header class="industries-header">
+      <div class="header-left">
+        <p class="section-eyebrow nt-eyebrow">
+          <span class="nt-eyebrow-index" aria-hidden="true">02</span>
+          <span>{{ t(copy.eyebrowText) }}</span>
+        </p>
+        <h2 id="industries-section-heading" class="section-headline nt-section-title">
+          <span>{{ t(copy.headline) }}</span>
+        </h2>
+      </div>
+
+      <p class="header-desc nt-section-lead">
+        {{ t(copy.supportingText) }}
       </p>
-      <h2 id="industries-section-heading" class="section-headline">
-        <span>{{ t(copy.headline) }}</span>
-      </h2>
+    </header>
+
+    <!-- Mobile / Tablet Sector Switcher Tabs (Hidden on Desktop where Panels expand directly) -->
+    <div
+      class="sector-tabs"
+      role="tablist"
+      [attr.aria-label]="t(copy.navAriaLabel)"
+    >
+      @for (item of industries; track item.id; let idx = $index) {
+        <button
+          type="button"
+          role="tab"
+          class="sector-tab"
+          [id]="'industry-tab-' + item.id"
+          [class.is-active]="item.id === selectedId()"
+          [attr.aria-selected]="item.id === selectedId()"
+          aria-controls="industry-stage-panel"
+          (click)="selectIndustry(item.id)"
+          (keydown)="onTabKeydown($event, idx)"
+        >
+          <span class="tab-index" aria-hidden="true">{{ formatNum(idx) }}</span>
+          <span class="tab-label">{{ t(item.name) }}</span>
+        </button>
+      }
     </div>
 
-    <p class="header-desc">
-      {{ t(copy.supportingText) }}
-    </p>
-  </header>
+    <!-- Expanding Architectural Panels Deck (Desktop 5-Panel Accordion / Mobile Active Stage) -->
+    <div id="industry-stage-panel" class="panels-deck" role="tabpanel">
+      @for (item of industries; track item.id; let idx = $index) {
+        @let isActive = item.id === selectedId();
 
-  <!-- Mobile / Tablet Sector Switcher Pills (Hidden on Desktop where Panels expand directly) -->
-  <div
-    class="sector-tabs"
-    role="tablist"
-    [attr.aria-label]="t(copy.navAriaLabel)"
-  >
-    @for (item of industries; track item.id; let idx = $index) {
-      <button
-        type="button"
-        role="tab"
-        class="sector-tab"
-        [id]="'industry-tab-' + item.id"
-        [class.is-active]="item.id === selectedId()"
-        [attr.aria-selected]="item.id === selectedId()"
-        aria-controls="industry-stage-panel"
-        (click)="selectIndustry(item.id)"
-        (keydown)="onTabKeydown($event, idx)"
-      >
-        <i class="tab-icon" [class]="item.faIcon" aria-hidden="true"></i>
-        <span class="tab-label">{{ t(item.name) }}</span>
-      </button>
-    }
-  </div>
-
-  <!-- Expanding Architectural Panels Deck (Desktop 5-Panel Accordion / Mobile Active Stage) -->
-  <div id="industry-stage-panel" class="panels-deck" role="tabpanel">
-    @for (item of industries; track item.id; let idx = $index) {
-      @let isActive = item.id === selectedId();
-
-      <article
-        class="industry-panel"
-        [class.is-active]="isActive"
-        (click)="!isActive && selectIndustry(item.id)"
-        (mousemove)="isActive && onPanelPointerMove($event)"
-        (mouseleave)="isActive && onPanelPointerLeave()"
-      >
-        <!-- Full-Bleed Architectural Photograph -->
-        <div class="panel-media">
-          @if (isActive) {
-            <img
-              #stageImg
-              class="panel-img stage-img"
-              [src]="item.image.src"
-              [alt]="t(item.image.alt)"
-              [width]="item.image.width"
-              [height]="item.image.height"
-              loading="lazy"
-              decoding="async"
-            />
-          } @else {
-            <img
-              class="panel-img"
-              [src]="item.image.src"
-              [alt]="t(item.image.alt)"
-              [width]="item.image.width"
-              [height]="item.image.height"
-              loading="lazy"
-              decoding="async"
-            />
-          }
-          <div class="panel-scrim" aria-hidden="true"></div>
-        </div>
-
-        @if (isActive) {
-          <!-- Top-End Environment Glass Pill -->
-          <div class="env-badge" aria-hidden="true">
-            <i [class]="item.faIcon"></i>
-            <span>{{ t(item.subtitle) }}</span>
+        <article
+          class="industry-panel"
+          [class.is-active]="isActive"
+          (click)="!isActive && selectIndustry(item.id)"
+        >
+          <!-- Full-Bleed Architectural Photograph -->
+          <div class="panel-media">
+            @if (isActive) {
+              <img
+                #stageImg
+                class="panel-img stage-img"
+                [src]="item.image.src"
+                [alt]="t(item.image.alt)"
+                [width]="item.image.width"
+                [height]="item.image.height"
+                loading="lazy"
+                decoding="async"
+              />
+            } @else {
+              <img
+                class="panel-img"
+                [src]="item.image.src"
+                [alt]="t(item.image.alt)"
+                [width]="item.image.width"
+                [height]="item.image.height"
+                loading="lazy"
+                decoding="async"
+              />
+            }
+            <div class="panel-scrim" aria-hidden="true"></div>
           </div>
 
-          <!-- Active Panel Editorial Content -->
-          <div class="stage-content">
-            <div #stageCopy class="stage-head">
-              <div class="stage-meta">
+          @if (isActive) {
+            <!-- Active Panel Swiss Editorial Content (Top Datum / Middle Headline / Lower Spec Rows + CTA) -->
+            <div class="stage-content">
+              <div class="stage-topbar">
                 <span class="stage-index">{{ formattedIndex() }} / {{ formattedTotal }}</span>
-                <span class="stage-dot" aria-hidden="true">·</span>
+                <span class="stage-datum" aria-hidden="true"></span>
                 <span class="stage-subtitle">{{ t(item.subtitle) }}</span>
               </div>
 
-              <h3 class="stage-title">{{ t(item.name) }}</h3>
-              <p class="stage-description">{{ t(item.description) }}</p>
-            </div>
+              <div #stageCopy class="stage-head">
+                <h3 class="stage-title">{{ t(item.name) }}</h3>
+                <p class="stage-description">{{ t(item.description) }}</p>
+              </div>
 
-            <ul #stageList class="stage-capabilities">
-              @for (cap of item.capabilities; track cap.label.en) {
-                <li class="stage-cap-item">
-                  <span class="cap-icon" aria-hidden="true">
-                    <i [class]="cap.icon"></i>
-                  </span>
-                  <span>{{ t(cap.label) }}</span>
-                </li>
-              }
-            </ul>
+              <div class="stage-lower">
+                <ul #stageList class="stage-capabilities">
+                  @for (cap of item.capabilities; track cap.label.en) {
+                    <li class="stage-cap-item">
+                      <span class="cap-marker" aria-hidden="true"></span>
+                      <span>{{ t(cap.label) }}</span>
+                    </li>
+                  }
+                </ul>
 
-            <div class="stage-actions">
-              <a class="stage-cta" [routerLink]="item.ctaRoute">
-                <span>{{ t(copy.exploreCta) }}</span>
-                <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
-              </a>
+                <div class="stage-actions">
+                  <a class="stage-cta" [routerLink]="item.ctaRoute">
+                    <span>{{ t(copy.exploreCta) }}</span>
+                    <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="15" />
+                  </a>
 
-              <div class="stage-nav">
-                <button
-                  type="button"
-                  class="stage-arrow"
-                  [attr.aria-label]="lang() === 'ar' ? 'القطاع السابق' : 'Previous industry'"
-                  (click)="prev(); $event.stopPropagation()"
-                >
-                  <i class="fa-solid fa-arrow-left nt-dir-icon" aria-hidden="true"></i>
-                </button>
-                <button
-                  type="button"
-                  class="stage-arrow"
-                  [attr.aria-label]="lang() === 'ar' ? 'القطاع التالي' : 'Next industry'"
-                  (click)="next(); $event.stopPropagation()"
-                >
-                  <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
-                </button>
+                  <div class="stage-nav">
+                    <button
+                      type="button"
+                      class="stage-arrow"
+                      [attr.aria-label]="lang() === 'ar' ? 'القطاع السابق' : 'Previous industry'"
+                      (click)="prev(); $event.stopPropagation()"
+                    >
+                      <app-nt-icon name="arrow-left" class="nt-dir-icon" [size]="15" />
+                    </button>
+                    <button
+                      type="button"
+                      class="stage-arrow"
+                      [attr.aria-label]="lang() === 'ar' ? 'القطاع التالي' : 'Next industry'"
+                      (click)="next(); $event.stopPropagation()"
+                    >
+                      <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="15" />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        } @else {
-          <!-- Collapsed Architectural Spine -->
-          <button
-            type="button"
-            class="collapsed-trigger"
-            [attr.aria-label]="t(item.name)"
-            (click)="selectIndustry(item.id); $event.stopPropagation()"
-          >
-            <span class="spine-top">
-              <span class="spine-num">{{ formatNum(idx) }}</span>
-              <span class="spine-icon" aria-hidden="true">
-                <i [class]="item.faIcon"></i>
+          } @else {
+            <!-- Collapsed Architectural Spine -->
+            <button
+              type="button"
+              class="collapsed-trigger"
+              [attr.aria-label]="t(item.name)"
+              (click)="selectIndustry(item.id); $event.stopPropagation()"
+            >
+              <span class="spine-top">
+                <span class="spine-num">{{ formatNum(idx) }}</span>
+                <span class="spine-rule" aria-hidden="true"></span>
               </span>
-            </span>
 
-            <span class="spine-label">{{ t(item.name) }}</span>
-          </button>
-        }
-      </article>
-    }
+              <span class="spine-label">{{ t(item.name) }}</span>
+            </button>
+          }
+        </article>
+      }
+    </div>
   </div>
 </section>

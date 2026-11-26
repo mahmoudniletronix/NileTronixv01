@@ -5,87 +5,38 @@
 }
 
 .blueprint-section {
-  --bp-gutter: var(--nt-gutter);
-  --bp-navy: var(--nt-dark-navy);
-  --bp-teal: var(--nt-nile-blue);
-  --bp-cyan: var(--nt-cyan-accent);
-  --bp-muted: var(--nt-ink-muted);
-  --bp-line: var(--nt-border-subtle);
-  background-color: var(--nt-surface-primary);
-  color: var(--bp-navy);
-  padding-block: var(--nt-section-py);
-  padding-inline: var(--bp-gutter);
-  border-block-start: 1px solid var(--bp-line);
+  background-color: var(--nt-bg-main);
+  color: var(--nt-text-primary);
   overflow-x: clip;
+}
+
+.blueprint-inner {
+  padding-block: var(--nt-section-py);
 }
 
 /* Header */
 .blueprint-header {
   display: grid;
-  grid-template-columns: minmax(0, 56%) minmax(0, 44%);
-  gap: clamp(1rem, 3.5vw, 3.5rem);
+  grid-template-columns: minmax(0, 58%) minmax(0, 42%);
+  gap: clamp(1.25rem, 3.5vw, 4rem);
   align-items: end;
-  margin-block-end: clamp(1.5rem, 2.5vw, 2.25rem);
-}
-
-.section-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin: 0 0 0.5rem;
-  font-size: var(--nt-eyebrow-size);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--bp-teal);
-}
-
-:host-context([dir='rtl']) .section-eyebrow {
-  letter-spacing: 0.02em;
-  font-size: 0.875rem;
-}
-
-.eyebrow-num {
-  color: var(--nt-brand-red);
-  font-variant-numeric: tabular-nums;
-}
-
-.section-headline {
-  margin: 0;
-  font-size: var(--nt-h2-size);
-  font-weight: 800;
-  line-height: 1.12;
-  letter-spacing: -0.025em;
-  color: var(--bp-navy);
-}
-
-:host-context([dir='rtl']) .section-headline {
-  letter-spacing: 0;
-  line-height: 1.24;
-}
-
-.headline-dot {
-  color: var(--bp-cyan);
+  margin-block-end: clamp(1.75rem, 2.8vw, 2.5rem);
 }
 
 .header-desc {
-  margin: 0;
-  font-size: var(--nt-body-size);
-  line-height: 1.65;
-  color: var(--bp-muted);
-  max-width: 50ch;
+  max-width: 52ch;
 }
 
 /* Architectural Category Line + Animated Technical Divider */
 .category-bar-wrap {
   position: relative;
-  margin-block-end: clamp(1.75rem, 3vw, 2.5rem);
+  margin-block-end: clamp(2rem, 3.2vw, 2.75rem);
 }
 
 .category-bar {
   display: flex;
   align-items: center;
-  gap: clamp(1rem, 2.5vw, 2.25rem);
+  gap: clamp(1.25rem, 2.5vw, 2.25rem);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -99,7 +50,7 @@
   display: block;
   width: 100%;
   height: 1px;
-  background-color: var(--bp-line);
+  background-color: var(--nt-border);
 }
 
 .cat-tab {
@@ -111,12 +62,12 @@
   padding-block: 0.85rem;
   background: transparent;
   border: 0;
-  font-size: 0.9375rem;
+  font-size: var(--nt-ui-size);
   font-weight: 600;
-  color: var(--bp-muted);
+  color: var(--nt-text-secondary);
   cursor: pointer;
   white-space: nowrap;
-  transition: color 180ms var(--nt-ease);
+  transition: color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .cat-tab::after {
@@ -125,30 +76,26 @@
   inset-inline: 0;
   inset-block-end: 0;
   height: 2px;
-  background-color: var(--bp-teal);
+  background-color: var(--nt-brand-red);
   transform: scaleX(0);
   transform-origin: inline-start;
-  transition: transform 240ms var(--nt-ease);
+  transition: transform var(--nt-dur-base) var(--nt-ease);
 }
 
 .cat-tab:hover,
 .cat-tab.is-active {
-  color: var(--bp-navy);
-}
-
-.cat-tab.is-active i {
-  color: var(--bp-teal);
+  color: var(--nt-text-primary);
 }
 
 .cat-tab.is-active::after {
   transform: scaleX(1);
 }
 
-/* Asymmetric Interactive Hardware Studio Grid (55% 3D Studio / 45% Technical Dossier) */
+/* Asymmetric Interactive Hardware Studio Grid (60% Spacious 3D Studio / 40% Spec Dossier) */
 .showroom-grid {
   display: grid;
-  grid-template-columns: minmax(0, 55%) minmax(0, 45%);
-  gap: clamp(2rem, 3.8vw, 3.75rem);
+  grid-template-columns: minmax(0, 60%) minmax(0, 40%);
+  gap: clamp(2rem, 4vw, 4.5rem);
   align-items: start;
 }
 
@@ -160,60 +107,7 @@
   min-width: 0;
 }
 
-/* Model Thumbnail Dock below 3D Studio */
-.model-dock {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  overflow-x: auto;
-  padding: 0.25rem 0.1rem;
-  scrollbar-width: none;
-}
-
-.model-dock::-webkit-scrollbar {
-  display: none;
-}
-
-.dock-thumb {
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  height: 46px;
-  padding: 0.25rem 0.65rem;
-  background-color: transparent;
-  border: 0;
-  border-radius: 8px;
-  cursor: pointer;
-  color: var(--bp-muted);
-  transition: background-color 180ms var(--nt-ease), color 180ms var(--nt-ease);
-}
-
-.dock-thumb img {
-  width: 30px;
-  height: 34px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.dock-code {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
-.dock-thumb:hover {
-  background-color: rgba(8, 47, 67, 0.05);
-  color: var(--bp-navy);
-}
-
-.dock-thumb.is-active {
-  background-color: rgba(8, 47, 67, 0.08);
-  color: var(--bp-navy);
-}
-
-/* Right: Swiss Technical Spec Dossier */
+/* Right: Engineering Technical Spec Dossier */
 .spec-dossier {
   display: flex;
   flex-direction: column;
@@ -226,22 +120,21 @@
   align-items: center;
   gap: 0.5rem;
   margin-block-end: 0.65rem;
-  font-size: 0.8125rem;
+  font-size: var(--nt-caption-size);
   font-weight: 700;
 }
 
 .dossier-counter {
-  color: var(--bp-teal);
+  color: var(--nt-brand-red-ink);
   font-variant-numeric: tabular-nums;
 }
 
 .dossier-sep {
-  color: var(--bp-muted);
-  opacity: 0.5;
+  color: var(--nt-border-strong);
 }
 
 .dossier-badge {
-  color: var(--bp-muted);
+  color: var(--nt-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -255,22 +148,22 @@
   margin: 0 0 0.65rem;
   font-size: var(--nt-h3-size);
   font-weight: 800;
-  line-height: 1.18;
-  color: var(--bp-navy);
+  line-height: 1.2;
+  color: var(--nt-text-primary);
 }
 
 .dossier-summary {
   margin: 0;
   font-size: var(--nt-body-size);
   line-height: 1.65;
-  color: var(--bp-muted);
+  color: var(--nt-text-secondary);
 }
 
 /* Technical Specifications Table */
 .spec-table {
   margin: 0;
   padding: 0;
-  border-block-start: 1px solid var(--bp-line);
+  border-block-start: 1px solid var(--nt-border);
 }
 
 .spec-row {
@@ -279,29 +172,28 @@
   justify-content: space-between;
   gap: 1rem;
   padding-block: 0.85rem;
-  border-block-end: 1px solid var(--bp-line);
+  border-block-end: 1px solid var(--nt-border);
 }
 
 .spec-key {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--bp-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--nt-text-secondary);
 }
 
-.spec-key i {
-  color: var(--bp-teal);
-  width: 16px;
-  text-align: center;
+:host-context([dir='rtl']) .spec-key {
+  font-size: 0.875rem;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .spec-val {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: var(--nt-ui-size);
   font-weight: 700;
-  color: var(--bp-navy);
+  color: var(--nt-text-primary);
   text-align: end;
 }
 
@@ -309,16 +201,16 @@
 .model-index-block {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.55rem;
 }
 
 .index-heading {
   margin: 0;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--bp-muted);
+  color: var(--nt-text-secondary);
 }
 
 :host-context([dir='rtl']) .index-heading {
@@ -333,22 +225,25 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
 }
 
 .index-row-btn {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.75rem;
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 0.75rem;
   background: transparent;
-  border: 0;
-  border-radius: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--nt-radius-sm);
   text-align: start;
   cursor: pointer;
-  color: var(--bp-muted);
-  transition: background-color 180ms var(--nt-ease), color 180ms var(--nt-ease);
+  color: var(--nt-text-secondary);
+  transition:
+    background-color var(--nt-dur-fast) var(--nt-ease),
+    border-color var(--nt-dur-fast) var(--nt-ease),
+    color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .index-thumb {
@@ -367,21 +262,26 @@
 }
 
 .index-row-btn:hover {
-  color: var(--bp-navy);
-  background-color: #f4f7f9;
+  color: var(--nt-text-primary);
+  background-color: var(--nt-surface-soft);
 }
 
 .index-row-btn.is-active {
-  color: var(--bp-navy);
+  color: var(--nt-text-primary);
   font-weight: 700;
-  background-color: #eef3f7;
+  background-color: var(--nt-surface-soft);
+  border-color: var(--nt-border);
 }
 
 .index-num {
   font-size: 0.8125rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--bp-teal);
+  color: var(--nt-slate-ink);
+}
+
+.index-row-btn.is-active .index-num {
+  color: var(--nt-brand-red-ink);
 }
 
 .index-name {
@@ -396,7 +296,7 @@
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.06em;
-  opacity: 0.7;
+  color: var(--nt-text-secondary);
 }
 
 /* Dossier Footer */
@@ -414,18 +314,18 @@
   justify-content: center;
   gap: 0.55rem;
   min-height: 46px;
-  padding: 0.65rem 1.35rem;
-  background-color: var(--bp-navy);
-  color: #ffffff;
+  padding: 0.65rem 1.4rem;
+  background-color: var(--nt-navy);
+  color: var(--nt-text-on-dark);
   font-size: 0.9rem;
   font-weight: 700;
   text-decoration: none;
-  border-radius: 6px;
-  transition: background-color 180ms var(--nt-ease);
+  border-radius: var(--nt-radius-sm);
+  transition: background-color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .dossier-cta:hover {
-  background-color: var(--bp-teal);
+  background-color: var(--nt-brand-red);
 }
 
 .dossier-arrows {
@@ -437,38 +337,41 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  background-color: #ffffff;
-  border: 1px solid var(--bp-line);
-  border-radius: 6px;
-  color: var(--bp-navy);
+  width: 44px;
+  height: 44px;
+  background-color: var(--nt-bg-main);
+  border: 1px solid var(--nt-border);
+  border-radius: var(--nt-radius-sm);
+  color: var(--nt-text-primary);
   cursor: pointer;
-  transition: border-color 180ms var(--nt-ease), background-color 180ms var(--nt-ease), color 180ms var(--nt-ease);
+  transition:
+    border-color var(--nt-dur-fast) var(--nt-ease),
+    background-color var(--nt-dur-fast) var(--nt-ease),
+    color var(--nt-dur-fast) var(--nt-ease);
 }
 
 .dossier-arrow:hover {
-  background-color: #f4f7f9;
-  border-color: #c2d0da;
-  color: var(--bp-navy);
+  background-color: var(--nt-surface-soft);
+  border-color: var(--nt-border-strong);
+  color: var(--nt-navy);
 }
 
 /* Tablet & Mobile */
 @media (max-width: 1023px) {
   .blueprint-header {
     grid-template-columns: 1fr;
-    gap: 0.75rem;
+    gap: 0.85rem;
   }
 
   .showroom-grid {
     grid-template-columns: 1fr;
-    gap: 1.75rem;
+    gap: 2rem;
   }
 }
 
 @media (max-width: 767px) {
-  .blueprint-section {
-    padding-block: 2.75rem 3rem;
+  .blueprint-inner {
+    padding-block: var(--nt-section-py-mobile);
   }
 
   .spec-row {
@@ -487,5 +390,24 @@
 
   .dossier-cta {
     flex: 1;
+  }
+}
+
+@media (max-width: 479px) {
+  .index-code {
+    display: none;
+  }
+
+  .dossier-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dossier-cta {
+    width: 100%;
+  }
+
+  .dossier-arrows {
+    justify-content: flex-end;
   }
 }

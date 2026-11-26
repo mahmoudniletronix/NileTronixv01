@@ -11,6 +11,7 @@ import {
 import { ScrollChoreographyService } from '../../core/animation/scroll-choreography.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { ContactSectionComponent } from './components/contact-section/contact-section.component';
+import { EditorialStatementComponent } from './components/editorial-statement/editorial-statement.component';
 import { HeroComponent } from './components/hero/hero.component';
 import { IndustriesServeComponent } from './components/industries-serve/industries-serve.component';
 import { ReferencesComponent } from './components/references/references.component';
@@ -22,6 +23,7 @@ import { SolutionsShowcaseComponent } from './components/solutions-showcase/solu
   imports: [
     HeroComponent,
     SolutionsShowcaseComponent,
+    EditorialStatementComponent,
     IndustriesServeComponent,
     SiteProductsComponent,
     ReferencesComponent,
@@ -30,6 +32,7 @@ import { SolutionsShowcaseComponent } from './components/solutions-showcase/solu
   template: `
     <app-hero />
     <app-solutions-showcase id="solutions" />
+    <app-editorial-statement />
     <app-industries-serve id="industries" />
     <app-site-products id="hardware" />
     <app-references id="references" />

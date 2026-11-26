@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  NgZone,
   OnDestroy,
   PLATFORM_ID,
   QueryList,
@@ -18,6 +19,9 @@ import {
 import { RouterLink } from '@angular/router';
 import gsap from 'gsap';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { NtMagneticDirective } from '../../../../shared/directives/nt-magnetic.directive';
+import { NtSpotlightDirective } from '../../../../shared/directives/nt-spotlight.directive';
+import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 import {
   SOLUTIONS_CATALOG,
   SOLUTIONS_SECTION_COPY,
@@ -26,13 +30,15 @@ import { LocalizedText, SolutionItem } from '../../../solutions/models/solution.
 
 @Component({
   selector: 'app-solutions-showcase',
-  imports: [RouterLink],
+  imports: [RouterLink, NtIconComponent, NtSpotlightDirective, NtMagneticDirective],
   templateUrl: './solutions-showcase.component.html',
   styleUrl: './solutions-showcase.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
   private readonly langService = inject(LanguageService);
+  private readonly hostEl = inject(ElementRef<HTMLElement>);
+  private readonly ngZone = inject(NgZone);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
@@ -63,9 +69,11 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
   protected readonly formattedTotal = String(SOLUTIONS_CATALOG.length).padStart(2, '0');
 
   private viewReady = false;
+  private inViewport = true;
   private touchStartX: number | null = null;
   private touchStartY: number | null = null;
   private autoPlayTimer: ReturnType<typeof setInterval> | null = null;
+  private visibilityObserver: IntersectionObserver | null = null;
 
   constructor() {
     effect(() => {
@@ -83,11 +91,28 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
     if (this.isBrowser) {
       this.animateDeck(this.activeIndex(), this.isRtl(), true);
       this.startAutoPlay();
+
+      if (typeof IntersectionObserver !== 'undefined') {
+        this.ngZone.runOutsideAngular(() => {
+          this.visibilityObserver = new IntersectionObserver(
+            (entries) => {
+              const entry = entries[0];
+              if (!entry) return;
+              this.inViewport = entry.isIntersecting;
+              this.hostEl.nativeElement.classList.toggle('is-offscreen', !entry.isIntersecting);
+            },
+            { threshold: 0.02 }
+          );
+          this.visibilityObserver.observe(this.hostEl.nativeElement);
+        });
+      }
     }
   }
 
   ngOnDestroy(): void {
     this.stopAutoPlay();
+    this.visibilityObserver?.disconnect();
+    this.visibilityObserver = null;
     if (!this.isBrowser) return;
     if (this.cardRefs) {
       this.cardRefs.forEach((ref) => gsap.killTweensOf(ref.nativeElement));
@@ -188,11 +213,13 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
     if (reducedMotion) return;
 
     this.stopAutoPlay();
-    this.autoPlayTimer = setInterval(() => {
-      if (!this.isPaused() && typeof document !== 'undefined' && !document.hidden) {
-        this.activeIndex.update((i) => (i + 1) % this.total);
-      }
-    }, 6500);
+    this.ngZone.runOutsideAngular(() => {
+      this.autoPlayTimer = setInterval(() => {
+        if (this.inViewport && !this.isPaused() && typeof document !== 'undefined' && !document.hidden) {
+          this.ngZone.run(() => this.activeIndex.update((i) => (i + 1) % this.total));
+        }
+      }, 6500);
+    });
   }
 
   private resetAutoPlay(): void {
@@ -227,8 +254,8 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
     const dirSign = isRtl ? -1 : 1;
     const duration = immediate || reducedMotion ? 0 : 0.64;
 
-    const sideX = vw >= 1280 ? 58 : vw >= 1024 ? 52 : vw >= 768 ? 48 : 38;
-    const outerX = vw >= 1280 ? 94 : 76;
+    const sideX = vw >= 1440 ? 54 : vw >= 1280 ? 52 : vw >= 1024 ? 50 : vw >= 768 ? 46 : 38;
+    const outerX = vw >= 1440 ? 90 : vw >= 1280 ? 86 : 74;
     const showOuter = vw >= 1200;
 
     this.cardRefs.forEach((ref, i) => {
@@ -242,7 +269,6 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
       let rotationY = 0;
       let opacity = 1;
       let zIndex = 30;
-      let filter = 'blur(0px)';
 
       if (absDiff === 1) {
         xPercent = diff * dirSign * sideX;
@@ -251,7 +277,6 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
         rotationY = -diff * dirSign * (vw < 768 ? 10 : 16);
         opacity = vw < 768 ? 0.42 : 0.72;
         zIndex = 20;
-        filter = 'blur(1.5px)';
       } else if (absDiff >= 2) {
         xPercent = Math.sign(diff) * dirSign * outerX;
         y = 26;
@@ -259,7 +284,6 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
         rotationY = -Math.sign(diff) * dirSign * 24;
         opacity = showOuter ? 0.32 : 0;
         zIndex = 10;
-        filter = 'blur(3px)';
       }
 
       gsap.to(el, {
@@ -269,7 +293,6 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
         rotationY,
         opacity,
         zIndex,
-        filter,
         duration,
         ease: 'power3.out',
         overwrite: 'auto',

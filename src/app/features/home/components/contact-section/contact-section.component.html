@@ -2,300 +2,297 @@
   class="contact-section"
   aria-labelledby="contact-section-heading"
 >
-  <div class="contact-grid">
-    <!-- Left Column: Editorial Intro + Info + Live Google Map -->
-    <div class="contact-info-col">
-      <header class="contact-header">
-        <p class="section-eyebrow">
-          <span>{{ lang() === 'ar' ? 'تواصل معنا' : 'CONTACT US' }}</span>
-        </p>
+  <div class="site-container contact-inner">
+    <div class="contact-grid">
+      <!-- Left Column: Editorial Intro + Direct Info + Live Google Map -->
+      <div class="contact-info-col">
+        <header class="contact-header">
+          <p class="section-eyebrow nt-eyebrow">
+            <span class="nt-eyebrow-index" aria-hidden="true">05</span>
+            <span>{{ lang() === 'ar' ? 'تواصل معنا' : 'CONTACT US' }}</span>
+          </p>
 
-        <h2 id="contact-section-heading" class="section-headline">
-          @if (lang() === 'ar') {
-            لنبدأ هندسة مشروعك القادم
-          } @else {
-            Let’s engineer your next project
-          }
-        </h2>
+          <h2 id="contact-section-heading" class="section-headline nt-section-title">
+            @if (lang() === 'ar') {
+              لنبدأ هندسة مشروعك القادم
+            } @else {
+              Let’s engineer your next project
+            }
+          </h2>
 
-        <p class="section-desc">
-          @if (lang() === 'ar') {
-            تواصل مع فريقنا الهندسي لحجز استشارة فنية، أو معاينة ميدانية، أو عرض سعر مخصص لمنشأتك.
-          } @else {
-            Connect with our engineering team for a technical consultation, site assessment, or tailored system proposal.
-          }
-        </p>
-      </header>
+          <p class="section-desc nt-section-lead">
+            @if (lang() === 'ar') {
+              تواصل مع فريقنا الهندسي لحجز استشارة فنية، أو معاينة ميدانية، أو عرض سعر مخصص لمنشأتك.
+            } @else {
+              Connect with our engineering team for a technical consultation, site assessment, or tailored system proposal.
+            }
+          </p>
+        </header>
 
-      <!-- Direct Info Strip -->
-      <div class="info-list">
-        <div class="info-row">
-          <span class="info-icon" aria-hidden="true">
-            <i class="fa-solid fa-location-dot"></i>
-          </span>
-          <div class="info-text">
-            <span class="info-label">{{ lang() === 'ar' ? 'المقر الرئيسي' : 'Headquarters' }}</span>
-            <span class="info-value">
-              {{ lang() === 'ar' ? 'نايل ترونكس للحلول المتقدمة — مصر الجديدة، القاهرة' : 'Niletronix For Advanced Solutions — Heliopolis, Cairo' }}
-            </span>
+        <!-- Direct Info Strip (Architectural Typographic Directory) -->
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-text">
+              <span class="info-label">{{ lang() === 'ar' ? 'المقر الرئيسي' : 'Headquarters' }}</span>
+              <span class="info-value">
+                {{ lang() === 'ar' ? 'نايل ترونكس للحلول المتقدمة — مصر الجديدة، القاهرة' : 'Niletronix For Advanced Solutions — Heliopolis, Cairo' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-text">
+              <span class="info-label">{{ lang() === 'ar' ? 'البريد الإلكتروني' : 'Business Inquiries' }}</span>
+              <div class="email-row">
+                <a class="info-value info-link" href="mailto:Info@niletronix.com">Info&#64;niletronix.com</a>
+                <button
+                  type="button"
+                  class="copy-btn"
+                  [class.is-copied]="emailCopied()"
+                  [attr.aria-label]="lang() === 'ar' ? 'نسخ البريد الإلكتروني' : 'Copy email address'"
+                  (click)="copyEmail()"
+                >
+                  @if (emailCopied()) {
+                    <app-nt-icon name="check" [size]="12" />
+                    <span>{{ lang() === 'ar' ? 'تم النسخ' : 'Copied' }}</span>
+                  } @else {
+                    <app-nt-icon name="copy" [size]="12" />
+                    <span>{{ lang() === 'ar' ? 'نسخ' : 'Copy' }}</span>
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <div class="info-text">
+              <span class="info-label">{{ lang() === 'ar' ? 'ساعات العمل' : 'Working Hours' }}</span>
+              <span class="info-value">
+                {{ lang() === 'ar' ? 'الأحد – الخميس · 9:00 صباحاً – 5:00 مساءً' : 'Sun – Thu · 9:00 AM – 5:00 PM' }}
+              </span>
+            </div>
           </div>
         </div>
 
-        <div class="info-row">
-          <span class="info-icon" aria-hidden="true">
-            <i class="fa-solid fa-envelope"></i>
-          </span>
-          <div class="info-text">
-            <span class="info-label">{{ lang() === 'ar' ? 'البريد الإلكتروني' : 'Business Inquiries' }}</span>
-            <div class="email-row">
-              <a class="info-value info-link" href="mailto:info@niletronix.com">info&#64;niletronix.com</a>
-              <button
-                type="button"
-                class="copy-btn"
-                [class.is-copied]="emailCopied()"
-                [attr.aria-label]="lang() === 'ar' ? 'نسخ البريد الإلكتروني' : 'Copy email address'"
-                (click)="copyEmail()"
-              >
-                @if (emailCopied()) {
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
-                  <span>{{ lang() === 'ar' ? 'تم النسخ' : 'Copied' }}</span>
-                } @else {
-                  <i class="fa-regular fa-copy" aria-hidden="true"></i>
-                  <span>{{ lang() === 'ar' ? 'نسخ' : 'Copy' }}</span>
-                }
+        <!-- Interactive Google Map Frame (Click-to-Interact prevents scroll capture) -->
+        <div
+          class="map-frame"
+          [class.is-map-active]="mapActive()"
+          (mouseleave)="deactivateMap()"
+        >
+          <div
+            class="map-viewport"
+            [attr.data-lenis-prevent]="mapActive() ? '' : null"
+            (click)="activateMap()"
+          >
+            @if (mapReady()) {
+              <iframe
+                class="map-iframe"
+                [src]="mapEmbedUrl"
+                [title]="lang() === 'ar' ? 'موقع مقر نايل ترونكس للحلول المتقدمة على خرائط جوجل' : 'Niletronix For Advanced Solutions location on Google Maps'"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen
+              ></iframe>
+            }
+            @if (!mapActive()) {
+              <span class="map-interact-hint" aria-hidden="true">
+                <span>{{ lang() === 'ar' ? 'اضغط للتفاعل مع الخريطة' : 'Click to interact with map' }}</span>
+              </span>
+            }
+          </div>
+
+          <div class="map-bar">
+            <div class="map-bar-info">
+              <span>Niletronix For Advanced Solutions</span>
+            </div>
+            <a
+              class="directions-btn"
+              [href]="mapsLink"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>{{ lang() === 'ar' ? 'الاتجاهات' : 'Get Directions' }}</span>
+              <app-nt-icon name="arrow-up-right" class="nt-dir-icon" [size]="14" />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Calm Architectural Consultation Form -->
+      <div class="contact-form-col" appNtSpotlight spotlightTone="light">
+        @if (submitted()) {
+          <div class="form-success" role="status">
+            <span class="success-icon" aria-hidden="true">
+              <app-nt-icon name="check-circle" [size]="42" [strokeWidth]="1.5" />
+            </span>
+            <h3 class="success-title">
+              {{ lang() === 'ar' ? 'تم استلام طلبك بنجاح' : 'Inquiry Received' }}
+            </h3>
+            <p class="success-desc">
+              @if (lang() === 'ar') {
+                شكراً لتواصلك مع نايل ترونكس. سيقوم أحد مهندسي الحلول بمراجعة طلبك والتواصل معك قريباً.
+              } @else {
+                Thank you for contacting NileTronix. One of our solutions engineers will review your inquiry and follow up shortly.
+              }
+            </p>
+            <div class="success-actions">
+              <a class="submit-btn" [href]="submittedMailtoHref()">
+                <app-nt-icon name="mail" [size]="15" />
+                <span>{{ lang() === 'ar' ? 'إرسال عبر البريد إلى Info@niletronix.com' : 'Send via Email to Info@niletronix.com' }}</span>
+              </a>
+              <button type="button" class="reset-btn" (click)="resetForm()">
+                <app-nt-icon name="rotate" [size]="14" />
+                <span>{{ lang() === 'ar' ? 'إرسال طلب جديد' : 'Send Another Inquiry' }}</span>
               </button>
             </div>
           </div>
-        </div>
+        } @else {
+          <form class="consultation-form" [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate>
+            <div class="form-head">
+              <h3 class="form-title">
+                {{ lang() === 'ar' ? 'اطلب استشارة فنية' : 'Request a Consultation' }}
+              </h3>
+              <p class="form-subtitle">
+                {{ lang() === 'ar' ? 'اختر الحل المطلوب وشاركنا تفاصيل مشروعك.' : 'Select your solution of interest and share your project requirements.' }}
+              </p>
+            </div>
 
-        <div class="info-row">
-          <span class="info-icon" aria-hidden="true">
-            <i class="fa-solid fa-clock"></i>
-          </span>
-          <div class="info-text">
-            <span class="info-label">{{ lang() === 'ar' ? 'ساعات العمل' : 'Working Hours' }}</span>
-            <span class="info-value">
-              {{ lang() === 'ar' ? 'الأحد – الخميس · 9:00 صباحاً – 5:00 مساءً' : 'Sun – Thu · 9:00 AM – 5:00 PM' }}
-            </span>
-          </div>
-        </div>
-      </div>
+            <!-- Solution Topic Selector -->
+            <div class="topic-group">
+              <span class="field-label">
+                {{ lang() === 'ar' ? 'الحل أو النظام المطلوب' : 'Solution of Interest' }}
+              </span>
+              <div class="topic-pills" role="group">
+                @for (topic of topics; track topic.id) {
+                  <button
+                    type="button"
+                    class="topic-pill"
+                    [class.is-active]="topic.id === selectedTopic()"
+                    [attr.aria-pressed]="topic.id === selectedTopic()"
+                    (click)="selectTopic(topic.id)"
+                  >
+                    <span>{{ t(topic.label) }}</span>
+                  </button>
+                }
+              </div>
+            </div>
 
-      <!-- Interactive Google Map Frame (Click-to-Interact prevents scroll capture) -->
-      <div
-        class="map-frame"
-        [class.is-map-active]="mapActive()"
-        (mouseleave)="deactivateMap()"
-      >
-        <div class="map-viewport" (click)="activateMap()">
-          <iframe
-            class="map-iframe"
-            [src]="mapEmbedUrl"
-            [title]="lang() === 'ar' ? 'موقع مقر نايل ترونكس للحلول المتقدمة على خرائط جوجل' : 'Niletronix For Advanced Solutions location on Google Maps'"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allowfullscreen
-          ></iframe>
-          @if (!mapActive()) {
-            <span class="map-interact-hint" aria-hidden="true">
-              <i class="fa-solid fa-hand-pointer"></i>
-              <span>{{ lang() === 'ar' ? 'اضغط للتفاعل مع الخريطة' : 'Click to interact with map' }}</span>
-            </span>
-          }
-        </div>
+            <!-- Two-Column Inputs -->
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="nt-full-name">
+                  {{ lang() === 'ar' ? 'الاسم الكامل *' : 'Full Name *' }}
+                </label>
+                <div class="input-wrap" [class.has-error]="hasError('fullName')">
+                  <input
+                    id="nt-full-name"
+                    type="text"
+                    formControlName="fullName"
+                    [attr.aria-invalid]="hasError('fullName')"
+                    [placeholder]="lang() === 'ar' ? 'الاسم بالكامل' : 'e.g. Ahmed Hassan'"
+                  />
+                </div>
+                @if (hasError('fullName')) {
+                  <p class="field-error" role="alert">{{ getErrorMessage('fullName') }}</p>
+                }
+              </div>
 
-        <div class="map-bar">
-          <div class="map-bar-info">
-            <i class="fa-solid fa-building" aria-hidden="true"></i>
-            <span>Niletronix For Advanced Solutions</span>
-          </div>
-          <a
-            class="directions-btn"
-            [href]="mapsLink"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <i class="fa-solid fa-diamond-turn-right" aria-hidden="true"></i>
-            <span>{{ lang() === 'ar' ? 'الاتجاهات' : 'Get Directions' }}</span>
-          </a>
-        </div>
-      </div>
-    </div>
+              <div class="field-group">
+                <label class="field-label" for="nt-org">
+                  {{ lang() === 'ar' ? 'الشركة / المنشأة *' : 'Company / Facility *' }}
+                </label>
+                <div class="input-wrap" [class.has-error]="hasError('organization')">
+                  <input
+                    id="nt-org"
+                    type="text"
+                    formControlName="organization"
+                    [attr.aria-invalid]="hasError('organization')"
+                    [placeholder]="lang() === 'ar' ? 'اسم المستشفى أو الشركة' : 'Hospital, Bank, or Enterprise'"
+                  />
+                </div>
+                @if (hasError('organization')) {
+                  <p class="field-error" role="alert">{{ getErrorMessage('organization') }}</p>
+                }
+              </div>
+            </div>
 
-    <!-- Right Column: Clean Consultation Form -->
-    <div class="contact-form-col">
-      @if (submitted()) {
-        <div class="form-success" role="status">
-          <span class="success-icon" aria-hidden="true">
-            <i class="fa-solid fa-circle-check"></i>
-          </span>
-          <h3 class="success-title">
-            {{ lang() === 'ar' ? 'تم استلام طلبك بنجاح' : 'Inquiry Received' }}
-          </h3>
-          <p class="success-desc">
-            @if (lang() === 'ar') {
-              شكراً لتواصلك مع نايل ترونكس. سيقوم أحد مهندسي الحلول بمراجعة طلبك والتواصل معك قريباً.
-            } @else {
-              Thank you for contacting NileTronix. One of our solutions engineers will review your inquiry and follow up shortly.
-            }
-          </p>
-          <button type="button" class="reset-btn" (click)="resetForm()">
-            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
-            <span>{{ lang() === 'ar' ? 'إرسال طلب جديد' : 'Send Another Inquiry' }}</span>
-          </button>
-        </div>
-      } @else {
-        <form class="consultation-form" [formGroup]="contactForm" (ngSubmit)="onSubmit()" novalidate>
-          <div class="form-head">
-            <h3 class="form-title">
-              {{ lang() === 'ar' ? 'اطلب استشارة فنية' : 'Request a Consultation' }}
-            </h3>
-            <p class="form-subtitle">
-              {{ lang() === 'ar' ? 'اختر الحل المطلوب وشاركنا تفاصيل مشروعك.' : 'Select your solution of interest and share your project requirements.' }}
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label" for="nt-email">
+                  {{ lang() === 'ar' ? 'البريد الإلكتروني *' : 'Work Email *' }}
+                </label>
+                <div class="input-wrap" [class.has-error]="hasError('email')">
+                  <input
+                    id="nt-email"
+                    type="email"
+                    formControlName="email"
+                    [attr.aria-invalid]="hasError('email')"
+                    placeholder="name@company.com"
+                  />
+                </div>
+                @if (hasError('email')) {
+                  <p class="field-error" role="alert">{{ getErrorMessage('email') }}</p>
+                }
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="nt-phone">
+                  {{ lang() === 'ar' ? 'رقم الهاتف *' : 'Phone Number *' }}
+                </label>
+                <div class="input-wrap" [class.has-error]="hasError('phone')">
+                  <input
+                    id="nt-phone"
+                    type="tel"
+                    formControlName="phone"
+                    [attr.aria-invalid]="hasError('phone')"
+                    placeholder="+20 1XX XXX XXXX"
+                  />
+                </div>
+                @if (hasError('phone')) {
+                  <p class="field-error" role="alert">{{ getErrorMessage('phone') }}</p>
+                }
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="nt-message">
+                {{ lang() === 'ar' ? 'تفاصيل المشروع *' : 'Project Details *' }}
+              </label>
+              <textarea
+                id="nt-message"
+                class="textarea-input"
+                [class.has-error]="hasError('message')"
+                [attr.aria-invalid]="hasError('message')"
+                rows="4"
+                formControlName="message"
+                [placeholder]="
+                  lang() === 'ar'
+                    ? 'اذكر عدد الفروع أو البوابات أو المتطلبات التشغيلية...'
+                    : 'Tell us about your facility, number of branches/gates, or integration goals...'
+                "
+              ></textarea>
+              @if (hasError('message')) {
+                <p class="field-error" role="alert">{{ getErrorMessage('message') }}</p>
+              }
+            </div>
+
+            <button type="submit" class="submit-btn" appNtMagnetic [magneticMax]="3">
+              <span>{{ lang() === 'ar' ? 'إرسال طلب الاستشارة' : 'Send Consultation Request' }}</span>
+              <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="15" />
+            </button>
+
+            <p class="form-footnote">
+              <span>
+                {{
+                  lang() === 'ar'
+                    ? 'يتم مراجعة طلبك مباشرةً من قِبل فريق مهندسي الحلول في نايل ترونكس.'
+                    : 'Reviewed directly by our NileTronix solutions engineering team.'
+                }}
+              </span>
             </p>
-          </div>
-
-          <!-- Solution Topic Selector -->
-          <div class="topic-group">
-            <span class="field-label">
-              {{ lang() === 'ar' ? 'الحل أو النظام المطلوب' : 'Solution of Interest' }}
-            </span>
-            <div class="topic-pills" role="group">
-              @for (topic of topics; track topic.id) {
-                <button
-                  type="button"
-                  class="topic-pill"
-                  [class.is-active]="topic.id === selectedTopic()"
-                  [attr.aria-pressed]="topic.id === selectedTopic()"
-                  (click)="selectTopic(topic.id)"
-                >
-                  <i [class]="topic.icon" aria-hidden="true"></i>
-                  <span>{{ t(topic.label) }}</span>
-                </button>
-              }
-            </div>
-          </div>
-
-          <!-- Two-Column Inputs -->
-          <div class="field-row">
-            <div class="field-group">
-              <label class="field-label" for="nt-full-name">
-                {{ lang() === 'ar' ? 'الاسم الكامل *' : 'Full Name *' }}
-              </label>
-              <div class="input-wrap" [class.has-error]="hasError('fullName')">
-                <i class="fa-solid fa-user input-icon" aria-hidden="true"></i>
-                <input
-                  id="nt-full-name"
-                  type="text"
-                  formControlName="fullName"
-                  [attr.aria-invalid]="hasError('fullName')"
-                  [placeholder]="lang() === 'ar' ? 'الاسم بالكامل' : 'e.g. Ahmed Hassan'"
-                />
-              </div>
-              @if (hasError('fullName')) {
-                <p class="field-error" role="alert">{{ getErrorMessage('fullName') }}</p>
-              }
-            </div>
-
-            <div class="field-group">
-              <label class="field-label" for="nt-org">
-                {{ lang() === 'ar' ? 'الشركة / المنشأة *' : 'Company / Facility *' }}
-              </label>
-              <div class="input-wrap" [class.has-error]="hasError('organization')">
-                <i class="fa-solid fa-building input-icon" aria-hidden="true"></i>
-                <input
-                  id="nt-org"
-                  type="text"
-                  formControlName="organization"
-                  [attr.aria-invalid]="hasError('organization')"
-                  [placeholder]="lang() === 'ar' ? 'اسم المستشفى أو الشركة' : 'Hospital, Bank, or Enterprise'"
-                />
-              </div>
-              @if (hasError('organization')) {
-                <p class="field-error" role="alert">{{ getErrorMessage('organization') }}</p>
-              }
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div class="field-group">
-              <label class="field-label" for="nt-email">
-                {{ lang() === 'ar' ? 'البريد الإلكتروني *' : 'Work Email *' }}
-              </label>
-              <div class="input-wrap" [class.has-error]="hasError('email')">
-                <i class="fa-solid fa-envelope input-icon" aria-hidden="true"></i>
-                <input
-                  id="nt-email"
-                  type="email"
-                  formControlName="email"
-                  [attr.aria-invalid]="hasError('email')"
-                  placeholder="name@company.com"
-                />
-              </div>
-              @if (hasError('email')) {
-                <p class="field-error" role="alert">{{ getErrorMessage('email') }}</p>
-              }
-            </div>
-
-            <div class="field-group">
-              <label class="field-label" for="nt-phone">
-                {{ lang() === 'ar' ? 'رقم الهاتف *' : 'Phone Number *' }}
-              </label>
-              <div class="input-wrap" [class.has-error]="hasError('phone')">
-                <i class="fa-solid fa-phone input-icon" aria-hidden="true"></i>
-                <input
-                  id="nt-phone"
-                  type="tel"
-                  formControlName="phone"
-                  [attr.aria-invalid]="hasError('phone')"
-                  placeholder="+20 1XX XXX XXXX"
-                />
-              </div>
-              @if (hasError('phone')) {
-                <p class="field-error" role="alert">{{ getErrorMessage('phone') }}</p>
-              }
-            </div>
-          </div>
-
-          <div class="field-group">
-            <label class="field-label" for="nt-message">
-              {{ lang() === 'ar' ? 'تفاصيل المشروع *' : 'Project Details *' }}
-            </label>
-            <textarea
-              id="nt-message"
-              class="textarea-input"
-              [class.has-error]="hasError('message')"
-              [attr.aria-invalid]="hasError('message')"
-              rows="4"
-              formControlName="message"
-              [placeholder]="
-                lang() === 'ar'
-                  ? 'اذكر عدد الفروع أو البوابات أو المتطلبات التشغيلية...'
-                  : 'Tell us about your facility, number of branches/gates, or integration goals...'
-              "
-            ></textarea>
-            @if (hasError('message')) {
-              <p class="field-error" role="alert">{{ getErrorMessage('message') }}</p>
-            }
-          </div>
-
-          <button type="submit" class="submit-btn">
-            <span>{{ lang() === 'ar' ? 'إرسال طلب الاستشارة' : 'Send Consultation Request' }}</span>
-            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
-          </button>
-
-          <p class="form-footnote">
-            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-            <span>
-              {{
-                lang() === 'ar'
-                  ? 'يتم مراجعة طلبك مباشرةً من قِبل فريق مهندسي الحلول في نايل ترونكس.'
-                  : 'Reviewed directly by our NileTronix solutions engineering team.'
-              }}
-            </span>
-          </p>
-        </form>
-      }
+          </form>
+        }
+      </div>
     </div>
   </div>
 </section>

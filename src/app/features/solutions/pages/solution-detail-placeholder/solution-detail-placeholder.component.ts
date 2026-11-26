@@ -3,17 +3,18 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 import { SOLUTIONS_CATALOG, SOLUTIONS_SECTION_COPY } from '../../data/solutions.data';
 import { LocalizedText } from '../../models/solution.model';
 
 @Component({
   selector: 'app-solution-detail-placeholder',
-  imports: [RouterLink],
+  imports: [RouterLink, NtIconComponent],
   template: `
     <section class="solution-wrap">
       <div class="nt-container solution-inner">
         <a class="back-link" routerLink="/" fragment="solutions">
-          <i class="fa-solid fa-arrow-left nt-dir-icon" aria-hidden="true"></i>
+          <app-nt-icon name="arrow-left" class="nt-dir-icon" [size]="15" />
           <span>{{ t(copy.backToSolutions) }}</span>
         </a>
 
@@ -56,7 +57,7 @@ import { LocalizedText } from '../../models/solution.model';
             <ul class="capabilities-list">
               @for (cap of solution().capabilities; track cap.en) {
                 <li>
-                  <i class="fa-solid fa-check" aria-hidden="true"></i>
+                  <span class="cap-dash" aria-hidden="true"></span>
                   <span>{{ t(cap) }}</span>
                 </li>
               }
@@ -76,7 +77,7 @@ import { LocalizedText } from '../../models/solution.model';
             </p>
             <a class="cta-btn" routerLink="/" fragment="contact">
               <span>{{ lang() === 'ar' ? 'اطلب استشارة فنية' : 'Request a Consultation' }}</span>
-              <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+              <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="15" />
             </a>
           </aside>
         </div>
@@ -104,7 +105,7 @@ import { LocalizedText } from '../../models/solution.model';
       gap: 0.45rem;
       font-size: 0.9rem;
       font-weight: 600;
-      color: var(--nt-nile-blue);
+      color: var(--nt-slate-ink);
       text-decoration: none;
       transition: color var(--nt-dur-fast) var(--nt-ease);
     }
@@ -119,7 +120,7 @@ import { LocalizedText } from '../../models/solution.model';
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--nt-nile-blue);
+      color: var(--nt-brand-red-ink);
     }
 
     .solution-title {
@@ -178,7 +179,7 @@ import { LocalizedText } from '../../models/solution.model';
     .shot-thumb:hover,
     .shot-thumb.is-active {
       opacity: 1;
-      border-color: var(--nt-nile-blue);
+      border-color: var(--nt-navy);
     }
 
     .shot-thumb img {
@@ -228,9 +229,11 @@ import { LocalizedText } from '../../models/solution.model';
       color: var(--nt-ink);
     }
 
-    .capabilities-list i {
-      color: var(--nt-nile-blue);
-      margin-block-start: 0.25rem;
+    .cap-dash {
+      width: 10px;
+      height: 1.5px;
+      background-color: var(--nt-brand-red);
+      margin-block-start: 0.7rem;
       flex-shrink: 0;
     }
 
@@ -259,7 +262,7 @@ import { LocalizedText } from '../../models/solution.model';
     }
 
     .cta-btn:hover {
-      background-color: var(--nt-nile-blue);
+      background-color: var(--nt-brand-red);
     }
 
     @media (max-width: 767px) {

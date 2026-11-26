@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  NgZone,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
@@ -15,10 +16,11 @@ import {
 } from '@angular/core';
 import gsap from 'gsap';
 import { LanguageService } from '../../core/i18n/language.service';
+import { NtIconComponent, NtIconName } from '../../shared/ui/nt-icon.component';
 
 export interface SocialFabItem {
   readonly id: 'whatsapp' | 'instagram' | 'facebook' | 'linkedin';
-  readonly icon: string;
+  readonly icon: NtIconName;
   readonly labelEn: string;
   readonly labelAr: string;
   readonly href: string;
@@ -31,7 +33,7 @@ export interface SocialFabItem {
 const SOCIAL_ITEMS: readonly SocialFabItem[] = [
   {
     id: 'whatsapp',
-    icon: 'fa-brands fa-whatsapp',
+    icon: 'whatsapp',
     labelEn: 'WhatsApp',
     labelAr: 'واتساب',
     href: 'https://wa.me/201000000000',
@@ -41,7 +43,7 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
   },
   {
     id: 'instagram',
-    icon: 'fa-brands fa-instagram',
+    icon: 'instagram',
     labelEn: 'Instagram',
     labelAr: 'إنستجرام',
     href: 'https://www.instagram.com/niletronix',
@@ -51,7 +53,7 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
   },
   {
     id: 'facebook',
-    icon: 'fa-brands fa-facebook-f',
+    icon: 'facebook',
     labelEn: 'Facebook',
     labelAr: 'فيسبوك',
     href: 'https://www.facebook.com/niletronix',
@@ -61,7 +63,7 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
   },
   {
     id: 'linkedin',
-    icon: 'fa-brands fa-linkedin-in',
+    icon: 'linkedin',
     labelEn: 'LinkedIn',
     labelAr: 'لينكدإن',
     href: 'https://www.linkedin.com/company/niletronix',
@@ -73,6 +75,7 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
 
 @Component({
   selector: 'app-social-fab',
+  imports: [NtIconComponent],
   template: `
     <div
       class="social-fab-wrap"
@@ -99,7 +102,7 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
             [attr.tabindex]="isOpen() ? 0 : -1"
             (click)="close()"
           >
-            <i [class]="item.icon" aria-hidden="true"></i>
+            <app-nt-icon [name]="item.icon" [size]="18" />
           </a>
         }
       </div>
@@ -121,14 +124,15 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
       >
         <span class="fab-pulse" aria-hidden="true"></span>
         @if (isOpen()) {
-          <i class="fa-solid fa-xmark fab-icon is-close" aria-hidden="true"></i>
+          <app-nt-icon name="close" class="fab-icon is-close" [size]="18" />
         } @else {
           @for (item of items; track item.id; let idx = $index) {
-            <i
-              [class]="item.icon + ' fab-icon cycle-icon'"
+            <app-nt-icon
+              [name]="item.icon"
+              class="fab-icon cycle-icon"
               [class.is-current]="idx === activeIconIndex()"
-              aria-hidden="true"
-            ></i>
+              [size]="20"
+            />
           }
         }
       </button>
@@ -137,11 +141,11 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
   styles: `
     .social-fab-wrap {
       position: fixed;
-      inset-block-end: 5.5rem;
+      inset-block-end: 5.15rem;
       inset-inline-end: 1.5rem;
       z-index: 155;
-      width: 50px;
-      height: 50px;
+      width: 46px;
+      height: 46px;
     }
 
     .social-arc {
@@ -188,8 +192,8 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
     .fab-trigger {
       position: relative;
       z-index: 2;
-      width: 50px;
-      height: 50px;
+      width: 46px;
+      height: 46px;
       padding: 0;
       border: 0;
       border-radius: 50%;
@@ -216,11 +220,11 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
     }
 
     .fab-trigger.is-open:hover {
-      background: var(--nt-nile-blue);
+      background: var(--nt-navy-hover);
     }
 
     .fab-trigger:focus-visible {
-      outline: 2px solid var(--nt-cyan-accent);
+      outline: 2px solid var(--nt-focus-ring);
       outline-offset: 3px;
     }
 
@@ -326,6 +330,7 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
 })
 export class SocialFabComponent implements OnInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly ngZone = inject(NgZone);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
   private readonly hostEl = inject(ElementRef<HTMLElement>);
   private readonly langService = inject(LanguageService);
@@ -347,11 +352,15 @@ export class SocialFabComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (!this.isBrowser) return;
-    this.cycleTimer = setInterval(() => {
-      if (!this.isOpen()) {
-        this.activeIconIndex.update((i) => (i + 1) % this.items.length);
-      }
-    }, 2200);
+    this.ngZone.runOutsideAngular(() => {
+      this.cycleTimer = setInterval(() => {
+        if (!this.isOpen() && typeof document !== 'undefined' && !document.hidden) {
+          this.ngZone.run(() => {
+            this.activeIconIndex.update((i) => (i + 1) % this.items.length);
+          });
+        }
+      }, 2600);
+    });
   }
 
   ngOnDestroy(): void {

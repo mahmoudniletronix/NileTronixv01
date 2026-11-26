@@ -1,9 +1,70 @@
 <section class="hero" [attr.aria-label]="content().hero.regionLabel">
+  <!-- Architectural Live Signal Flow Layer (Inspired by NileTronix N-mark & Systems Integration) -->
+  <div class="hero-signal-backdrop" aria-hidden="true">
+    <svg
+      class="hero-signal-svg"
+      viewBox="0 0 960 760"
+      fill="none"
+      preserveAspectRatio="xMinYMid slice"
+    >
+      <defs>
+        <linearGradient id="ntHeroPulseBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#cbd6e0" stop-opacity="0" />
+          <stop offset="50%" stop-color="#dce6ee" stop-opacity="0.52" />
+          <stop offset="100%" stop-color="#cbd6e0" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="ntHeroPulseRed" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#E71F35" stop-opacity="0" />
+          <stop offset="50%" stop-color="#E71F35" stop-opacity="0.52" />
+          <stop offset="100%" stop-color="#E71F35" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+
+      <!-- Subtle Architectural Base Tracks -->
+      <path class="signal-track" d="M -40 120 L 220 120 L 340 240 L 680 240 L 790 130" />
+      <path class="signal-track" d="M -40 310 L 145 310 L 285 450 L 620 450 L 760 310" />
+      <path class="signal-track" d="M -40 520 L 260 520 L 390 650 L 740 650" />
+      <path class="signal-track signal-track-fine" d="M 90 -20 L 220 120 M 340 240 L 455 355 L 740 355" />
+
+      <!-- Live Signal Pulses -->
+      <path
+        class="signal-pulse signal-pulse-1"
+        stroke="url(#ntHeroPulseBlue)"
+        pathLength="100"
+        d="M -40 120 L 220 120 L 340 240 L 680 240 L 790 130"
+      />
+      <path
+        class="signal-pulse signal-pulse-2"
+        stroke="url(#ntHeroPulseBlue)"
+        pathLength="100"
+        d="M -40 310 L 145 310 L 285 450 L 620 450 L 760 310"
+      />
+      <path
+        class="signal-pulse signal-pulse-3"
+        stroke="url(#ntHeroPulseRed)"
+        pathLength="100"
+        d="M -40 520 L 260 520 L 390 650 L 740 650"
+      />
+      <path
+        class="signal-pulse signal-pulse-4"
+        stroke="url(#ntHeroPulseBlue)"
+        pathLength="100"
+        d="M 90 -20 L 220 120 L 340 240 L 455 355 L 740 355"
+      />
+
+      <!-- Restrained Integration Nodes -->
+      <circle class="signal-node signal-node-1" cx="220" cy="120" r="2.5" />
+      <circle class="signal-node signal-node-2" cx="340" cy="240" r="2.5" />
+      <circle class="signal-node signal-node-3" cx="285" cy="450" r="2.5" />
+      <circle class="signal-node signal-node-red" cx="390" cy="650" r="2.2" />
+    </svg>
+  </div>
+
   <!-- Desktop / Tablet Seamless Background Visual Layer -->
   <div class="hero-media-desktop" aria-hidden="true">
     <img
       class="hero-image-bg"
-      src="images/Marble Lobby with Digital Queue Screen.png"
+      src="images/hero-lobby-desktop.webp"
       alt=""
       width="1024"
       height="576"
@@ -14,7 +75,7 @@
     <div class="hero-scrim"></div>
   </div>
 
-  <div class="nt-container hero-grid">
+  <div class="site-container hero-grid">
     <div class="hero-content">
       <p class="hero-eyebrow hero-anim hero-anim-1">
         {{ content().hero.eyebrow }}
@@ -33,18 +94,29 @@
       </p>
 
       <div class="hero-actions hero-anim hero-anim-4">
-        <a class="hero-btn-primary" routerLink="/" fragment="solutions">
+        <a
+          class="hero-btn-primary"
+          appNtMagnetic
+          routerLink="/"
+          fragment="solutions"
+          (click)="scrollToSection('solutions', $event)"
+        >
           <span>{{ content().hero.primaryCta }}</span>
-          <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+          <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="15" />
         </a>
 
-        <a class="hero-btn-secondary" routerLink="/" fragment="hardware">
+        <a
+          class="hero-btn-secondary"
+          routerLink="/"
+          fragment="hardware"
+          (click)="scrollToSection('hardware', $event)"
+        >
           <span>{{ content().hero.secondaryCta }}</span>
-          <i class="fa-solid fa-arrow-right nt-dir-icon" aria-hidden="true"></i>
+          <app-nt-icon name="arrow-right" class="nt-dir-icon" [size]="15" />
         </a>
       </div>
 
-      <!-- Mobile / Tablet Dedicated Full-Width Visual (keeps kiosk & queue display uncropped) -->
+      <!-- Mobile / Tablet Dedicated Full-Width Visual -->
       <figure class="hero-media-mobile">
         <img
           class="hero-image-inline"
@@ -58,23 +130,11 @@
         />
       </figure>
 
-      <!-- Solution Indicators -->
+      <!-- Solution Indicators (Architectural Index Markers) -->
       <ul class="hero-indicators" [attr.aria-label]="content().hero.indicatorsLabel">
         @for (item of content().hero.indicators; track item.id; let idx = $index) {
           <li class="indicator-item" [style.--stagger-index]="idx">
-            <span class="indicator-icon" aria-hidden="true">
-              @switch (item.id) {
-                @case ('software') {
-                  <i class="fa-solid fa-layer-group"></i>
-                }
-                @case ('hardware') {
-                  <i class="fa-solid fa-desktop"></i>
-                }
-                @case ('integration') {
-                  <i class="fa-solid fa-diagram-project"></i>
-                }
-              }
-            </span>
+            <span class="indicator-index" aria-hidden="true">0{{ idx + 1 }}</span>
             <span class="indicator-label">
               <span>{{ item.line1 }}</span>
               <span>{{ item.line2 }}</span>
@@ -86,5 +146,12 @@
 
     <!-- Accessible image description for desktop background composition -->
     <span class="nt-sr-only hero-desktop-alt">{{ content().hero.imageAlt }}</span>
+  </div>
+
+  <!-- Architectural Bottom Transition Edge into Solutions -->
+  <div class="hero-bottom-datum" aria-hidden="true">
+    <div class="site-container">
+      <div class="hero-datum-line"></div>
+    </div>
   </div>
 </section>

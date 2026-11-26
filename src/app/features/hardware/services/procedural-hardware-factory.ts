@@ -1008,12 +1008,17 @@ function buildQct101Terminal(T: THREE, b: AssetBuilder): ThreeNamespace.Group {
     new T.MeshStandardMaterial({ color: 0x12161a, roughness: 0.6, metalness: 0.15 })
   );
 
-  // Wedge-angled ergonomic desktop enclosure
-  const wedge = new T.Group();
-  wedge.position.set(0, 0.11, 0);
-  wedge.rotation.x = 0.24;
+  // Solid angled ergonomic desktop enclosure resting cleanly on desk surface
+  const deskBase = b.mesh(b.extrudeRoundedBox(0.49, 0.055, 0.62, 0.024, 0.006), bezelMat);
+  deskBase.position.set(0, 0.04, 0);
+  group.add(deskBase);
 
-  const casing = b.mesh(b.extrudeRoundedBox(0.5, 0.68, 0.12, 0.03, 0.01), bodyMat);
+  const wedge = new T.Group();
+  wedge.position.set(0, 0.145, -0.01);
+  // Tilted ~22 deg toward the counter operator on the horizontal XZ desk plane
+  wedge.rotation.x = -Math.PI / 2 + 0.38;
+
+  const casing = b.mesh(b.extrudeRoundedBox(0.5, 0.66, 0.11, 0.03, 0.01), bodyMat);
   wedge.add(casing);
 
   // Recessed blue backlit LCD
@@ -1096,16 +1101,16 @@ function buildQct101Terminal(T: THREE, b: AssetBuilder): ThreeNamespace.Group {
 
   group.add(wedge);
 
-  // Rubber desktop feet
-  const footGeo = b.geo(new T.CylinderGeometry(0.025, 0.025, 0.012, 14));
+  // Rubber desktop feet mounted flush beneath the desktop base
+  const footGeo = b.geo(new T.CylinderGeometry(0.024, 0.026, 0.014, 14));
   for (const [fx, fz] of [
-    [-0.19, -0.22],
-    [0.19, -0.22],
-    [-0.19, 0.22],
-    [0.19, 0.22],
+    [-0.19, -0.24],
+    [0.19, -0.24],
+    [-0.19, 0.24],
+    [0.19, 0.24],
   ]) {
     const foot = b.mesh(footGeo, bezelMat);
-    foot.position.set(fx, 0.006, fz);
+    foot.position.set(fx, 0.007, fz);
     group.add(foot);
   }
 

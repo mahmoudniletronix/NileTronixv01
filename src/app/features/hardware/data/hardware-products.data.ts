@@ -422,17 +422,17 @@ const HARDWARE_3D_CONFIG_MAP: Readonly<Record<string, Hardware3DConfig>> = {
     proceduralId: 'terminal-qct101',
     sourceType: 'procedural-reference',
     referenceImage: 'originals/counter-terminals/qct-101-keypad.png',
-    defaultYawDeg: 22,
-    defaultPitchDeg: 24,
+    defaultYawDeg: 18,
+    defaultPitchDeg: 38,
     distanceScale: 1.18,
     supportsExplodedView: false,
     hasConfirmedDimensions: false,
     hotspots: [
       {
         id: 'qct-lcd',
-        anchor: { x: 0, y: 0.24, z: 0.14 },
-        normal: { x: 0, y: 0.55, z: 0.85 },
-        cameraOffset: { x: 0.1, y: 0.4, z: 0.85 },
+        anchor: { x: 0, y: 0.34, z: -0.24 },
+        normal: { x: 0, y: 0.9, z: 0.42 },
+        cameraOffset: { x: 0.1, y: 0.72, z: 0.65 },
         icon: 'fa-solid fa-display',
         title: { en: 'Backlit Status LCD', ar: 'شاشة LCD مضيئة' },
         description: {
@@ -442,9 +442,9 @@ const HARDWARE_3D_CONFIG_MAP: Readonly<Record<string, Hardware3DConfig>> = {
       },
       {
         id: 'qct-keypad',
-        anchor: { x: 0.04, y: -0.1, z: 0.2 },
-        normal: { x: 0, y: 0.65, z: 0.75 },
-        cameraOffset: { x: 0.25, y: 0.55, z: 0.8 },
+        anchor: { x: 0.04, y: 0.1, z: 0.14 },
+        normal: { x: 0, y: 0.9, z: 0.42 },
+        cameraOffset: { x: 0.25, y: 0.75, z: 0.65 },
         icon: 'fa-solid fa-keyboard',
         title: { en: 'Dedicated Tactile Keys', ar: 'أزرار استدعاء مخصصة' },
         description: {

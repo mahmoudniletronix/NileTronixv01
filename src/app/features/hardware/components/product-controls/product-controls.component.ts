@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 import { LocalizedText } from '../../../solutions/models/solution.model';
 import { HARDWARE_STUDIO_COPY } from '../../data/hardware-products.data';
 import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model';
 
 @Component({
   selector: 'app-product-controls',
+  imports: [NtIconComponent],
   template: `
     <div
       class="controls-bar"
@@ -38,7 +40,7 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
           [attr.title]="t(copy.zoomIn)"
           (click)="zoomInClicked.emit()"
         >
-          <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
+          <app-nt-icon name="zoom-in" [size]="15" />
         </button>
 
         <button
@@ -48,7 +50,7 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
           [attr.title]="t(copy.zoomOut)"
           (click)="zoomOutClicked.emit()"
         >
-          <i class="fa-solid fa-magnifying-glass-minus" aria-hidden="true"></i>
+          <app-nt-icon name="zoom-out" [size]="15" />
         </button>
 
         <button
@@ -60,7 +62,7 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
           [attr.aria-pressed]="autoRotate()"
           (click)="autoRotateToggled.emit()"
         >
-          <i class="fa-solid fa-rotate" aria-hidden="true"></i>
+          <app-nt-icon name="rotate" [size]="15" />
         </button>
 
         @if (hasHotspots()) {
@@ -73,7 +75,7 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
             [attr.aria-pressed]="hotspotsVisible()"
             (click)="hotspotsToggled.emit()"
           >
-            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <app-nt-icon name="pin" [size]="15" />
           </button>
         }
 
@@ -84,7 +86,7 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
           [attr.title]="t(copy.resetView)"
           (click)="resetClicked.emit()"
         >
-          <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
+          <app-nt-icon name="rotate" [size]="15" />
         </button>
 
         <button
@@ -94,10 +96,7 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
           [attr.title]="isFullscreen() ? t(copy.fullscreenExit) : t(copy.fullscreenEnter)"
           (click)="fullscreenToggled.emit()"
         >
-          <i
-            [class]="isFullscreen() ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"
-            aria-hidden="true"
-          ></i>
+          <app-nt-icon [name]="isFullscreen() ? 'compress' : 'expand'" [size]="15" />
         </button>
       </div>
     </div>
@@ -116,19 +115,17 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
       flex-wrap: wrap;
       gap: 0.35rem;
       max-width: 100%;
-      padding: 0.32rem 0.45rem;
-      background-color: rgba(255, 255, 255, 0.84);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      border-radius: 999px;
-      box-shadow: 0 8px 24px rgba(8, 47, 67, 0.1);
+      padding: 0.3rem 0.4rem;
+      background-color: var(--nt-bg-main);
+      border: 1px solid var(--nt-border);
+      border-radius: var(--nt-radius-md);
+      box-shadow: var(--nt-shadow-sm);
     }
 
     .controls-group {
       display: inline-flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: 0.2rem;
       flex-wrap: nowrap;
     }
 
@@ -144,7 +141,7 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
     .ctrl-divider {
       width: 1px;
       height: 20px;
-      background-color: var(--nt-border-subtle);
+      background-color: var(--nt-border);
       flex-shrink: 0;
     }
 
@@ -155,24 +152,24 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
       min-height: 32px;
       padding: 0 0.55rem;
       border: 0;
-      border-radius: 6px;
+      border-radius: var(--nt-radius-xs);
       background-color: transparent;
-      color: var(--nt-ink-muted);
+      color: var(--nt-text-secondary);
       font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
-      transition: background-color 160ms var(--nt-ease), color 160ms var(--nt-ease);
+      transition: background-color var(--nt-dur-fast) var(--nt-ease), color var(--nt-dur-fast) var(--nt-ease);
     }
 
     .ctrl-btn:hover {
-      background-color: #edf3f6;
-      color: var(--nt-dark-navy);
+      background-color: var(--nt-surface-soft);
+      color: var(--nt-text-primary);
     }
 
     .ctrl-btn.is-active {
-      background-color: var(--nt-dark-navy);
-      color: #ffffff;
+      background-color: var(--nt-navy);
+      color: var(--nt-text-on-dark);
     }
 
     .icon-btn {
@@ -188,6 +185,7 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
 
     @media (max-width: 767px) {
       .controls-bar {
+        width: 100%;
         padding: 0.3rem;
         gap: 0.3rem;
       }
@@ -196,7 +194,14 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
         display: none;
       }
 
-      .presets-group,
+      .presets-group {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        width: 100%;
+        gap: 0.15rem;
+        overflow: visible;
+      }
+
       .actions-group {
         width: 100%;
         justify-content: space-between;
@@ -204,7 +209,14 @@ import { CAMERA_PRESETS, CameraPresetId } from '../../models/camera-preset.model
 
       .ctrl-btn {
         min-height: 36px;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
+      }
+
+      .preset-btn {
+        padding: 0 0.2rem;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .icon-btn {

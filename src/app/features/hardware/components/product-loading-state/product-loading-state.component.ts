@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 import { LocalizedText } from '../../../solutions/models/solution.model';
 import { HARDWARE_STUDIO_COPY } from '../../data/hardware-products.data';
 import { HardwareProductItem } from '../../models/hardware-product.model';
 
 @Component({
   selector: 'app-product-loading-state',
+  imports: [NtIconComponent],
   template: `
     <div class="poster-stage" [class.is-overlay]="mode() === 'loading'">
       <img
@@ -33,7 +35,7 @@ import { HardwareProductItem } from '../../models/hardware-product.model';
         <div class="fallback-bar" role="alert">
           <span class="fallback-msg">{{ t(copy.fallbackNotice) }}</span>
           <button type="button" class="retry-btn" (click)="retryClicked.emit()">
-            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+            <app-nt-icon name="rotate" [size]="13" />
             <span>{{ t(copy.retryLabel) }}</span>
           </button>
         </div>
@@ -83,13 +85,13 @@ import { HardwareProductItem } from '../../models/hardware-product.model';
       align-items: center;
       gap: 0.55rem;
       padding: 0.45rem 0.9rem;
-      background-color: rgba(255, 255, 255, 0.94);
-      border: 1px solid var(--nt-border-subtle);
-      border-radius: 999px;
-      box-shadow: 0 6px 18px rgba(8, 47, 67, 0.08);
+      background-color: var(--nt-bg-main);
+      border: 1px solid var(--nt-border);
+      border-radius: var(--nt-radius-sm);
+      box-shadow: var(--nt-shadow-sm);
       font-size: 0.78rem;
       font-weight: 600;
-      color: var(--nt-dark-navy);
+      color: var(--nt-text-primary);
       pointer-events: auto;
     }
 
@@ -97,27 +99,26 @@ import { HardwareProductItem } from '../../models/hardware-product.model';
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background-color: var(--nt-cyan-accent);
+      background-color: var(--nt-brand-red);
       animation: ntPulse 1.1s ease-in-out infinite;
     }
 
     .loading-pct {
       font-variant-numeric: tabular-nums;
-      color: var(--nt-nile-blue);
+      color: var(--nt-navy);
     }
 
     .progress-track {
       width: 56px;
-      height: 4px;
-      border-radius: 999px;
-      background-color: #dce5ea;
+      height: 3px;
+      background-color: var(--nt-border);
       overflow: hidden;
     }
 
     .progress-fill {
       display: block;
       height: 100%;
-      background-color: var(--nt-cyan-accent);
+      background-color: var(--nt-brand-red);
       transition: width 180ms ease;
     }
 
@@ -130,11 +131,11 @@ import { HardwareProductItem } from '../../models/hardware-product.model';
       justify-content: center;
       gap: 0.65rem;
       padding: 0.5rem 0.9rem;
-      background-color: rgba(255, 255, 255, 0.94);
-      border: 1px solid var(--nt-border-subtle);
-      border-radius: 8px;
+      background-color: var(--nt-bg-main);
+      border: 1px solid var(--nt-border);
+      border-radius: var(--nt-radius-sm);
       font-size: 0.8125rem;
-      color: var(--nt-ink-muted);
+      color: var(--nt-text-secondary);
       pointer-events: auto;
     }
 
@@ -143,10 +144,10 @@ import { HardwareProductItem } from '../../models/hardware-product.model';
       align-items: center;
       gap: 0.4rem;
       padding: 0.35rem 0.75rem;
-      background-color: var(--nt-dark-navy);
-      color: #ffffff;
+      background-color: var(--nt-navy);
+      color: var(--nt-text-on-dark);
       border: 0;
-      border-radius: 6px;
+      border-radius: var(--nt-radius-xs);
       font-size: 0.78rem;
       font-weight: 600;
       cursor: pointer;

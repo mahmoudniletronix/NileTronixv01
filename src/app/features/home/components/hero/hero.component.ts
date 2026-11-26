@@ -10,26 +10,48 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import gsap from 'gsap';
+import { SmoothScrollService } from '../../../../core/animation/smooth-scroll.service';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { NtMagneticDirective } from '../../../../shared/directives/nt-magnetic.directive';
+import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 
 @Component({
   selector: 'app-hero',
-  imports: [RouterLink],
+  imports: [RouterLink, NtIconComponent, NtMagneticDirective],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroComponent implements AfterViewInit, OnDestroy {
   private readonly lang = inject(LanguageService);
+  private readonly smoothScroll = inject(SmoothScrollService);
   private readonly hostRef = inject(ElementRef<HTMLElement>);
   private readonly platformId = inject(PLATFORM_ID);
 
   protected readonly content = this.lang.content;
 
+  protected scrollToSection(sectionId: string, event: Event): void {
+    event.preventDefault();
+    this.smoothScroll.scrollToElement(sectionId, { offset: -76, duration: 1.05 });
+  }
+
   private gsapCtx: gsap.Context | null = null;
+  private visibilityObserver: IntersectionObserver | null = null;
 
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;
+
+    if (typeof IntersectionObserver !== 'undefined') {
+      this.visibilityObserver = new IntersectionObserver(
+        (entries) => {
+          const entry = entries[0];
+          if (!entry) return;
+          this.hostRef.nativeElement.classList.toggle('is-offscreen', !entry.isIntersecting);
+        },
+        { threshold: 0.01 }
+      );
+      this.visibilityObserver.observe(this.hostRef.nativeElement);
+    }
 
     const reducedMotion =
       typeof window !== 'undefined' &&
@@ -41,19 +63,19 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
     this.gsapCtx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-      // Subtle architectural visual settle
+      // Controlled architectural image settle
       tl.fromTo(
         '.hero-image-bg, .hero-image-inline',
-        { scale: 1.055, opacity: 0.78 },
-        { scale: 1, opacity: 1, duration: 0.95, ease: 'power2.out', clearProps: 'transform' },
+        { scale: 1.025, opacity: 0.88 },
+        { scale: 1, opacity: 1, duration: 0.72, ease: 'power2.out', clearProps: 'transform,opacity' },
         0
       );
 
-      // Eyebrow fade & rise
+      // Eyebrow subtle rise
       tl.from(
         '.hero-eyebrow',
-        { opacity: 0, y: 12, duration: 0.44, clearProps: 'transform,opacity' },
-        0.08
+        { opacity: 0, y: 10, duration: 0.4, clearProps: 'transform,opacity' },
+        0.06
       );
 
       // Staggered headline line reveal
@@ -61,19 +83,19 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         '.hero-headline-row',
         {
           opacity: 0,
-          y: 20,
-          duration: 0.56,
-          stagger: 0.1,
+          y: 16,
+          duration: 0.5,
+          stagger: 0.08,
           clearProps: 'transform,opacity',
         },
-        0.16
+        0.14
       );
 
       // Supporting description
       tl.from(
         '.hero-description',
-        { opacity: 0, y: 12, duration: 0.44, clearProps: 'transform,opacity' },
-        0.34
+        { opacity: 0, y: 10, duration: 0.42, clearProps: 'transform,opacity' },
+        0.28
       );
 
       // CTA buttons staggered entrance
@@ -81,12 +103,12 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         '.hero-actions a',
         {
           opacity: 0,
-          y: 12,
-          duration: 0.4,
-          stagger: 0.08,
+          y: 10,
+          duration: 0.36,
+          stagger: 0.06,
           clearProps: 'transform,opacity',
         },
-        0.44
+        0.36
       );
 
       // Solution indicators sequential reveal
@@ -94,17 +116,32 @@ export class HeroComponent implements AfterViewInit, OnDestroy {
         '.indicator-item',
         {
           opacity: 0,
-          y: 14,
-          duration: 0.42,
-          stagger: 0.09,
+          y: 10,
+          duration: 0.38,
+          stagger: 0.07,
           clearProps: 'transform,opacity',
         },
-        0.54
+        0.44
+      );
+
+      // Bottom architectural datum line draw
+      tl.from(
+        '.hero-datum-line',
+        {
+          scaleX: 0,
+          transformOrigin: this.lang.isRtl() ? 'right center' : 'left center',
+          duration: 0.65,
+          ease: 'power2.out',
+          clearProps: 'transform',
+        },
+        0.32
       );
     }, this.hostRef.nativeElement);
   }
 
   ngOnDestroy(): void {
+    this.visibilityObserver?.disconnect();
+    this.visibilityObserver = null;
     this.gsapCtx?.revert();
     this.gsapCtx = null;
   }

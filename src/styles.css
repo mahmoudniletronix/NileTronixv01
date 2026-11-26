@@ -1,57 +1,112 @@
 /* ==========================================================================
-   NileTronix Enterprise Design System — Consolidated Global Tokens & Base
+   NileTronix — Global Engineering Design System
+   Direction: Premium Industrial Engineering × Swiss Editorial Design
    ========================================================================== */
 
 :root {
-  /* Official Brand Palette (Refined Architectural Navy + Disciplined Nile Blue) */
-  --nt-dark-navy: #0a1924;
-  --nt-deep-navy: #122634;
-  --nt-nile-blue: #0b7897;
-  --nt-cyan-accent: #0b7897;
-  --nt-brand-red: #c81e1e;
-  --nt-white: #ffffff;
-  --nt-light-bg: #f5f7f9;
+  /* 1. Brand & Tonal Surface Palette (Swiss Industrial: Deep Navy + Graphite + Precision Brand Red) */
+  --nt-navy: #0a1924;
+  --nt-navy-elevated: #102432;
+  --nt-navy-hover: #1b3142;
+  --nt-navy-surface: #0e202e;
+  --nt-bg-main: #ffffff;
+  --nt-surface-soft: #f4f7f9; /* Secondary tonal surface (Industries, form panels) */
+  --nt-surface-quiet: #f8fafc; /* Quiet tonal surface (Clients & References) */
+  --nt-surface-hover: #ebf1f5;
+  --nt-slate-icon: #475569; /* Crisp Architectural Graphite for light-surface icons */
+  --nt-slate-ink: #334155; /* WCAG AA 10.6:1 on #FFFFFF */
+  --nt-tech-blue: var(--nt-navy-elevated);
+  --nt-tech-blue-hover: var(--nt-navy-hover);
+  --nt-tech-blue-ink: var(--nt-slate-ink);
+  --nt-tech-blue-tint: rgba(16, 36, 50, 0.08);
+  --nt-brand-red: #e71f35;
+  --nt-brand-red-ink: #c4172b; /* WCAG AA 5.9:1 on #FFFFFF */
+  --nt-silver-on-dark: #cbd6e0;
+  --nt-silver-muted-on-dark: #9fb0be;
 
-  /* Semantic Surfaces & Text (Flat B4 Surfaces) */
-  --nt-surface-primary: #ffffff;
-  --nt-surface-secondary: #f5f7f9;
-  --nt-ink: #0f1e29;
-  --nt-ink-muted: #526370;
-  --nt-placeholder: #7a8a97;
-  --nt-border-subtle: #e2e8ee;
-  --nt-border-light: rgba(255, 255, 255, 0.16);
-  --nt-surface-hover: #eef3f7;
-  --nt-focus-ring: #0b7897;
+  /* 2. Borders & Hairlines */
+  --nt-border: #dce4ea;
+  --nt-border-strong: #c2cfd8;
+  --nt-border-on-dark: rgba(255, 255, 255, 0.14);
+  --nt-border-on-dark-strong: rgba(255, 255, 255, 0.28);
 
-  /* Typography Families */
+  /* 3. Typography Colors */
+  --nt-text-primary: #102432;
+  --nt-text-secondary: #536675; /* Stronger editorial readability (5.9:1 on #FFFFFF) */
+  --nt-text-placeholder: #768896;
+  --nt-text-on-dark: #ffffff;
+  --nt-text-on-dark-muted: rgba(255, 255, 255, 0.82);
+  --nt-text-on-dark-subtle: rgba(255, 255, 255, 0.62);
+
+  /* 4. Semantic Compatibility Aliases */
+  --nt-dark-navy: var(--nt-navy);
+  --nt-deep-navy: var(--nt-navy-elevated);
+  --nt-nile-blue: var(--nt-tech-blue-ink);
+  --nt-cyan-accent: var(--nt-tech-blue);
+  --nt-white: var(--nt-bg-main);
+  --nt-light-bg: var(--nt-surface-soft);
+  --nt-surface-primary: var(--nt-bg-main);
+  --nt-surface-secondary: var(--nt-surface-soft);
+  --nt-ink: var(--nt-text-primary);
+  --nt-ink-muted: var(--nt-text-secondary);
+  --nt-placeholder: var(--nt-text-placeholder);
+  --nt-border-subtle: var(--nt-border);
+  --nt-border-light: var(--nt-border-on-dark);
+  --nt-focus-ring: var(--nt-tech-blue);
+
+  /* 5. Wide Editorial Container & Layout Rhythm */
+  --container-width: 92%;
+  --container-max-width: 1600px;
+  --section-spacing: clamp(64px, 6vw, 112px);
+  --nt-container-max: var(--container-max-width);
+  --nt-gutter: clamp(1rem, 2.5vw, 2rem);
+  --nt-container-pad: var(--nt-gutter);
+  --nt-section-py: var(--section-spacing);
+  --nt-section-py-mobile: clamp(48px, 7vw, 64px);
+  --nt-section-header-gap: clamp(1.75rem, 2.8vw, 2.75rem);
+  --nt-header-height: 76px;
+
+  /* 6. Engineering Alignment System Tokens */
+  --nt-grid-line-light: rgba(16, 36, 50, 0.03);
+  --nt-grid-line-dark: rgba(255, 255, 255, 0.032);
+  --nt-grid-size: 40px;
+  --nt-corner-mark-light: rgba(16, 36, 50, 0.22);
+  --nt-corner-mark-dark: rgba(255, 255, 255, 0.22);
+
+  /* 7. Elevation (Restrained, Crisp) */
+  --nt-shadow-xs: 0 1px 2px rgba(10, 25, 36, 0.04);
+  --nt-shadow-sm: 0 4px 14px rgba(10, 25, 36, 0.06);
+  --nt-shadow-md: 0 12px 28px rgba(10, 25, 36, 0.11);
+  --nt-shadow-dark-stage: 0 22px 48px -14px rgba(0, 0, 0, 0.48);
+
+  /* 8. Typography Families */
   --nt-font-en: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --nt-font-en-display: 'Space Grotesk', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   --nt-font-ar: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
   --nt-font-sans: var(--nt-font-en);
   --nt-font-display: var(--nt-font-en-display);
 
-  /* Unified Typography Scale */
-  --nt-h1-size: clamp(2.5rem, 4.4vw, 4.25rem);
-  --nt-h2-size: clamp(2.05rem, 3.1vw, 2.85rem);
-  --nt-h3-size: clamp(1.45rem, 2.05vw, 1.95rem);
-  --nt-body-size: clamp(0.96875rem, 1.05vw, 1.03125rem);
+  /* 9. Bold Swiss-Industrial Typography Hierarchy */
+  --nt-h1-size: clamp(2.45rem, 4.4vw, 4.625rem); /* 39px → 64–74px desktop */
+  --nt-h2-size: clamp(1.95rem, 2.95vw, 3rem); /* 31px → 40–48px desktop */
+  --nt-h3-size: clamp(1.375rem, 1.85vw, 1.875rem); /* 22px → 30px desktop */
+  --nt-lead-size: clamp(1rem, 1.12vw, 1.125rem); /* 16–18px section lead */
+  --nt-body-size: clamp(0.9375rem, 1vw, 1rem); /* 15–16px body */
   --nt-ui-size: 0.9375rem;
-  --nt-eyebrow-size: 0.8125rem;
+  --nt-eyebrow-size: 0.75rem; /* 12px crisp eyebrow */
+  --nt-caption-size: 0.8125rem;
 
-  /* Unified Spacing & Layout Rhythm (8px base) */
-  --nt-container-max: 1380px;
-  --nt-gutter: clamp(1rem, 3.5vw, 4rem);
-  --nt-container-pad: var(--nt-gutter);
-  --nt-section-py: clamp(3.5rem, 5.5vw, 5rem);
-  --nt-header-height: 80px;
+  /* 10. Architectural Radii */
+  --nt-radius-xs: 4px;
   --nt-radius-sm: 6px;
   --nt-radius-md: 10px;
   --nt-radius-lg: 14px;
 
-  /* Motion */
+  /* 11. Unified Motion */
   --nt-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --nt-dur-fast: 180ms;
-  --nt-dur-base: 260ms;
+  --nt-dur-fast: 160ms;
+  --nt-dur-base: 240ms;
+  --nt-dur-slow: 420ms;
 }
 
 html[lang='ar'] {
@@ -59,6 +114,9 @@ html[lang='ar'] {
   --nt-font-display: var(--nt-font-ar);
 }
 
+/* ==========================================================================
+   Base Reset & Accessibility
+   ========================================================================== */
 *,
 *::before,
 *::after {
@@ -68,18 +126,35 @@ html[lang='ar'] {
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   overflow-x: clip;
   max-width: 100%;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
   margin: 0;
   font-family: var(--nt-font-sans);
   font-size: 1rem;
-  color: var(--nt-ink);
-  background-color: var(--nt-surface-primary);
-  line-height: 1.6;
+  color: var(--nt-text-primary);
+  background-color: var(--nt-bg-main);
+  line-height: 1.62;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
@@ -90,6 +165,7 @@ h2,
 h3,
 h4 {
   font-family: var(--nt-font-display);
+  color: inherit;
 }
 
 img,
@@ -110,7 +186,6 @@ a {
   color: inherit;
 }
 
-/* Accessible focus indicator */
 :focus-visible {
   outline: 2px solid var(--nt-focus-ring);
   outline-offset: 2px;
@@ -123,8 +198,8 @@ a {
   inset-inline-start: 1rem;
   z-index: 1000;
   padding: 0.75rem 1.25rem;
-  background-color: var(--nt-dark-navy);
-  color: var(--nt-white);
+  background-color: var(--nt-navy);
+  color: var(--nt-bg-main);
   font-weight: 600;
   font-size: 0.875rem;
   border-radius: var(--nt-radius-sm);
@@ -136,12 +211,169 @@ a {
   inset-block-start: 1rem;
 }
 
-/* Shared Layout Container */
+/* ==========================================================================
+   Shared Wide Editorial Container System (92% width, max 1600px)
+   ========================================================================== */
+.site-container,
 .nt-container {
-  width: 100%;
-  max-width: var(--nt-container-max);
+  width: var(--container-width);
+  max-width: var(--container-max-width);
   margin-inline: auto;
-  padding-inline: var(--nt-gutter);
+  padding-inline: 0;
+}
+
+@media (max-width: 767px) {
+  .site-container,
+  .nt-container {
+    width: calc(100% - 2rem);
+  }
+}
+
+/* Smooth anchor scroll clearance beneath sticky header */
+app-solutions-showcase[id],
+app-industries-serve[id],
+app-site-products[id],
+app-references[id],
+app-contact-section[id] {
+  scroll-margin-top: calc(var(--nt-header-height) + 12px);
+}
+
+/* ==========================================================================
+   Engineering Alignment System & Editorial Typography Primitives
+   ========================================================================== */
+
+/* Editorial Section Index + Eyebrow Lockup */
+.nt-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0 0 0.75rem;
+  font-size: var(--nt-eyebrow-size);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nt-slate-ink);
+  line-height: 1.25;
+}
+
+.nt-eyebrow-index {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--nt-text-primary);
+  font-family: var(--nt-font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+.nt-eyebrow-index::after {
+  content: '';
+  display: inline-block;
+  width: 22px;
+  height: 2px;
+  background-color: var(--nt-brand-red);
+}
+
+html[dir='rtl'] .nt-eyebrow {
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-size: 0.84375rem;
+}
+
+/* Strong Swiss Editorial Section Title (40–48px desktop) */
+.nt-section-title {
+  margin: 0;
+  font-size: var(--nt-h2-size);
+  font-weight: 800;
+  line-height: 1.09;
+  letter-spacing: -0.028em;
+  color: var(--nt-text-primary);
+}
+
+html[dir='rtl'] .nt-section-title {
+  letter-spacing: 0;
+  line-height: 1.22;
+}
+
+/* Readable Section Lead Copy (16–18px) */
+.nt-section-lead {
+  margin: 0;
+  font-size: var(--nt-lead-size);
+  line-height: 1.62;
+  color: var(--nt-text-secondary);
+}
+
+/* Selective Architectural Guide Accent Bar (Replaces repetitive generic dividers) */
+.nt-axis-rule {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: var(--nt-border);
+}
+
+.nt-axis-rule::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  top: -1px;
+  width: 48px;
+  height: 2px;
+  background-color: var(--nt-brand-red);
+}
+
+/* Subtle Engineering Grid Background Utilities (Low Visual Intensity) */
+.nt-grid-surface-light {
+  background-image:
+    linear-gradient(to right, var(--nt-grid-line-light) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--nt-grid-line-light) 1px, transparent 1px);
+  background-size: var(--nt-grid-size) var(--nt-grid-size);
+}
+
+.nt-grid-surface-dark {
+  background-image:
+    linear-gradient(to right, var(--nt-grid-line-dark) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--nt-grid-line-dark) 1px, transparent 1px);
+  background-size: var(--nt-grid-size) var(--nt-grid-size);
+}
+
+/* Minimal Technical Corner Registration Marks */
+.nt-corner-marks {
+  position: relative;
+}
+
+.nt-corner-marks::before,
+.nt-corner-marks::after {
+  content: '';
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.nt-corner-marks::before {
+  top: 12px;
+  inset-inline-start: 12px;
+  border-top: 1.5px solid var(--nt-corner-mark-light);
+  border-inline-start: 1.5px solid var(--nt-corner-mark-light);
+}
+
+.nt-corner-marks::after {
+  bottom: 12px;
+  inset-inline-end: 12px;
+  border-bottom: 1.5px solid var(--nt-corner-mark-light);
+  border-inline-end: 1.5px solid var(--nt-corner-mark-light);
+}
+
+.nt-corner-marks-dark::before {
+  border-top-color: var(--nt-corner-mark-dark);
+  border-inline-start-color: var(--nt-corner-mark-dark);
+}
+
+.nt-corner-marks-dark::after {
+  border-bottom-color: var(--nt-corner-mark-dark);
+  border-inline-end-color: var(--nt-corner-mark-dark);
 }
 
 /* Screen-reader only utility */
@@ -162,12 +394,48 @@ html[dir='rtl'] .nt-dir-icon {
   transform: scaleX(-1);
 }
 
+/* Subtle Specular Spotlight Layer (React-Bits-inspired, Swiss Industrial restrained intensity) */
+.nt-spotlight-host {
+  position: relative;
+}
+
+.nt-spotlight-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 320ms var(--nt-ease);
+}
+
+.nt-spotlight-layer.is-dark {
+  background: radial-gradient(
+    520px circle at var(--nt-spot-x, 50%) var(--nt-spot-y, 50%),
+    rgba(203, 214, 224, 0.085) 0%,
+    rgba(231, 31, 53, 0.035) 32%,
+    transparent 68%
+  );
+}
+
+.nt-spotlight-layer.is-light {
+  background: radial-gradient(
+    460px circle at var(--nt-spot-x, 50%) var(--nt-spot-y, 50%),
+    rgba(16, 36, 50, 0.045) 0%,
+    transparent 65%
+  );
+}
+
+.nt-spotlight-layer.is-active {
+  opacity: 1;
+}
+
 /* Lock body scroll when mobile drawer is open */
 body.nt-scroll-locked {
   overflow: hidden;
 }
 
-/* Shared Entrance Keyframes */
+/* Shared Keyframes */
 @keyframes ntHeaderEnter {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -181,21 +449,6 @@ body.nt-scroll-locked {
 @keyframes ntFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-@keyframes ntRevealUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes ntIndicatorReveal {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes ntHeroImageEnter {
-  from { opacity: 0.72; transform: scale(1.02); }
-  to { opacity: 1; transform: scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {

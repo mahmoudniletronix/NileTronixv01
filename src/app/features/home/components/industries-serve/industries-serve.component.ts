@@ -15,6 +15,7 @@ import {
 import { RouterLink } from '@angular/router';
 import gsap from 'gsap';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 import {
   INDUSTRIES_CATALOG,
   INDUSTRIES_SECTION_COPY,
@@ -24,7 +25,7 @@ import { LocalizedText } from '../../../solutions/models/solution.model';
 
 @Component({
   selector: 'app-industries-serve',
-  imports: [RouterLink],
+  imports: [RouterLink, NtIconComponent],
   templateUrl: './industries-serve.component.html',
   styleUrl: './industries-serve.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,7 +35,6 @@ export class IndustriesServeComponent implements AfterViewInit, OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
-  @ViewChild('stageImg') private stageImgRef?: ElementRef<HTMLImageElement>;
   @ViewChild('stageCopy') private stageCopyRef?: ElementRef<HTMLElement>;
   @ViewChild('stageList') private stageListRef?: ElementRef<HTMLElement>;
 
@@ -63,8 +63,6 @@ export class IndustriesServeComponent implements AfterViewInit, OnDestroy {
 
   private viewReady = false;
   private activeTimeline: gsap.core.Timeline | null = null;
-  private parallaxX: gsap.QuickToFunc | null = null;
-  private parallaxY: gsap.QuickToFunc | null = null;
 
   constructor() {
     effect(() => {
@@ -77,17 +75,12 @@ export class IndustriesServeComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.viewReady = true;
-    if (this.isBrowser) {
-      this.bindParallax();
-    }
   }
 
   ngOnDestroy(): void {
     if (!this.isBrowser) return;
     this.activeTimeline?.kill();
-    if (this.stageImgRef) {
-      gsap.killTweensOf(this.stageImgRef.nativeElement);
-    }
+    this.activeTimeline = null;
   }
 
   protected t(text: LocalizedText): string {
@@ -119,20 +112,6 @@ export class IndustriesServeComponent implements AfterViewInit, OnDestroy {
     this.selectByIndex((this.activeIndex() - 1 + this.total) % this.total);
   }
 
-  protected onPanelPointerMove(event: MouseEvent): void {
-    if (!this.parallaxX || !this.parallaxY) return;
-    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    const relX = (event.clientX - rect.left) / rect.width - 0.5;
-    const relY = (event.clientY - rect.top) / rect.height - 0.5;
-    this.parallaxX(-relX * 16);
-    this.parallaxY(-relY * 10);
-  }
-
-  protected onPanelPointerLeave(): void {
-    this.parallaxX?.(0);
-    this.parallaxY?.(0);
-  }
-
   protected onTabKeydown(event: KeyboardEvent, index: number): void {
     let targetIdx: number | null = null;
     if (event.key === 'ArrowRight') {
@@ -156,31 +135,7 @@ export class IndustriesServeComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private bindParallax(): void {
-    const reducedMotion =
-      typeof window !== 'undefined' &&
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (reducedMotion || !this.stageImgRef) {
-      this.parallaxX = null;
-      this.parallaxY = null;
-      return;
-    }
-
-    this.parallaxX = gsap.quickTo(this.stageImgRef.nativeElement, 'x', {
-      duration: 0.55,
-      ease: 'power2.out',
-    });
-    this.parallaxY = gsap.quickTo(this.stageImgRef.nativeElement, 'y', {
-      duration: 0.55,
-      ease: 'power2.out',
-    });
-  }
-
   private animateActivePanel(): void {
-    this.bindParallax();
-
     const reducedMotion =
       typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
@@ -189,41 +144,30 @@ export class IndustriesServeComponent implements AfterViewInit, OnDestroy {
     if (reducedMotion) return;
 
     this.activeTimeline?.kill();
-    const dirSign = this.isRtl() ? -1 : 1;
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out', overwrite: 'auto' } });
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out', overwrite: 'auto' } });
     this.activeTimeline = tl;
-
-    if (this.stageImgRef) {
-      tl.fromTo(
-        this.stageImgRef.nativeElement,
-        { scale: 1.09, opacity: 0.65 },
-        { scale: 1.02, opacity: 1, duration: 0.78, ease: 'power2.out' },
-        0
-      );
-    }
 
     if (this.stageCopyRef) {
       tl.fromTo(
         this.stageCopyRef.nativeElement,
-        { opacity: 0, y: 18 },
-        { opacity: 1, y: 0, duration: 0.44, clearProps: 'transform' },
-        0.1
+        { opacity: 0.35, y: 8 },
+        { opacity: 1, y: 0, duration: 0.26, clearProps: 'transform,opacity' },
+        0.04
       );
     }
 
     if (this.stageListRef?.nativeElement.children.length) {
       tl.fromTo(
         this.stageListRef.nativeElement.children,
-        { opacity: 0, x: -16 * dirSign },
+        { opacity: 0.35, y: 6 },
         {
           opacity: 1,
-          x: 0,
-          duration: 0.34,
-          stagger: 0.065,
-          ease: 'power2.out',
-          clearProps: 'transform',
+          y: 0,
+          duration: 0.22,
+          stagger: 0.035,
+          clearProps: 'transform,opacity',
         },
-        0.18
+        0.08
       );
     }
   }

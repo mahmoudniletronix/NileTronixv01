@@ -4,31 +4,37 @@ import {
   Component,
   ElementRef,
   HostListener,
+  NgZone,
   OnDestroy,
+  OnInit,
   PLATFORM_ID,
   effect,
   inject,
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import gsap from 'gsap';
+import { SmoothScrollService } from '../../core/animation/smooth-scroll.service';
 import { LanguageService } from '../../core/i18n/language.service';
+import { NtMagneticDirective } from '../../shared/directives/nt-magnetic.directive';
+import { NtIconComponent } from '../../shared/ui/nt-icon.component';
 
 export type NavSectionId = 'home' | 'solutions' | 'industries' | 'hardware' | 'references' | 'contact';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink],
+  imports: [RouterLink, NtIconComponent, NtMagneticDirective],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent implements OnDestroy {
+export class HeaderComponent implements OnInit, OnDestroy {
   private readonly document = inject(DOCUMENT);
   private readonly hostRef = inject(ElementRef<HTMLElement>);
   private readonly router = inject(Router);
+  private readonly ngZone = inject(NgZone);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
+  private readonly smoothScroll = inject(SmoothScrollService);
 
   protected readonly lang = inject(LanguageService);
   protected readonly content = this.lang.content;
@@ -40,50 +46,77 @@ export class HeaderComponent implements OnDestroy {
 
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private openedViaHover = false;
-  private scrollTween: gsap.core.Tween | null = null;
+  private scrollRafId: number | null = null;
+
+  private readonly boundPassiveScroll = () => {
+    if (this.scrollRafId !== null) return;
+    this.scrollRafId = requestAnimationFrame(() => {
+      this.scrollRafId = null;
+      this.syncActiveSection();
+    });
+  };
 
   constructor() {
     effect(() => {
       const locked = this.mobileDrawerOpen();
       this.document.body?.classList.toggle('nt-scroll-locked', locked);
+      if (locked) {
+        this.smoothScroll.stop();
+      } else {
+        this.smoothScroll.start();
+      }
+    });
+  }
+
+  ngOnInit(): void {
+    if (!this.isBrowser) return;
+    this.ngZone.runOutsideAngular(() => {
+      window.addEventListener('scroll', this.boundPassiveScroll, { passive: true });
     });
   }
 
   ngOnDestroy(): void {
     this.clearCloseTimer();
-    this.scrollTween?.kill();
+    if (this.scrollRafId !== null) {
+      cancelAnimationFrame(this.scrollRafId);
+      this.scrollRafId = null;
+    }
+    if (this.isBrowser) {
+      window.removeEventListener('scroll', this.boundPassiveScroll);
+    }
+    this.smoothScroll.start();
     this.document.body?.classList.remove('nt-scroll-locked');
   }
 
-  @HostListener('window:scroll')
-  protected onWindowScroll(): void {
-    if (!this.isBrowser) return;
-
+  private syncActiveSection(): void {
     const currentUrl = this.router.url.split('#')[0];
+    let nextSection: NavSectionId = 'home';
+
     if (currentUrl.startsWith('/solutions/')) {
-      this.activeSection.set('solutions');
-      return;
-    }
+      nextSection = 'solutions';
+    } else {
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+      const offset = 140;
+      const sectionOrder: Exclude<NavSectionId, 'home'>[] = [
+        'contact',
+        'references',
+        'hardware',
+        'industries',
+        'solutions',
+      ];
 
-    const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-    const offset = 140;
-    const sectionOrder: Exclude<NavSectionId, 'home'>[] = [
-      'contact',
-      'references',
-      'hardware',
-      'industries',
-      'solutions',
-    ];
-
-    for (const id of sectionOrder) {
-      const el = this.document.getElementById(id);
-      if (el && el.offsetTop - offset <= scrollY) {
-        this.activeSection.set(id);
-        return;
+      for (const id of sectionOrder) {
+        const el = this.document.getElementById(id);
+        if (el && el.offsetTop - offset <= scrollY) {
+          nextSection = id;
+          break;
+        }
       }
     }
 
-    this.activeSection.set('home');
+    if (nextSection !== this.activeSection()) {
+      this.ngZone.run(() => this.activeSection.set(nextSection));
+    }
   }
 
   protected navigateToSection(section: NavSectionId, event?: Event): void {
@@ -106,37 +139,14 @@ export class HeaderComponent implements OnDestroy {
 
   private smoothScrollTo(section: NavSectionId): void {
     const headerHeight = 76;
-    let targetY = 0;
-
-    if (section !== 'home') {
-      const el = this.document.getElementById(section);
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      targetY = Math.max(0, rect.top + window.scrollY - headerHeight);
-    }
-
-    const reducedMotion =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (reducedMotion) {
-      window.scrollTo(0, targetY);
+    if (section === 'home') {
+      this.smoothScroll.scrollToTop();
       return;
     }
 
-    this.scrollTween?.kill();
-    const state = { y: window.scrollY || document.documentElement.scrollTop || 0 };
-    const distance = Math.abs(targetY - state.y);
-    const duration = Math.min(1.05, Math.max(0.45, distance / 2600));
-
-    this.scrollTween = gsap.to(state, {
-      y: targetY,
-      duration,
-      ease: 'power3.inOut',
-      onUpdate: () => window.scrollTo(0, state.y),
-      onComplete: () => {
-        this.scrollTween = null;
-      },
+    this.smoothScroll.scrollToElement(section, {
+      offset: -headerHeight,
+      duration: 1.05,
     });
   }
 

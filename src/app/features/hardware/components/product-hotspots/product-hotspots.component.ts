@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { LanguageService } from '../../../../core/i18n/language.service';
+import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 import { LocalizedText } from '../../../solutions/models/solution.model';
 import { HARDWARE_STUDIO_COPY } from '../../data/hardware-products.data';
 import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.model';
 
 @Component({
   selector: 'app-product-hotspots',
+  imports: [NtIconComponent],
   template: `
     <div class="hotspots-layer" aria-live="polite">
       @for (item of projectedHotspots(); track item.hotspot.id) {
@@ -28,9 +30,6 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
       @if (activeHotspot(); as hs) {
         <div class="hotspot-card" role="dialog" [attr.aria-label]="t(hs.title)">
           <div class="hotspot-card-head">
-            <span class="hotspot-icon" aria-hidden="true">
-              <i [class]="hs.icon"></i>
-            </span>
             <h4 class="hotspot-title">{{ t(hs.title) }}</h4>
             <button
               type="button"
@@ -38,12 +37,12 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
               [attr.aria-label]="t(copy.returnDefaultView)"
               (click)="dismissed.emit()"
             >
-              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              <app-nt-icon name="close" [size]="15" />
             </button>
           </div>
           <p class="hotspot-desc">{{ t(hs.description) }}</p>
           <button type="button" class="hotspot-reset-link" (click)="dismissed.emit()">
-            <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i>
+            <app-nt-icon name="rotate" [size]="13" />
             <span>{{ t(copy.returnDefaultView) }}</span>
           </button>
         </div>
@@ -71,31 +70,31 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      border: 2px solid #ffffff;
-      background-color: rgba(8, 47, 67, 0.78);
-      box-shadow: 0 4px 12px rgba(8, 47, 67, 0.22);
+      border: 2px solid var(--nt-bg-main);
+      background-color: var(--nt-navy);
+      box-shadow: var(--nt-shadow-sm);
       display: grid;
       place-items: center;
       cursor: pointer;
       pointer-events: auto;
-      transition: transform 180ms var(--nt-ease), background-color 180ms var(--nt-ease);
+      transition: transform var(--nt-dur-fast) var(--nt-ease), background-color var(--nt-dur-fast) var(--nt-ease);
     }
 
     .hotspot-pin:hover,
     .hotspot-pin.is-selected {
-      transform: translate(-50%, -50%) scale(1.2);
-      background-color: var(--nt-nile-blue);
+      transform: translate(-50%, -50%) scale(1.18);
+      background-color: var(--nt-brand-red);
     }
 
     .pin-core {
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background-color: #ffffff;
+      background-color: var(--nt-bg-main);
     }
 
     .hotspot-pin.is-selected .pin-core {
-      background-color: #ffffff;
+      background-color: var(--nt-bg-main);
     }
 
     .hotspot-card {
@@ -103,11 +102,11 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
       inset-inline-start: 1rem;
       bottom: 4.5rem;
       max-width: min(300px, calc(100% - 2rem));
-      padding: 0.85rem 1rem;
-      background-color: rgba(255, 255, 255, 0.96);
-      border: 1px solid var(--nt-border-subtle);
-      border-radius: 10px;
-      box-shadow: 0 14px 32px rgba(8, 47, 67, 0.14);
+      padding: 0.9rem 1rem;
+      background-color: var(--nt-bg-main);
+      border: 1px solid var(--nt-border);
+      border-radius: var(--nt-radius-md);
+      box-shadow: var(--nt-shadow-md);
       pointer-events: auto;
       display: flex;
       flex-direction: column;
@@ -123,9 +122,10 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
     .hotspot-icon {
       width: 26px;
       height: 26px;
-      border-radius: 6px;
-      background-color: #edf3f6;
-      color: var(--nt-nile-blue);
+      border-radius: var(--nt-radius-xs);
+      background-color: var(--nt-surface-soft);
+      border: 1px solid var(--nt-border);
+      color: var(--nt-slate-icon);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -138,16 +138,16 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
       flex: 1;
       font-size: 0.875rem;
       font-weight: 700;
-      color: var(--nt-dark-navy);
+      color: var(--nt-text-primary);
     }
 
     .hotspot-close {
       width: 26px;
       height: 26px;
       border: 0;
-      border-radius: 6px;
+      border-radius: var(--nt-radius-xs);
       background: transparent;
-      color: var(--nt-ink-muted);
+      color: var(--nt-text-secondary);
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -155,15 +155,15 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
     }
 
     .hotspot-close:hover {
-      background-color: #edf3f6;
-      color: var(--nt-dark-navy);
+      background-color: var(--nt-surface-soft);
+      color: var(--nt-text-primary);
     }
 
     .hotspot-desc {
       margin: 0;
       font-size: 0.8125rem;
       line-height: 1.5;
-      color: var(--nt-ink-muted);
+      color: var(--nt-text-secondary);
     }
 
     .hotspot-reset-link {
@@ -174,14 +174,14 @@ import { ProductHotspot, ProjectedHotspot } from '../../models/product-hotspot.m
       padding: 0.25rem 0;
       border: 0;
       background: transparent;
-      color: var(--nt-nile-blue);
+      color: var(--nt-navy);
       font-size: 0.75rem;
       font-weight: 700;
       cursor: pointer;
     }
 
     .hotspot-reset-link:hover {
-      color: var(--nt-dark-navy);
+      color: var(--nt-text-primary);
     }
 
     @media (max-width: 767px) {

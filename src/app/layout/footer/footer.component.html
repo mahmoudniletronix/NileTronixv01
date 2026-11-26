@@ -1,8 +1,37 @@
-<footer #footerRoot class="site-footer">
-  <span class="footer-top-line" aria-hidden="true"></span>
+<footer #footerRoot class="site-footer" appNtSpotlight spotlightTone="dark">
+  <!-- Subtle Live Signal Flow Backdrop -->
+  <svg
+    class="footer-signal-svg"
+    aria-hidden="true"
+    viewBox="0 0 1600 440"
+    fill="none"
+    preserveAspectRatio="xMidYMid slice"
+  >
+    <defs>
+      <linearGradient id="ntFooterPulseBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#cbd6e0" stop-opacity="0" />
+        <stop offset="50%" stop-color="#dce6ee" stop-opacity="0.4" />
+        <stop offset="100%" stop-color="#cbd6e0" stop-opacity="0" />
+      </linearGradient>
+    </defs>
+    <path class="footer-track" d="M -40 110 L 440 110 L 540 210 L 1140 210 L 1240 110 L 1640 110" />
+    <path class="footer-track" d="M -40 320 L 590 320 L 680 230 L 1640 230" />
+    <path
+      class="footer-pulse"
+      stroke="url(#ntFooterPulseBlue)"
+      pathLength="100"
+      d="M -40 110 L 440 110 L 540 210 L 1140 210 L 1240 110 L 1640 110"
+    />
+  </svg>
+
+  <div class="footer-datum-bar" aria-hidden="true">
+    <div class="site-container">
+      <span class="footer-top-line"></span>
+    </div>
+  </div>
   <span class="footer-watermark" aria-hidden="true">NILETRONIX</span>
 
-  <div class="footer-inner">
+  <div class="site-container footer-inner">
     <div class="footer-grid">
       <!-- Brand Column (Seamless Dark-Mode Lockup — Zero White Sticker Box) -->
       <div class="footer-brand">
@@ -46,15 +75,15 @@
             [attr.aria-label]="lang() === 'ar' ? 'موقعنا على خرائط جوجل' : 'NileTronix on Google Maps'"
             [attr.title]="lang() === 'ar' ? 'موقعنا على الخريطة' : 'Google Maps'"
           >
-            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <app-nt-icon name="pin" [size]="16" />
           </a>
           <a
             class="social-btn"
-            href="mailto:info@niletronix.com"
+            href="mailto:Info@niletronix.com"
             [attr.aria-label]="lang() === 'ar' ? 'راسلنا عبر البريد الإلكتروني' : 'Email NileTronix'"
             [attr.title]="lang() === 'ar' ? 'البريد الإلكتروني' : 'Email Us'"
           >
-            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            <app-nt-icon name="mail" [size]="16" />
           </a>
           <a
             class="social-btn"
@@ -63,7 +92,7 @@
             [attr.aria-label]="lang() === 'ar' ? 'اطلب استشارة' : 'Request a Consultation'"
             [attr.title]="lang() === 'ar' ? 'اطلب استشارة' : 'Consultation'"
           >
-            <i class="fa-solid fa-headset" aria-hidden="true"></i>
+            <app-nt-icon name="headset" [size]="16" />
           </a>
         </div>
       </div>
@@ -143,17 +172,14 @@
         </h3>
         <ul class="footer-contact-list">
           <li>
-            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
             <a [href]="mapsLink" target="_blank" rel="noopener noreferrer">
               {{ lang() === 'ar' ? 'مصر الجديدة، القاهرة، مصر' : 'Heliopolis, Cairo, Egypt' }}
             </a>
           </li>
           <li>
-            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-            <a href="mailto:info@niletronix.com">info&#64;niletronix.com</a>
+            <a href="mailto:Info@niletronix.com">Info&#64;niletronix.com</a>
           </li>
           <li>
-            <i class="fa-solid fa-clock" aria-hidden="true"></i>
             <span>
               {{ lang() === 'ar' ? 'الأحد – الخميس · 9:00 ص – 5:00 م' : 'Sun – Thu · 9:00 AM – 5:00 PM' }}
             </span>
