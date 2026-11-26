@@ -86,7 +86,7 @@ import { LocalizedText } from '../../models/solution.model';
   `,
   styles: `
     .solution-wrap {
-      padding-block: clamp(3rem, 5.5vw, 5rem);
+      padding-block: calc(var(--nt-header-height) + clamp(2rem, 4vw, 3.5rem)) clamp(3rem, 5.5vw, 5rem);
       background-color: var(--nt-white);
       color: var(--nt-ink);
     }

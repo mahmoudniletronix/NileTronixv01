@@ -1,4 +1,9 @@
-<header class="site-header">
+<header
+  class="site-header"
+  [class.is-over-dark]="isOverDarkHero()"
+  [class.is-scrolled]="isScrolled()"
+  [class.is-mega-open]="solutionsOpen()"
+>
   <div class="header-bar">
     <!-- Brand -->
     <a

@@ -3,7 +3,7 @@
   background-color: var(--nt-navy);
   color: var(--nt-text-on-dark);
   overflow: hidden;
-  min-height: clamp(660px, calc(100vh - var(--nt-header-height)), 840px);
+  min-height: clamp(720px, 100vh, 920px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -170,7 +170,7 @@
 .hero-grid {
   position: relative;
   z-index: 2;
-  padding-block: clamp(3.75rem, 6.5vh, 5.5rem) clamp(4.5rem, 7.5vh, 6rem);
+  padding-block: calc(var(--nt-header-height) + clamp(2.5rem, 5vh, 4rem)) clamp(4.5rem, 7.5vh, 6rem);
 }
 
 .hero-content {
@@ -433,7 +433,7 @@
   }
 
   .hero-grid {
-    padding-block: 2.75rem 3.25rem;
+    padding-block: calc(68px + 2rem) 3.25rem;
   }
 
   .hero-content {
@@ -458,7 +458,7 @@
 
 @media (max-width: 767px) {
   .hero-grid {
-    padding-block: 2.25rem 2.75rem;
+    padding-block: calc(68px + 1.5rem) 2.75rem;
   }
 
   .hero-eyebrow {

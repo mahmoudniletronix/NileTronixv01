@@ -64,7 +64,7 @@ import { NtIconComponent } from '../../shared/ui/nt-icon.component';
   `,
   styles: `
     .legal-page {
-      padding-block: clamp(3.5rem, 6vw, 5.5rem);
+      padding-block: calc(var(--nt-header-height) + clamp(2.5rem, 4.5vw, 4rem)) clamp(3.5rem, 6vw, 5.5rem);
       background-color: var(--nt-white);
       color: var(--nt-ink);
       min-height: 65vh;

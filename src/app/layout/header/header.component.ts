@@ -8,11 +8,13 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
+  computed,
   effect,
   inject,
   signal,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { Subscription, filter } from 'rxjs';
 import { SmoothScrollService } from '../../core/animation/smooth-scroll.service';
 import { LanguageService } from '../../core/i18n/language.service';
 import { NtMagneticDirective } from '../../shared/directives/nt-magnetic.directive';
@@ -39,24 +41,43 @@ export class HeaderComponent implements OnInit, OnDestroy {
   protected readonly lang = inject(LanguageService);
   protected readonly content = this.lang.content;
 
+  private static readonly HOME_PATHS = new Set([
+    '',
+    '/',
+    '/solutions',
+    '/industries',
+    '/projects',
+    '/about',
+    '/contact',
+    '/consultation',
+  ]);
+
   protected readonly solutionsOpen = signal(false);
   protected readonly mobileDrawerOpen = signal(false);
   protected readonly mobileSolutionsOpen = signal(false);
   protected readonly activeSection = signal<NavSectionId>('home');
+  protected readonly isScrolled = signal(false);
+  protected readonly isHomeRoute = signal(true);
+  protected readonly isOverDarkHero = computed(
+    () => this.isHomeRoute() && !this.isScrolled() && !this.solutionsOpen()
+  );
 
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private openedViaHover = false;
   private scrollRafId: number | null = null;
+  private routerSub: Subscription | null = null;
 
   private readonly boundPassiveScroll = () => {
     if (this.scrollRafId !== null) return;
     this.scrollRafId = requestAnimationFrame(() => {
       this.scrollRafId = null;
-      this.syncActiveSection();
+      this.syncScrollState();
     });
   };
 
   constructor() {
+    this.syncRouteState(this.router.url);
+
     effect(() => {
       const locked = this.mobileDrawerOpen();
       this.document.body?.classList.toggle('nt-scroll-locked', locked);
@@ -69,33 +90,58 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.routerSub = this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => {
+        this.syncRouteState(event.urlAfterRedirects);
+        if (this.isBrowser) {
+          this.syncScrollState();
+        }
+      });
+
     if (!this.isBrowser) return;
+    this.syncScrollState();
     this.ngZone.runOutsideAngular(() => {
       window.addEventListener('scroll', this.boundPassiveScroll, { passive: true });
+      window.addEventListener('resize', this.boundPassiveScroll, { passive: true });
     });
   }
 
   ngOnDestroy(): void {
     this.clearCloseTimer();
+    this.routerSub?.unsubscribe();
+    this.routerSub = null;
     if (this.scrollRafId !== null) {
       cancelAnimationFrame(this.scrollRafId);
       this.scrollRafId = null;
     }
     if (this.isBrowser) {
       window.removeEventListener('scroll', this.boundPassiveScroll);
+      window.removeEventListener('resize', this.boundPassiveScroll);
     }
     this.smoothScroll.start();
     this.document.body?.classList.remove('nt-scroll-locked');
   }
 
-  private syncActiveSection(): void {
+  private syncRouteState(url: string): void {
+    const cleanPath = url.split(/[?#]/)[0];
+    const isHome = HeaderComponent.HOME_PATHS.has(cleanPath);
+    if (isHome !== this.isHomeRoute()) {
+      this.isHomeRoute.set(isHome);
+    }
+  }
+
+  private syncScrollState(): void {
+    const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+    const viewportHeight = window.innerHeight || 800;
+    const nextScrolled = scrollY >= viewportHeight * 0.8;
+
     const currentUrl = this.router.url.split('#')[0];
     let nextSection: NavSectionId = 'home';
 
     if (currentUrl.startsWith('/solutions/')) {
       nextSection = 'solutions';
     } else {
-      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
       const offset = 140;
       const sectionOrder: Exclude<NavSectionId, 'home'>[] = [
         'contact',
@@ -114,8 +160,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (nextSection !== this.activeSection()) {
-      this.ngZone.run(() => this.activeSection.set(nextSection));
+    if (nextScrolled !== this.isScrolled() || nextSection !== this.activeSection()) {
+      this.ngZone.run(() => {
+        if (nextScrolled !== this.isScrolled()) {
+          this.isScrolled.set(nextScrolled);
+        }
+        if (nextSection !== this.activeSection()) {
+          this.activeSection.set(nextSection);
+        }
+      });
     }
   }
 

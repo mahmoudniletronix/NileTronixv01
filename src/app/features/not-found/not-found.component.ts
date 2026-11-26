@@ -29,7 +29,7 @@ import { NtIconComponent } from '../../shared/ui/nt-icon.component';
   `,
   styles: `
     .not-found-page {
-      padding-block: clamp(4.5rem, 8vw, 7rem);
+      padding-block: calc(var(--nt-header-height) + clamp(3rem, 6vw, 5rem)) clamp(4.5rem, 8vw, 7rem);
       background-color: var(--nt-white);
       color: var(--nt-ink);
       min-height: 65vh;
