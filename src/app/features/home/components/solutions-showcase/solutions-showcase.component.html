@@ -123,7 +123,7 @@
                   [alt]="t(item.screenshots[0].alt)"
                   [width]="item.screenshots[0].width"
                   [height]="item.screenshots[0].height"
-                  loading="lazy"
+                  [attr.loading]="idx === 0 ? 'eager' : 'lazy'"
                   decoding="async"
                 />
                 <div class="card-dim-layer" aria-hidden="true"></div>

@@ -1,7 +1,8 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Injectable, NgZone, PLATFORM_ID, inject } from '@angular/core';
-import gsap from 'gsap';
+import type GsapType from 'gsap';
 import type Lenis from 'lenis';
+import { loadGsap, loadGsapWithScrollTrigger } from './gsap-loader';
 
 export interface SmoothScrollOptions {
   readonly offset?: number;
@@ -23,6 +24,7 @@ export class SmoothScrollService {
   private readonly document = inject(DOCUMENT);
 
   private lenis: Lenis | null = null;
+  private gsapRef: typeof GsapType | null = null;
   private tickerFn: ((time: number) => void) | null = null;
   private fallbackTween: gsap.core.Tween | null = null;
   private initPromise: Promise<void> | null = null;
@@ -40,14 +42,14 @@ export class SmoothScrollService {
     this.destroyed = false;
     this.initPromise = this.ngZone.runOutsideAngular(async () => {
       try {
-        const [{ default: LenisCtor }, { ScrollTrigger }] = await Promise.all([
+        const [{ default: LenisCtor }, { gsap, ScrollTrigger }] = await Promise.all([
           import('lenis'),
-          import('gsap/ScrollTrigger'),
+          loadGsapWithScrollTrigger(),
         ]);
 
         if (this.destroyed) return;
 
-        gsap.registerPlugin(ScrollTrigger);
+        this.gsapRef = gsap;
 
         const lenis = new LenisCtor({
           duration: 1.05,
@@ -82,8 +84,8 @@ export class SmoothScrollService {
     this.fallbackTween?.kill();
     this.fallbackTween = null;
 
-    if (this.tickerFn) {
-      gsap.ticker.remove(this.tickerFn);
+    if (this.tickerFn && this.gsapRef) {
+      this.gsapRef.ticker.remove(this.tickerFn);
       this.tickerFn = null;
     }
 
@@ -151,14 +153,18 @@ export class SmoothScrollService {
     const duration = options.duration ?? Math.min(1.0, Math.max(0.45, distance / 2600));
 
     this.ngZone.runOutsideAngular(() => {
-      this.fallbackTween = gsap.to(state, {
-        y: targetY,
-        duration,
-        ease: 'power3.inOut',
-        onUpdate: () => window.scrollTo(0, state.y),
-        onComplete: () => {
-          this.fallbackTween = null;
-        },
+      void loadGsap().then((gsap) => {
+        if (this.destroyed) return;
+        this.gsapRef = gsap;
+        this.fallbackTween = gsap.to(state, {
+          y: targetY,
+          duration,
+          ease: 'power3.inOut',
+          onUpdate: () => window.scrollTo(0, state.y),
+          onComplete: () => {
+            this.fallbackTween = null;
+          },
+        });
       });
     });
   }

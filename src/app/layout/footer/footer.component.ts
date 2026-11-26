@@ -10,7 +10,7 @@ import {
   inject,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import gsap from 'gsap';
+import { loadGsapWithScrollTrigger } from '../../core/animation/gsap-loader';
 import { LanguageService } from '../../core/i18n/language.service';
 import { NtSpotlightDirective } from '../../shared/directives/nt-spotlight.directive';
 import { NtIconComponent } from '../../shared/ui/nt-icon.component';
@@ -60,9 +60,8 @@ export class FooterComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    void import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
+    void loadGsapWithScrollTrigger().then(({ gsap, ScrollTrigger }) => {
       if (this.destroyed) return;
-      gsap.registerPlugin(ScrollTrigger);
 
       const root = this.footerRootRef.nativeElement;
       const isRtl = this.langService.isRtl();

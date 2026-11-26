@@ -1,15 +1,17 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './features/home/home.component';
+
+const loadHomeComponent = () =>
+  import('./features/home/home.component').then((m) => m.HomeComponent);
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    loadComponent: loadHomeComponent,
     title: 'NileTronix — Enterprise Technology & Systems Integration',
   },
   {
     path: 'solutions',
-    component: HomeComponent,
+    loadComponent: loadHomeComponent,
     title: 'Our Solutions — NileTronix',
   },
   {
@@ -22,27 +24,27 @@ export const routes: Routes = [
   },
   {
     path: 'industries',
-    component: HomeComponent,
+    loadComponent: loadHomeComponent,
     title: 'Industries — NileTronix',
   },
   {
     path: 'projects',
-    component: HomeComponent,
+    loadComponent: loadHomeComponent,
     title: 'Projects — NileTronix',
   },
   {
     path: 'about',
-    component: HomeComponent,
+    loadComponent: loadHomeComponent,
     title: 'About Us — NileTronix',
   },
   {
     path: 'contact',
-    component: HomeComponent,
+    loadComponent: loadHomeComponent,
     title: 'Contact — NileTronix',
   },
   {
     path: 'consultation',
-    component: HomeComponent,
+    loadComponent: loadHomeComponent,
     title: 'Request a Consultation — NileTronix',
   },
   {

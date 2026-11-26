@@ -61,19 +61,21 @@
   </div>
 
   <!-- Desktop / Tablet Seamless Background Visual Layer -->
-  <div class="hero-media-desktop" aria-hidden="true">
-    <img
-      class="hero-image-bg"
-      src="images/hero-lobby-desktop.webp"
-      alt=""
-      width="1024"
-      height="576"
-      loading="eager"
-      fetchpriority="high"
-      decoding="async"
-    />
-    <div class="hero-scrim"></div>
-  </div>
+  @if (isDesktop()) {
+    <div class="hero-media-desktop" aria-hidden="true">
+      <img
+        class="hero-image-bg"
+        src="images/hero-lobby-desktop.webp"
+        alt=""
+        width="1024"
+        height="576"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <div class="hero-scrim"></div>
+    </div>
+  }
 
   <div class="site-container hero-grid">
     <div class="hero-content">
@@ -117,18 +119,20 @@
       </div>
 
       <!-- Mobile / Tablet Dedicated Full-Width Visual -->
-      <figure class="hero-media-mobile">
-        <img
-          class="hero-image-inline"
-          src="images/hero-smart-operations.jpg"
-          [alt]="content().hero.imageAlt"
-          width="1024"
-          height="576"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-        />
-      </figure>
+      @if (!isDesktop()) {
+        <figure class="hero-media-mobile">
+          <img
+            class="hero-image-inline"
+            src="images/hero-smart-operations.webp"
+            [alt]="content().hero.imageAlt"
+            width="1024"
+            height="576"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </figure>
+      }
 
       <!-- Solution Indicators (Architectural Index Markers) -->
       <ul class="hero-indicators" [attr.aria-label]="content().hero.indicatorsLabel">

@@ -62,10 +62,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
     () => this.isHomeRoute() && !this.isScrolled() && !this.solutionsOpen()
   );
 
+  private static readonly SECTION_ORDER: readonly Exclude<NavSectionId, 'home'>[] = [
+    'contact',
+    'references',
+    'hardware',
+    'industries',
+    'solutions',
+  ];
+
   private closeTimer: ReturnType<typeof setTimeout> | null = null;
   private openedViaHover = false;
   private scrollRafId: number | null = null;
   private routerSub: Subscription | null = null;
+  private resizeObserver: ResizeObserver | null = null;
+  private cachedViewportHeight = 800;
+  private cachedSectionOffsets: Array<{ id: Exclude<NavSectionId, 'home'>; top: number }> = [];
+  private offsetsDirty = true;
 
   private readonly boundPassiveScroll = () => {
     if (this.scrollRafId !== null) return;
@@ -73,6 +85,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.scrollRafId = null;
       this.syncScrollState();
     });
+  };
+
+  private readonly boundResize = () => {
+    this.offsetsDirty = true;
+    this.cachedViewportHeight = window.innerHeight || 800;
+    this.boundPassiveScroll();
   };
 
   constructor() {
@@ -94,16 +112,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => {
         this.syncRouteState(event.urlAfterRedirects);
+        this.offsetsDirty = true;
         if (this.isBrowser) {
           this.syncScrollState();
         }
       });
 
     if (!this.isBrowser) return;
+    this.cachedViewportHeight = window.innerHeight || 800;
     this.syncScrollState();
     this.ngZone.runOutsideAngular(() => {
       window.addEventListener('scroll', this.boundPassiveScroll, { passive: true });
-      window.addEventListener('resize', this.boundPassiveScroll, { passive: true });
+      window.addEventListener('resize', this.boundResize, { passive: true });
+      if (typeof ResizeObserver !== 'undefined' && this.document.body) {
+        this.resizeObserver = new ResizeObserver(() => {
+          this.offsetsDirty = true;
+        });
+        this.resizeObserver.observe(this.document.body);
+      }
     });
   }
 
@@ -111,13 +137,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.clearCloseTimer();
     this.routerSub?.unsubscribe();
     this.routerSub = null;
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     if (this.scrollRafId !== null) {
       cancelAnimationFrame(this.scrollRafId);
       this.scrollRafId = null;
     }
     if (this.isBrowser) {
       window.removeEventListener('scroll', this.boundPassiveScroll);
-      window.removeEventListener('resize', this.boundPassiveScroll);
+      window.removeEventListener('resize', this.boundResize);
     }
     this.smoothScroll.start();
     this.document.body?.classList.remove('nt-scroll-locked');
@@ -131,30 +159,35 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
+  private refreshSectionOffsets(): void {
+    const next: Array<{ id: Exclude<NavSectionId, 'home'>; top: number }> = [];
+    for (const id of HeaderComponent.SECTION_ORDER) {
+      const el = this.document.getElementById(id);
+      if (el) {
+        next.push({ id, top: el.offsetTop });
+      }
+    }
+    this.cachedSectionOffsets = next;
+    this.offsetsDirty = false;
+  }
+
   private syncScrollState(): void {
     const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-    const viewportHeight = window.innerHeight || 800;
-    const nextScrolled = scrollY >= viewportHeight * 0.8;
+    const nextScrolled = scrollY >= this.cachedViewportHeight * 0.8;
 
     const currentUrl = this.router.url.split('#')[0];
     let nextSection: NavSectionId = 'home';
 
     if (currentUrl.startsWith('/solutions/')) {
       nextSection = 'solutions';
-    } else {
+    } else if (this.isHomeRoute()) {
+      if (this.offsetsDirty || this.cachedSectionOffsets.length === 0) {
+        this.refreshSectionOffsets();
+      }
       const offset = 140;
-      const sectionOrder: Exclude<NavSectionId, 'home'>[] = [
-        'contact',
-        'references',
-        'hardware',
-        'industries',
-        'solutions',
-      ];
-
-      for (const id of sectionOrder) {
-        const el = this.document.getElementById(id);
-        if (el && el.offsetTop - offset <= scrollY) {
-          nextSection = id;
+      for (const entry of this.cachedSectionOffsets) {
+        if (entry.top - offset <= scrollY) {
+          nextSection = entry.id;
           break;
         }
       }

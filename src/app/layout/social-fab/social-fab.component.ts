@@ -8,13 +8,10 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
-  QueryList,
-  ViewChildren,
   computed,
   inject,
   signal,
 } from '@angular/core';
-import gsap from 'gsap';
 import { LanguageService } from '../../core/i18n/language.service';
 import { NtIconComponent, NtIconName } from '../../shared/ui/nt-icon.component';
 
@@ -26,51 +23,75 @@ export interface SocialFabItem {
   readonly href: string;
   readonly brandColor: string;
   readonly brandBg: string;
-  /** Angle in degrees along the inward semicircle (LTR reference) */
-  readonly angleDeg: number;
+  readonly cos: number;
+  readonly sin: number;
 }
 
+const makeItem = (
+  id: SocialFabItem['id'],
+  icon: NtIconName,
+  labelEn: string,
+  labelAr: string,
+  href: string,
+  brandColor: string,
+  brandBg: string,
+  angleDeg: number
+): SocialFabItem => {
+  const rad = (angleDeg * Math.PI) / 180;
+  return {
+    id,
+    icon,
+    labelEn,
+    labelAr,
+    href,
+    brandColor,
+    brandBg,
+    cos: Number(Math.cos(rad).toFixed(4)),
+    sin: Number((-Math.sin(rad)).toFixed(4)),
+  };
+};
+
 const SOCIAL_ITEMS: readonly SocialFabItem[] = [
-  {
-    id: 'whatsapp',
-    icon: 'whatsapp',
-    labelEn: 'WhatsApp',
-    labelAr: 'واتساب',
-    href: 'https://wa.me/201000000000',
-    brandColor: '#25d366',
-    brandBg: '#25d366',
-    angleDeg: 95,
-  },
-  {
-    id: 'instagram',
-    icon: 'instagram',
-    labelEn: 'Instagram',
-    labelAr: 'إنستجرام',
-    href: 'https://www.instagram.com/niletronix',
-    brandColor: '#dd2a7b',
-    brandBg: 'linear-gradient(135deg, #f58529 0%, #dd2a7b 52%, #8134af 100%)',
-    angleDeg: 140,
-  },
-  {
-    id: 'facebook',
-    icon: 'facebook',
-    labelEn: 'Facebook',
-    labelAr: 'فيسبوك',
-    href: 'https://www.facebook.com/niletronix',
-    brandColor: '#1877f2',
-    brandBg: '#1877f2',
-    angleDeg: 185,
-  },
-  {
-    id: 'linkedin',
-    icon: 'linkedin',
-    labelEn: 'LinkedIn',
-    labelAr: 'لينكدإن',
-    href: 'https://www.linkedin.com/company/niletronix',
-    brandColor: '#0a66c2',
-    brandBg: '#0a66c2',
-    angleDeg: 230,
-  },
+  makeItem(
+    'whatsapp',
+    'whatsapp',
+    'WhatsApp',
+    'واتساب',
+    'https://wa.me/201000000000',
+    '#25d366',
+    '#25d366',
+    95
+  ),
+  makeItem(
+    'instagram',
+    'instagram',
+    'Instagram',
+    'إنستجرام',
+    'https://www.instagram.com/niletronix',
+    '#dd2a7b',
+    'linear-gradient(135deg, #f58529 0%, #dd2a7b 52%, #8134af 100%)',
+    140
+  ),
+  makeItem(
+    'facebook',
+    'facebook',
+    'Facebook',
+    'فيسبوك',
+    'https://www.facebook.com/niletronix',
+    '#1877f2',
+    '#1877f2',
+    185
+  ),
+  makeItem(
+    'linkedin',
+    'linkedin',
+    'LinkedIn',
+    'لينكدإن',
+    'https://www.linkedin.com/company/niletronix',
+    '#0a66c2',
+    '#0a66c2',
+    230
+  ),
 ];
 
 @Component({
@@ -89,7 +110,6 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
       >
         @for (item of items; track item.id; let idx = $index) {
           <a
-            #arcItem
             class="arc-btn"
             role="menuitem"
             [href]="item.href"
@@ -97,6 +117,10 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
             rel="noopener noreferrer"
             [style.--brand-color]="item.brandColor"
             [style.--brand-bg]="item.brandBg"
+            [style.--arc-cos]="item.cos"
+            [style.--arc-sin]="item.sin"
+            [style.--arc-open-delay]="idx * 50 + 'ms'"
+            [style.--arc-close-delay]="(items.length - 1 - idx) * 28 + 'ms'"
             [attr.aria-label]="lang() === 'ar' ? item.labelAr : item.labelEn"
             [attr.title]="lang() === 'ar' ? item.labelAr : item.labelEn"
             [attr.tabindex]="isOpen() ? 0 : -1"
@@ -146,6 +170,12 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
       z-index: 155;
       width: 46px;
       height: 46px;
+      --arc-radius: 78px;
+      --arc-dir: 1;
+    }
+
+    :host-context([dir='rtl']) .social-fab-wrap {
+      --arc-dir: -1;
     }
 
     .social-arc {
@@ -169,16 +199,28 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
       text-decoration: none;
       box-shadow: 0 10px 24px rgba(8, 47, 67, 0.22);
       opacity: 0;
-      transform: scale(0.35);
+      transform: translate3d(0, 0, 0) scale(0.35);
       pointer-events: none;
-      will-change: transform, opacity;
       transition:
+        transform 260ms cubic-bezier(0.4, 0, 1, 1) var(--arc-close-delay, 0ms),
+        opacity 200ms var(--nt-ease) var(--arc-close-delay, 0ms),
         filter 180ms var(--nt-ease),
         box-shadow 180ms var(--nt-ease);
     }
 
     .social-fab-wrap.is-open .arc-btn {
       pointer-events: auto;
+      opacity: 1;
+      transform: translate3d(
+        calc(var(--arc-cos) * var(--arc-radius) * var(--arc-dir)),
+        calc(var(--arc-sin) * var(--arc-radius)),
+        0
+      ) scale(1);
+      transition:
+        transform 400ms cubic-bezier(0.34, 1.56, 0.64, 1) var(--arc-open-delay, 0ms),
+        opacity 280ms var(--nt-ease) var(--arc-open-delay, 0ms),
+        filter 180ms var(--nt-ease),
+        box-shadow 180ms var(--nt-ease);
     }
 
     .arc-btn:hover,
@@ -301,6 +343,7 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
         inset-inline-end: 1.1rem;
         width: 46px;
         height: 46px;
+        --arc-radius: 68px;
       }
 
       .fab-trigger {
@@ -324,6 +367,11 @@ const SOCIAL_ITEMS: readonly SocialFabItem[] = [
         transition: opacity 150ms linear;
         transform: none;
       }
+      .arc-btn,
+      .social-fab-wrap.is-open .arc-btn {
+        transition: opacity 150ms linear;
+        transition-delay: 0ms;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -335,10 +383,7 @@ export class SocialFabComponent implements OnInit, OnDestroy {
   private readonly hostEl = inject(ElementRef<HTMLElement>);
   private readonly langService = inject(LanguageService);
 
-  @ViewChildren('arcItem') private arcItems?: QueryList<ElementRef<HTMLAnchorElement>>;
-
   protected readonly lang = this.langService.lang;
-  protected readonly isRtl = this.langService.isRtl;
   protected readonly items = SOCIAL_ITEMS;
 
   protected readonly isOpen = signal(false);
@@ -348,7 +393,6 @@ export class SocialFabComponent implements OnInit, OnDestroy {
   );
 
   private cycleTimer: ReturnType<typeof setInterval> | null = null;
-  private arcTimeline: gsap.core.Timeline | null = null;
 
   ngOnInit(): void {
     if (!this.isBrowser) return;
@@ -368,28 +412,16 @@ export class SocialFabComponent implements OnInit, OnDestroy {
       clearInterval(this.cycleTimer);
       this.cycleTimer = null;
     }
-    this.arcTimeline?.kill();
-    this.arcTimeline = null;
   }
 
   protected toggle(): void {
-    if (this.isOpen()) {
-      this.close();
-    } else {
-      this.open();
-    }
-  }
-
-  protected open(): void {
-    if (this.isOpen()) return;
-    this.isOpen.set(true);
-    this.animateArc(true);
+    this.isOpen.update((open) => !open);
   }
 
   protected close(): void {
-    if (!this.isOpen()) return;
-    this.isOpen.set(false);
-    this.animateArc(false);
+    if (this.isOpen()) {
+      this.isOpen.set(false);
+    }
   }
 
   @HostListener('document:click', ['$event'])
@@ -404,58 +436,5 @@ export class SocialFabComponent implements OnInit, OnDestroy {
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
     this.close();
-  }
-
-  private animateArc(opening: boolean): void {
-    if (!this.isBrowser || !this.arcItems?.length) return;
-
-    const nodes = this.arcItems.toArray().map((ref) => ref.nativeElement);
-    const reducedMotion =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isMobile = window.innerWidth <= 767;
-    const radius = isMobile ? 68 : 78;
-    const dirSign = this.isRtl() ? -1 : 1;
-
-    this.arcTimeline?.kill();
-    const tl = gsap.timeline();
-    this.arcTimeline = tl;
-
-    nodes.forEach((el, idx) => {
-      const item = this.items[idx];
-      const rad = (item.angleDeg * Math.PI) / 180;
-      // cos(angle) is negative for 95..230° (fans left in LTR; negated in RTL to fan right)
-      const tx = Math.cos(rad) * radius * dirSign;
-      // sin(angle) is positive for 95..180° (upward -> negative CSS Y), negative for >180° (downward -> positive CSS Y)
-      const ty = -Math.sin(rad) * radius;
-
-      if (opening) {
-        tl.to(
-          el,
-          {
-            x: tx,
-            y: ty,
-            scale: 1,
-            opacity: 1,
-            duration: reducedMotion ? 0.15 : 0.42,
-            ease: reducedMotion ? 'power1.out' : 'back.out(1.7)',
-          },
-          reducedMotion ? 0 : idx * 0.055
-        );
-      } else {
-        tl.to(
-          el,
-          {
-            x: 0,
-            y: 0,
-            scale: 0.35,
-            opacity: 0,
-            duration: reducedMotion ? 0.12 : 0.24,
-            ease: 'power2.in',
-          },
-          reducedMotion ? 0 : (nodes.length - 1 - idx) * 0.03
-        );
-      }
-    });
   }
 }

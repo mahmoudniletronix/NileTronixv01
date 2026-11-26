@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import gsap from 'gsap';
+import type GsapType from 'gsap';
 import type * as ThreeNamespace from 'three';
 import type { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { loadGsap } from '../../../core/animation/gsap-loader';
 import { CameraPresetId } from '../models/camera-preset.model';
 import { ProductHotspot } from '../models/product-hotspot.model';
 
@@ -13,7 +14,8 @@ export interface FramingBox {
 
 @Injectable()
 export class CameraControllerService {
-  private activeTween: gsap.core.Timeline | null = null;
+  private activeTween: ReturnType<typeof GsapType.timeline> | null = null;
+  private tweenGeneration = 0;
 
   computeFraming(T: typeof ThreeNamespace, object: ThreeNamespace.Object3D): FramingBox {
     object.updateMatrixWorld(true);
@@ -92,6 +94,7 @@ export class CameraControllerService {
   }
 
   cancelTransition(): void {
+    this.tweenGeneration++;
     if (this.activeTween) {
       this.activeTween.kill();
       this.activeTween = null;
@@ -220,22 +223,26 @@ export class CameraControllerService {
       return;
     }
 
-    const tl = gsap.timeline({
-      defaults: { duration, ease: 'power3.inOut' },
-      onUpdate: () => {
-        controls.update();
-        onFrameUpdate();
-      },
-      onComplete: () => {
-        this.activeTween = null;
-        onFrameUpdate();
-        onComplete?.();
-      },
-    });
+    const gen = ++this.tweenGeneration;
+    void loadGsap().then((gsap) => {
+      if (gen !== this.tweenGeneration) return;
+      const tl = gsap.timeline({
+        defaults: { duration, ease: 'power3.inOut' },
+        onUpdate: () => {
+          controls.update();
+          onFrameUpdate();
+        },
+        onComplete: () => {
+          this.activeTween = null;
+          onFrameUpdate();
+          onComplete?.();
+        },
+      });
 
-    tl.to(camera.position, { x: destPos.x, y: destPos.y, z: destPos.z }, 0);
-    tl.to(controls.target, { x: destTarget.x, y: destTarget.y, z: destTarget.z }, 0);
-    this.activeTween = tl;
+      tl.to(camera.position, { x: destPos.x, y: destPos.y, z: destPos.z }, 0);
+      tl.to(controls.target, { x: destTarget.x, y: destTarget.y, z: destTarget.z }, 0);
+      this.activeTween = tl;
+    });
   }
 
   destroy(): void {

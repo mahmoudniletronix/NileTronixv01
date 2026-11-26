@@ -4,7 +4,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener,
   NgZone,
   OnDestroy,
   PLATFORM_ID,
@@ -17,7 +16,8 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import gsap from 'gsap';
+import type GsapType from 'gsap';
+import { loadGsap } from '../../../../core/animation/gsap-loader';
 import { LanguageService } from '../../../../core/i18n/language.service';
 import { NtMagneticDirective } from '../../../../shared/directives/nt-magnetic.directive';
 import { NtSpotlightDirective } from '../../../../shared/directives/nt-spotlight.directive';
@@ -70,10 +70,23 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
 
   private viewReady = false;
   private inViewport = true;
+  private destroyed = false;
   private touchStartX: number | null = null;
   private touchStartY: number | null = null;
   private autoPlayTimer: ReturnType<typeof setInterval> | null = null;
   private visibilityObserver: IntersectionObserver | null = null;
+  private resizeRafId: number | null = null;
+  private gsapRef: typeof GsapType | null = null;
+
+  private readonly boundResize = () => {
+    if (this.resizeRafId !== null) return;
+    this.resizeRafId = requestAnimationFrame(() => {
+      this.resizeRafId = null;
+      if (this.viewReady && this.isBrowser && !this.destroyed) {
+        this.animateDeck(this.activeIndex(), this.isRtl(), true);
+      }
+    });
+  };
 
   constructor() {
     effect(() => {
@@ -81,7 +94,7 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
       const rtl = this.isRtl();
       if (this.viewReady && this.isBrowser) {
         this.animateDeck(idx, rtl, false);
-        this.animateInfoPanel();
+        void this.animateInfoPanel();
       }
     });
   }
@@ -91,6 +104,10 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
     if (this.isBrowser) {
       this.animateDeck(this.activeIndex(), this.isRtl(), true);
       this.startAutoPlay();
+
+      this.ngZone.runOutsideAngular(() => {
+        window.addEventListener('resize', this.boundResize, { passive: true });
+      });
 
       if (typeof IntersectionObserver !== 'undefined') {
         this.ngZone.runOutsideAngular(() => {
@@ -110,22 +127,23 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.stopAutoPlay();
     this.visibilityObserver?.disconnect();
     this.visibilityObserver = null;
+    if (this.resizeRafId !== null) {
+      cancelAnimationFrame(this.resizeRafId);
+      this.resizeRafId = null;
+    }
     if (!this.isBrowser) return;
-    if (this.cardRefs) {
-      this.cardRefs.forEach((ref) => gsap.killTweensOf(ref.nativeElement));
-    }
-    if (this.infoPanelRef) {
-      gsap.killTweensOf(this.infoPanelRef.nativeElement);
-    }
-  }
-
-  @HostListener('window:resize')
-  protected onResize(): void {
-    if (this.viewReady && this.isBrowser) {
-      this.animateDeck(this.activeIndex(), this.isRtl(), true);
+    window.removeEventListener('resize', this.boundResize);
+    if (this.gsapRef) {
+      if (this.cardRefs) {
+        this.cardRefs.forEach((ref) => this.gsapRef?.killTweensOf(ref.nativeElement));
+      }
+      if (this.infoPanelRef) {
+        this.gsapRef.killTweensOf(this.infoPanelRef.nativeElement);
+      }
     }
   }
 
@@ -258,7 +276,7 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
     const outerX = vw >= 1440 ? 90 : vw >= 1280 ? 86 : 74;
     const showOuter = vw >= 1200;
 
-    this.cardRefs.forEach((ref, i) => {
+    const cardStates = this.cardRefs.map((ref, i) => {
       const el = ref.nativeElement;
       const diff = this.getCircularOffset(i, active);
       const absDiff = Math.abs(diff);
@@ -286,21 +304,38 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
         zIndex = 10;
       }
 
-      gsap.to(el, {
-        xPercent,
-        y,
-        scale,
-        rotationY,
-        opacity,
-        zIndex,
-        duration,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      });
+      return { el, xPercent, y, scale, rotationY, opacity, zIndex };
+    });
+
+    if (duration === 0) {
+      for (const s of cardStates) {
+        s.el.style.transform = `translate3d(${s.xPercent}%, ${s.y}px, 0) rotateY(${s.rotationY}deg) scale(${s.scale})`;
+        s.el.style.opacity = String(s.opacity);
+        s.el.style.zIndex = String(s.zIndex);
+      }
+      return;
+    }
+
+    void loadGsap().then((gsap) => {
+      if (this.destroyed) return;
+      this.gsapRef = gsap;
+      for (const s of cardStates) {
+        gsap.to(s.el, {
+          xPercent: s.xPercent,
+          y: s.y,
+          scale: s.scale,
+          rotationY: s.rotationY,
+          opacity: s.opacity,
+          zIndex: s.zIndex,
+          duration,
+          ease: 'power3.out',
+          overwrite: 'auto',
+        });
+      }
     });
   }
 
-  private animateInfoPanel(): void {
+  private async animateInfoPanel(): Promise<void> {
     if (!this.infoPanelRef) return;
     const reducedMotion =
       typeof window !== 'undefined' &&
@@ -308,6 +343,10 @@ export class SolutionsShowcaseComponent implements AfterViewInit, OnDestroy {
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reducedMotion) return;
+
+    const gsap = await loadGsap();
+    if (this.destroyed || !this.infoPanelRef) return;
+    this.gsapRef = gsap;
 
     gsap.fromTo(
       this.infoPanelRef.nativeElement,

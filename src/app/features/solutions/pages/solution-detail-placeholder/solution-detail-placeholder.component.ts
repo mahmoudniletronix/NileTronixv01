@@ -30,6 +30,9 @@ import { LocalizedText } from '../../models/solution.model';
             [alt]="t(activeShot().alt)"
             [width]="activeShot().width"
             [height]="activeShot().height"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
           />
           <figcaption>{{ t(activeShot().caption) }}</figcaption>
         </figure>
@@ -45,7 +48,14 @@ import { LocalizedText } from '../../models/solution.model';
                 [attr.aria-selected]="idx === activeShotIndex()"
                 (click)="selectShot(idx)"
               >
-                <img [src]="shot.src" [alt]="t(shot.alt)" width="240" height="150" loading="lazy" />
+                <img
+                  [src]="shot.src"
+                  [alt]="t(shot.alt)"
+                  width="240"
+                  height="150"
+                  loading="lazy"
+                  decoding="async"
+                />
               </button>
             }
           </div>

@@ -9,11 +9,10 @@ import {
   inject,
   input,
 } from '@angular/core';
-import gsap from 'gsap';
 
 /**
  * Adds a restrained, precision magnetic attraction (±4px max) to primary CTA buttons
- * on fine-pointer desktop devices using GSAP `quickTo` outside Angular Zone.
+ * on fine-pointer desktop devices using native RAF + GPU transforms outside Angular Zone.
  */
 @Directive({
   selector: '[appNtMagnetic]',
@@ -26,39 +25,55 @@ export class NtMagneticDirective implements AfterViewInit, OnDestroy {
 
   readonly magneticMax = input<number>(4.5);
 
-  private quickX: gsap.QuickToFunc | null = null;
-  private quickY: gsap.QuickToFunc | null = null;
+  private cachedRect: DOMRect | null = null;
+  private rafId: number | null = null;
+  private targetX = 0;
+  private targetY = 0;
+  private prevTransition = '';
+
+  private readonly onPointerEnter = () => {
+    const el = this.elRef.nativeElement;
+    this.cachedRect = el.getBoundingClientRect();
+    el.style.willChange = 'transform';
+    el.style.transition = 'transform 140ms cubic-bezier(0.22, 1, 0.36, 1)';
+  };
 
   private readonly onPointerMove = (e: PointerEvent) => {
-    if (e.pointerType !== 'mouse' || !this.quickX || !this.quickY) return;
-    const rect = this.elRef.nativeElement.getBoundingClientRect();
+    if (e.pointerType !== 'mouse') return;
+    const rect = this.cachedRect ?? this.elRef.nativeElement.getBoundingClientRect();
     const relX = (e.clientX - rect.left) / Math.max(rect.width, 1) - 0.5;
     const relY = (e.clientY - rect.top) / Math.max(rect.height, 1) - 0.5;
     const max = this.magneticMax();
 
-    this.quickX(Math.max(-max, Math.min(max, relX * max * 2)));
-    this.quickY(Math.max(-max, Math.min(max, relY * max * 2)));
+    this.targetX = Math.max(-max, Math.min(max, relX * max * 2));
+    this.targetY = Math.max(-max, Math.min(max, relY * max * 2));
+
+    if (this.rafId !== null) return;
+    this.rafId = requestAnimationFrame(() => {
+      this.rafId = null;
+      this.elRef.nativeElement.style.transform = `translate3d(${this.targetX.toFixed(2)}px, ${this.targetY.toFixed(2)}px, 0)`;
+    });
   };
 
   private readonly onPointerLeave = () => {
-    if (!this.quickX || !this.quickY) return;
-    gsap.to(this.elRef.nativeElement, {
-      x: 0,
-      y: 0,
-      duration: 0.45,
-      ease: 'power3.out',
-      overwrite: 'auto',
-      clearProps: 'transform',
-    });
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+    this.cachedRect = null;
+    const el = this.elRef.nativeElement;
+    el.style.transition = this.prevTransition || 'transform 360ms cubic-bezier(0.22, 1, 0.36, 1)';
+    el.style.transform = '';
+    el.style.willChange = '';
   };
 
   ngAfterViewInit(): void {
     if (!this.isBrowser || this.shouldDisable()) return;
 
     const el = this.elRef.nativeElement;
+    this.prevTransition = el.style.transition;
     this.ngZone.runOutsideAngular(() => {
-      this.quickX = gsap.quickTo(el, 'x', { duration: 0.32, ease: 'power3.out' });
-      this.quickY = gsap.quickTo(el, 'y', { duration: 0.32, ease: 'power3.out' });
+      el.addEventListener('pointerenter', this.onPointerEnter, { passive: true });
       el.addEventListener('pointermove', this.onPointerMove, { passive: true });
       el.addEventListener('pointerleave', this.onPointerLeave, { passive: true });
     });
@@ -66,12 +81,16 @@ export class NtMagneticDirective implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (!this.isBrowser) return;
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
     const el = this.elRef.nativeElement;
+    el.removeEventListener('pointerenter', this.onPointerEnter);
     el.removeEventListener('pointermove', this.onPointerMove);
     el.removeEventListener('pointerleave', this.onPointerLeave);
-    gsap.killTweensOf(el);
-    this.quickX = null;
-    this.quickY = null;
+    el.style.transform = '';
+    el.style.willChange = '';
   }
 
   private shouldDisable(): boolean {

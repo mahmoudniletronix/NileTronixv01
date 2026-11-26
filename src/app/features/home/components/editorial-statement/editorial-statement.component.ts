@@ -11,7 +11,8 @@ import {
   effect,
   inject,
 } from '@angular/core';
-import gsap from 'gsap';
+import type GsapType from 'gsap';
+import { loadGsapWithScrollTrigger } from '../../../../core/animation/gsap-loader';
 import { LanguageService } from '../../../../core/i18n/language.service';
 
 interface StatementWord {
@@ -232,7 +233,7 @@ export class EditorialStatementComponent implements AfterViewInit, OnDestroy {
     this.lang() === 'ar' ? STATEMENT_AR : STATEMENT_EN
   );
 
-  private gsapCtx: gsap.Context | null = null;
+  private gsapCtx: ReturnType<typeof GsapType.context> | null = null;
   private viewReady = false;
   private destroyed = false;
 
@@ -267,9 +268,8 @@ export class EditorialStatementComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+    const { gsap } = await loadGsapWithScrollTrigger();
     if (this.destroyed) return;
-    gsap.registerPlugin(ScrollTrigger);
 
     this.gsapCtx?.revert();
 

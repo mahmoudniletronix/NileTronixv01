@@ -36,7 +36,11 @@ import { SolutionsShowcaseComponent } from './components/solutions-showcase/solu
     <app-industries-serve id="industries" />
     <app-site-products id="hardware" />
     <app-references id="references" />
-    <app-contact-section id="contact" />
+    @defer (on viewport; prefetch on idle) {
+      <app-contact-section id="contact" />
+    } @placeholder {
+      <section id="contact" style="min-height: 760px" aria-hidden="true"></section>
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

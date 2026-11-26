@@ -13,8 +13,9 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import gsap from 'gsap';
+import type GsapType from 'gsap';
 import type { ScrollTrigger as ScrollTriggerType } from 'gsap/ScrollTrigger';
+import { loadGsap, loadGsapWithScrollTrigger } from '../../../../core/animation/gsap-loader';
 import { LanguageService } from '../../../../core/i18n/language.service';
 import { NtMagneticDirective } from '../../../../shared/directives/nt-magnetic.directive';
 import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
@@ -73,8 +74,8 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
   );
 
   private viewReady = false;
-  private swapTimeline: gsap.core.Timeline | null = null;
-  private entranceTimeline: gsap.core.Timeline | null = null;
+  private swapTimeline: ReturnType<typeof GsapType.timeline> | null = null;
+  private entranceTimeline: ReturnType<typeof GsapType.timeline> | null = null;
   private entranceTrigger: ScrollTriggerType | null = null;
   private destroyed = false;
 
@@ -83,7 +84,7 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
       this.activeCategory();
       this.activeModelIndex();
       if (this.viewReady && this.isBrowser) {
-        queueMicrotask(() => this.animateDossierSwap());
+        queueMicrotask(() => void this.animateDossierSwap());
       }
     });
   }
@@ -97,14 +98,13 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reducedMotion) return;
 
-    void import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
+    void loadGsapWithScrollTrigger().then(({ gsap, ScrollTrigger }) => {
       if (this.destroyed) return;
-      gsap.registerPlugin(ScrollTrigger);
       this.entranceTrigger = ScrollTrigger.create({
         trigger: this.sectionRootRef.nativeElement,
         start: 'top 80%',
         once: true,
-        onEnter: () => this.playSectionEntrance(),
+        onEnter: () => this.playSectionEntrance(gsap),
       });
     });
   }
@@ -150,7 +150,7 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
     this.activeModelIndex.update((i) => (i - 1 + total) % total);
   }
 
-  private playSectionEntrance(): void {
+  private playSectionEntrance(gsap: typeof GsapType): void {
     this.entranceTimeline?.kill();
     const dirSign = this.isRtl() ? -1 : 1;
     const tl = gsap.timeline({ defaults: { ease: 'power3.out', overwrite: 'auto' } });
@@ -223,13 +223,16 @@ export class SiteProductsComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private animateDossierSwap(): void {
+  private async animateDossierSwap(): Promise<void> {
     const reducedMotion =
       typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reducedMotion) return;
+
+    const gsap = await loadGsap();
+    if (this.destroyed) return;
 
     this.swapTimeline?.kill();
     const dirSign = this.isRtl() ? -1 : 1;

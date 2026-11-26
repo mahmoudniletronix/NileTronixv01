@@ -13,7 +13,8 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import gsap from 'gsap';
+import type GsapType from 'gsap';
+import { loadGsap } from '../../../../core/animation/gsap-loader';
 import { LanguageService } from '../../../../core/i18n/language.service';
 import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 import {
@@ -62,13 +63,14 @@ export class IndustriesServeComponent implements AfterViewInit, OnDestroy {
   protected readonly formattedTotal = String(INDUSTRIES_CATALOG.length).padStart(2, '0');
 
   private viewReady = false;
-  private activeTimeline: gsap.core.Timeline | null = null;
+  private activeTimeline: ReturnType<typeof GsapType.timeline> | null = null;
+  private destroyed = false;
 
   constructor() {
     effect(() => {
       this.selectedId();
       if (this.viewReady && this.isBrowser) {
-        queueMicrotask(() => this.animateActivePanel());
+        queueMicrotask(() => void this.animateActivePanel());
       }
     });
   }
@@ -78,6 +80,7 @@ export class IndustriesServeComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     if (!this.isBrowser) return;
     this.activeTimeline?.kill();
     this.activeTimeline = null;
@@ -135,13 +138,16 @@ export class IndustriesServeComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private animateActivePanel(): void {
+  private async animateActivePanel(): Promise<void> {
     const reducedMotion =
       typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (reducedMotion) return;
+
+    const gsap = await loadGsap();
+    if (this.destroyed) return;
 
     this.activeTimeline?.kill();
     const tl = gsap.timeline({ defaults: { ease: 'power2.out', overwrite: 'auto' } });

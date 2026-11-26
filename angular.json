@@ -29,11 +29,6 @@
                   "images/Marble Lobby with Digital Queue Screen.png",
                   "images/Niletronix Corporate Reception Lobby.png"
                 ]
-              },
-              {
-                "glob": "**/*",
-                "input": "src/assets",
-                "output": "/assets"
               }
             ],
             "styles": [

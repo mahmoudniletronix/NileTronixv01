@@ -58,9 +58,7 @@ import { NtIconComponent } from '../../shared/ui/nt-icon.component';
       padding: 0;
       border: 0;
       border-radius: 50%;
-      background-color: rgba(10, 25, 36, 0.9);
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter: blur(10px);
+      background-color: rgba(10, 25, 36, 0.94);
       color: rgba(255, 255, 255, 0.92);
       box-shadow: 0 8px 24px rgba(10, 25, 36, 0.24);
       cursor: pointer;
@@ -152,6 +150,8 @@ export class BackToTopComponent implements AfterViewInit, OnDestroy {
   protected readonly visible = signal(false);
 
   private rafId: number | null = null;
+  private resizeObserver: ResizeObserver | null = null;
+  private cachedMaxScroll = 1;
 
   private readonly boundScroll = () => {
     if (this.rafId !== null) return;
@@ -161,18 +161,34 @@ export class BackToTopComponent implements AfterViewInit, OnDestroy {
     });
   };
 
+  private readonly boundMetrics = () => {
+    this.cachedMaxScroll = Math.max(
+      1,
+      document.documentElement.scrollHeight - window.innerHeight
+    );
+    this.boundScroll();
+  };
+
   ngAfterViewInit(): void {
     if (!this.isBrowser) return;
+    this.cachedMaxScroll = Math.max(
+      1,
+      document.documentElement.scrollHeight - window.innerHeight
+    );
     this.updateScrollState();
     this.ngZone.runOutsideAngular(() => {
       window.addEventListener('scroll', this.boundScroll, { passive: true });
+      window.addEventListener('resize', this.boundMetrics, { passive: true });
+      if (typeof ResizeObserver !== 'undefined') {
+        this.resizeObserver = new ResizeObserver(this.boundMetrics);
+        this.resizeObserver.observe(document.documentElement);
+      }
     });
   }
 
   private updateScrollState(): void {
     const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    const progress = Math.min(1, Math.max(0, scrollY / maxScroll));
+    const progress = Math.min(1, Math.max(0, scrollY / this.cachedMaxScroll));
 
     // Direct DOM ring update outside Angular Zone — zero change detection during scroll
     if (this.ringFillRef) {
@@ -202,8 +218,11 @@ export class BackToTopComponent implements AfterViewInit, OnDestroy {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     if (this.isBrowser) {
       window.removeEventListener('scroll', this.boundScroll);
+      window.removeEventListener('resize', this.boundMetrics);
     }
   }
 }

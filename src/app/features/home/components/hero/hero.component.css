@@ -138,7 +138,6 @@
   height: 100%;
   object-fit: cover;
   object-position: 52% center;
-  will-change: transform, opacity;
 }
 
 .hero-scrim {
@@ -541,9 +540,59 @@
   animation-play-state: paused;
 }
 
+@keyframes ntHeroRise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes ntHeroDatum {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.hero-eyebrow {
+  animation: ntHeroRise 420ms var(--nt-ease) 40ms both;
+}
+
+.hero-description {
+  animation: ntHeroRise 440ms var(--nt-ease) 120ms both;
+}
+
+.hero-actions {
+  animation: ntHeroRise 420ms var(--nt-ease) 180ms both;
+}
+
+.indicator-item {
+  animation: ntHeroRise 400ms var(--nt-ease) calc(220ms + var(--stagger-index, 0) * 60ms) both;
+}
+
+.hero-datum-line {
+  transform-origin: left center;
+  animation: ntHeroDatum 620ms var(--nt-ease) 220ms both;
+}
+
+:host-context([dir='rtl']) .hero-datum-line {
+  transform-origin: right center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .signal-pulse,
-  .signal-node {
+  .signal-node,
+  .hero-eyebrow,
+  .hero-description,
+  .hero-actions,
+  .indicator-item,
+  .hero-datum-line {
     animation: none;
   }
   .signal-pulse {

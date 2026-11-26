@@ -11,7 +11,8 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import gsap from 'gsap';
+import type GsapType from 'gsap';
+import { loadGsap } from '../../../../core/animation/gsap-loader';
 import { LanguageService } from '../../../../core/i18n/language.service';
 import { NtIconComponent } from '../../../../shared/ui/nt-icon.component';
 
@@ -58,12 +59,14 @@ export class ReferencesComponent implements AfterViewInit, OnDestroy {
   );
   private visibilityObserver: IntersectionObserver | null = null;
   private preloadObserver: IntersectionObserver | null = null;
+  private gsapRef: typeof GsapType | null = null;
+  private destroyed = false;
 
   constructor() {
     effect(() => {
       const mode = this.viewMode();
       if (mode === 'grid' && this.isBrowser) {
-        queueMicrotask(() => this.animateGridReveal());
+        queueMicrotask(() => void this.animateGridReveal());
       }
     });
   }
@@ -96,12 +99,13 @@ export class ReferencesComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.visibilityObserver?.disconnect();
     this.visibilityObserver = null;
     this.preloadObserver?.disconnect();
     this.preloadObserver = null;
-    if (this.isBrowser && this.gridRef) {
-      gsap.killTweensOf(this.gridRef.nativeElement.children);
+    if (this.isBrowser && this.gridRef && this.gsapRef) {
+      this.gsapRef.killTweensOf(this.gridRef.nativeElement.children);
     }
   }
 
@@ -110,13 +114,17 @@ export class ReferencesComponent implements AfterViewInit, OnDestroy {
     this.viewMode.update((m) => (m === 'marquee' ? 'grid' : 'marquee'));
   }
 
-  private animateGridReveal(): void {
+  private async animateGridReveal(): Promise<void> {
     if (!this.gridRef?.nativeElement.children.length) return;
     const reducedMotion =
       typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reducedMotion) return;
+
+    const gsap = await loadGsap();
+    if (this.destroyed || !this.gridRef?.nativeElement.children.length) return;
+    this.gsapRef = gsap;
 
     const items = this.gridRef.nativeElement.children;
     gsap.killTweensOf(items);

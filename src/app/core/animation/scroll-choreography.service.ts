@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import gsap from 'gsap';
+import type GsapType from 'gsap';
+import { loadGsapWithScrollTrigger } from './gsap-loader';
 
 /**
  * Coordinates safe, GPU-accelerated GSAP ScrollTrigger choreography across
@@ -25,13 +26,12 @@ export class ScrollChoreographyService {
       return null;
     }
 
-    const { ScrollTrigger } = await import('gsap/ScrollTrigger');
-    gsap.registerPlugin(ScrollTrigger);
+    const { gsap, ScrollTrigger } = await loadGsapWithScrollTrigger();
 
     const dirSign = isRtl ? -1 : 1;
 
     const animateEditorialHeader = (
-      tl: gsap.core.Timeline,
+      tl: ReturnType<typeof GsapType.timeline>,
       root: HTMLElement,
       eyebrowSel: string,
       titleSel: string,
